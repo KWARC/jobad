@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Wed, 05 Jun 2013 10:52:13 +0200
+	built: Thu, 06 Jun 2013 14:01:01 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -87,7 +87,7 @@ var JOBAD = function(element){
 JOBAD.ifaces = []; //JOBAD interfaces
 
 /* JOBAD Version */
-JOBAD.version = "3.0.0"; 
+JOBAD.version = "3.0.1"; 
 
 /*
 	JOBAD.toString
@@ -373,7 +373,7 @@ JOBAD.util.generateMenuList = function(menu){
 	@returns the new representation. 
 */
 JOBAD.util.fullWrap = function(menu, wrapper){
-	var menu = (JOBAD.refs._.isArray(menu))?menu:JOBAD.util.generateMenuList(menu);
+	var menu = JOBAD.util.generateMenuList(menu);
 	var menu2 = [];
 	for(var i=0;i<menu.length;i++){
 		if(typeof menu[i][1] == 'function'){
@@ -381,10 +381,10 @@ JOBAD.util.fullWrap = function(menu, wrapper){
 				var org = menu[i][1];
 				menu2.push([menu[i][0], function(){
 					return wrapper(org, arguments)
-				}]);
+				}, menu[i][2]]);
 			})();
 		} else {
-			menu2.push([menu[i][0], JOBAD.util.fullWrap(menu[i][1])]);
+			menu2.push([menu[i][0], JOBAD.util.fullWrap(menu[i][1]), menu[i][2]]);
 		}
 		
 	}

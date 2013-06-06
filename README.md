@@ -1,6 +1,6 @@
 # JOBAD
 
-Current Stable Version: 3.0.0
+Current Stable Version: 3.0.1
 
 This is the stable branch. 
 

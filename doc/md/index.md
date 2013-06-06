@@ -2,7 +2,7 @@
 
 Welcome to the JOBAD v3 Documentation. 
 
-This is JOBAD Version 3.0.0 (stable branch). 
+This is JOBAD Version 3.0.1 (stable branch). 
 
 * [About](about.md) - General Information about JOBAD. 
 * [Setup](setup.md) - How to setup JOBAD on your website. 
