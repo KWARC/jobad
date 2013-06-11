@@ -6,10 +6,10 @@ This is the stable branch.
 
 JOBAD (JavaScript API for OMDoc-based Active Documents) is a javascript framework which makes it easy to create interactive web pages. 
 
-[Simplistic Demo](http://kwarc.github.com/jobad/examples/build/simple/release.html)
+[Simplistic Demo](http://kwarc.github.com/jobad/stable/examples/build/simple/release.html)
 
 
-[Online Documentation](http://kwarc.github.com/jobad/)
+[Online Documentation](http://kwarc.github.com/jobad/stable/)
 
 
 ## Getting JOBAD
