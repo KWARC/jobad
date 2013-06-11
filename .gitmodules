@@ -1,6 +1,8 @@
-[submodule "build/deps/closurecompilerpy"]
-	path = build/deps/closurecompilerpy
-	url = https://github.com/tkw1536/ClosureCompilerPy
-[submodule "build/deps/PythonMarkdownCompiler"]
-	path = build/deps/PythonMarkdownCompiler
-	url = https://github.com/tkw1536/PythonMarkdownCompiler
+[submodule "stable"]
+	path = stable
+	url = https://github.com/KWARC/jobad.git
+	branch = stable
+[submodule "dev"]
+	path = dev
+	url = https://github.com/KWARC/jobad.git
+	branch = dev
