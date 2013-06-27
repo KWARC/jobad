@@ -4,7 +4,7 @@ This object can be used as a termplate for module objects. **Note:** The code fo
 
 * **Object** `template.info` Module information namespace. 
 * **String** `template.info.identifier` A unique identifier for the module. 
-* **String** `template.info.title` Module title
+* **String** `template.info.title` Module title. 
 * **String** `template.info.author` The module author. 
 * **String** `template.info.description` A human readable description of the module. 
 * **String** `template.info.version` String containing the version number. May be omitted. 
@@ -13,7 +13,7 @@ This object can be used as a termplate for module objects. **Note:** The code fo
 
 * **Object** `template.config` Specification of user configurable objects. A map containing (`name`, `spec`) values. The `spec` object looks like the following:
 	* **Array[3|4]** `spec` Contains the specification. 
-		* **String** `spec[0] = type` The type of the setting: `string` (a string), `bool` (a boolean), `number` (a number), `integer` (an integer) or `list` (a list of different values to select from). 
+		* **String** `spec[0] = type` The type of the setting: `string` (a string), `bool` (a boolean), `number` (a number), `integer` (an integer), `list` (a list of different values to select from) or `none` (hidden from user, can be anything). 
 		* **Mixed** `spec[1] = restrictions` Restrictions to apply for setting. Optional if type if not `list`. 
 			* for `string`: a regular expression or a function `check(value)` which returns a boolean. 
 			* for `bool`: N/A
@@ -23,6 +23,7 @@ This object can be used as a termplate for module objects. **Note:** The code fo
 		* **Mixed** `spec[3|2] = meta` Meta information. If type is not `list`, may either be a string (with name of setting) 
 		or an array containg the name of the setting and optionally a longer description of this setting. For `list`, this must be an array containg the setting name 
 		and the name of each option.  
+		There is also the special option type 'none', which represents a hidden setting which can not be changed by the user. It has a default but no validator and no meta. 
 
 * **Function** `template.configUpdate(key, JOBADInstance)` Called every time a user configuration is updated.  
 	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 
@@ -76,7 +77,7 @@ This object can be used as a termplate for module objects. **Note:** The code fo
 	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 
 	* **jQuery** `target` The element that was hovered clicked on. 
 	* **Instance[ [JOBAD](JOBAD/JOBADInstance/index.md) ]** `JOBADInstance` The instance of JOBAD the module is initiated on. 
-	* **returns** a text, a jQuery-ish object[^1] or a boolean indicating either the text or if something was done. 
+	* **returns** a text, a jQuery element or a boolean indicating either the text or if something was done. 
 * **Function** `template.onEvent(event, element, JOBADInstance)` Called when an onEvent handler is requested. May be ommitted. 
 	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 
 	* **string** `event` The event that was triggered. 
@@ -84,7 +85,4 @@ This object can be used as a termplate for module objects. **Note:** The code fo
 	* **Instance[ [JOBAD](JOBAD/JOBADInstance/index.md) ]** `JOBADInstance` The instance of JOBAD the module is initiated on. 
 
 ## See also
-* [Getting started with modules](../dev/modules.md)
-
-## Footnotes
-[^1]: A jQuery-ish object is any object that can be passed to the main jQuery function, for example a document node or a jQuery selector. 
+* [Getting started with modules](../intro/modules.md)

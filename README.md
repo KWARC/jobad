@@ -1,16 +1,12 @@
 # JOBAD
 
-Current Stable Version: 3.0.1
+Current Stable Version: 3.1.0
 
 This is the stable branch. 
 
 JOBAD (JavaScript API for OMDoc-based Active Documents) is a javascript framework which makes it easy to create interactive web pages. 
 
-[Simplistic Demo](http://kwarc.github.com/jobad/stable/examples/build/simple/release.html)
-
-
-[Online Documentation](http://kwarc.github.com/jobad/stable/)
-
+[Simplistic Demo](http://kwarc.github.io/jobad/stable/examples/build/simple/release.html)
 
 ## Getting JOBAD
 
@@ -41,6 +37,7 @@ in order to check out the build dependencies.
 	You should have received a copy of the GNU General Public License
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 
+This project includes Underscore 1.4.4, which is licensed under [MIT License](https://github.com/documentcloud/underscore/blob/master/LICENSE). 
+
 ## Documentation
 Please refer to [the Documentation](doc/md/index.md) or to the html version in doc/html/index.html. 
-
