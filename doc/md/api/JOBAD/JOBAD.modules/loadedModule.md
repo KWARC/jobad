@@ -1,9 +1,10 @@
 # JOBAD.modules.loadedModule
 
-* **Function** `JOBAD.modules.loadedModule(name, args, JOBADInstance)` Loads a module, assuming the dependencies are already available. 
+* **Function** `JOBAD.modules.loadedModule(name, args, JOBADInstance, callback)` Loads a module, assuming the dependencies are already available. 
 	* **String** `name` Module to load.
 	* **Array[Mixed]** Arguments to pass to this module instance. 
 	* **Instance[ [JOBAD](../JOBADInstance/index.md) ]** `JOBADInstance` The instance of JOBAD the module is initiated on. 
+	* **Function** `callback(state)` Callback. Will be called when the module has finsihed loading or fails to do so. 
 	* **returns** a new `JOBAD.modules.loadedModule` instance. 
 
 ## Instance Functions
@@ -29,6 +30,11 @@
 * **Function** `.UserConfig.get(prop)` Reads user configuration. 
 	* **String** `prop` Property to get. 
 	* **returns** value. 
+
+* **Function** `.UserConfig.setMessage(msg)` Sets the current message (displayed in config UI). 
+	* **String** `msg` Message to set. 
+* **Function** `.UserConfig.getMessage()` Gets the current message (displayed in config UI). 
+
 
 * **Function** `.UserConfig.reset()` Resets the user configuration. 
 * **Function** `.UserConfig.getTypes()` Gets the user configuration types. 
@@ -71,6 +77,7 @@ These functions represent event handlers. If an event is globally disabled (via 
 	* **Mixed** `value` Value to set the variable to. 
 * **Function** `.localStore.delete(key)` Deletes a local variable. 
 	* **String** `key` Key to delete. 
+* **Function** `.localStore.keys()` Gets all available keys. 
 	
 ## .globalStore
 * **Object** `.globalStore` Namespace to store variables shared among instances of this variable. 
@@ -82,6 +89,7 @@ These functions represent event handlers. If an event is globally disabled (via 
 	* **Mixed** `value` Value to set the variable to. 
 * **Function** `.globalStore.delete(key)` Deletes a global variable. 
 	* **String** `key` Key to delete. 
+* **Function** `.globalStore.keys()` Gets all available keys. 
 
 ## Further members
 A `JOBAD.modules.loadedModule` instance also contains all non-standard properties of the original Module object. Note

@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>[JOBAD.UI] - JOBAD Documentation</title>
+		<title>[JOBAD.repo] - JOBAD Documentation</title>
 		<style type="text/css">
 /* Basic styles https://gist.github.com/cpatuzzo/3331384 */
 		body {
@@ -478,38 +478,76 @@
 -->
 	</head>
 	<body>
-<p><a href="../../../index.html">Start</a> &gt; <a href="../../index.html">API Documentation</a> &gt; <a href="../index.html">JOBAD</a> &gt; <strong>JOBAD.UI</strong></p>
-<h1>JOBAD.UI</h1>
-
-<p>This object contains the JOBAD User interface</p>
+<p><a href="../../index.html">Start</a> &gt; <a href="../index.html">API Documentation</a> &gt; <a href="index.html">JOBAD</a> &gt; <strong>JOBAD.repo</strong></p>
+<h1>JOBAD.repo</h1>
 
 <ul>
-<li><strong>Object</strong> <a href="hover.html"><code>JOBAD.UI.hover</code></a> Namespace for the hover UI. </li>
-<li><strong>Object</strong> <a href="contextmenu.html"><code>JOBAD.UI.ContextMenu</code></a> Namespace for the Context Menu UI. </li>
-<li><strong>Object</strong> <a href="sidebar.html"><code>JOBAD.UI.Sidebar</code></a> Namespace for the Sidebar UI. </li>
-<li><strong>Object</strong> <a href="toolbar.html"><code>JOBAD.UI.Toolbar</code></a> Namespace for the Toolbar UI. </li>
-<li><strong>Object</strong> <a href="folding.html"><code>JOBAD.UI.Folding</code></a> Namespace for the Folding UI. </li>
-<li><strong>Object</strong> <a href="overlay.html"><code>JOBAD.UI.Overlay</code></a> Namespace for the Overlay UI. </li>
-<li><strong>Function</strong> <code>JOBAD.UI.highlight(element, color)</code> Highlights an element
+<li><strong>Function</strong> <code>JOBAD.repo()</code> - Marks the current page as a repository page and shows a simple about page. Should be used on repositories only. </li>
+<li><strong>Function</strong> <code>JOBAD.repo.config(data)</code> - Used inside a repository to configure it. 
 <ul>
-<li><strong>jQuery</strong> <code>element</code> Element to highlight. </li>
-<li><strong>String</strong> <code>color</code> Optional. Color to use. </li>
+<li><strong>Object</strong> <code>data</code> Repository config object
+<ul>
+<li><strong>Array</strong> <code>data.provides</code> Array of modules provided. urls default to [name].js. </li>
+<li><strong>Object</strong> <code>data.at</code> Overrides default module locations. A name - path map. </li>
+<li><strong>Array</strong> <code>data.versions</code> Array of compatible JOBAD Versions. </li>
+<li><strong>String</strong> <code>data.name</code> Name of the repository. </li>
+<li><strong>String</strong> <code>data.description</code> Description of the repository. </li>
 </ul></li>
-<li><strong>Function</strong> <code>JOBAD.UI.unhighlight(element)</code> Reverts an element to its normal state. 
-<ul>
-<li><strong>jQuery</strong> <code>element</code> Element to unhighlight. </li>
 </ul></li>
-<li><strong>Function</strong> <code>JOBAD.UI.sortTableBy(element, sortFunction, callback)</code> - Sorts a table
+<li><strong>Function</strong> <code>JOBAD.repo.init(repo, callback)</code> - Initialises a new repository. 
 <ul>
-<li><strong>jQuery</strong> <code>element</code> A th in the header of the table representing by which column to sort by. </li>
-<li><strong>String|Function</strong> <code>sortFunction(a, b)</code> A string-based sorting function which sorts the table. Can also be a string: 
+<li><strong>String|Array</strong> <code>repo</code> - Url(s) of repositories to init. </li>
+<li><strong>Function</strong> <code>callback(success, message)</code> - Callback once the repository is inited. 
 <ul>
-<li><code>ascending</code> - Sort ascending</li>
-<li><code>descending</code>- Sort descending</li>
-<li><code>reset</code> - Go back to the original state</li>
-<li><code>rotate</code> - Rotate through the above. </li>
+<li><strong>Boolean</strong> <code>success</code> Was the init a success</li>
+<li><strong>String</strong> <code>message</code> If <code>success == false</code> then a message why it failed. </li>
 </ul></li>
-<li><strong>Function</strong> <code>callback(state)</code> Optional. If <code>sortFunction == 'rotate'</code>,  this function will be called with the current (new) state. (0 = 'reset', 1=<code>ascending</code>, 2=<code>descending</code>)</li>
+</ul></li>
+<li><strong>Function</strong> <code>JOBAD.repo.hasInit(repo)</code> - Checks if a repository has been inited. 
+<ul>
+<li><strong>String</strong> <code>repo</code> - Url of repository to  check. </li>
+</ul></li>
+<li><strong>Function</strong> <code>JOBAD.repo.loadFrom(repo, modules, callback)</code> - Loads modules from a repository. 
+<ul>
+<li><strong>String</strong> <code>repo</code> - Url of repository to load from. </li>
+<li><strong>String|Array</strong> <code>modules</code> Modules to load</li>
+<li><strong>Function</strong> <code>callback(success, message)</code> - Callback. 
+<ul>
+<li><strong>Boolean</strong> <code>success</code> Was loading successfull?</li>
+<li><strong>String</strong> <code>message</code> If <code>success == false</code> then a message why it failed. </li>
+</ul></li>
+</ul></li>
+<li><strong>Function</strong> <code>JOBAD.repo.loadAllFrom(repo, callback)</code> - Loads all modules from a repository. 
+<ul>
+<li><strong>String</strong> <code>repo</code> - Url of repository to load from. </li>
+<li><strong>Function</strong> <code>callback(success, message)</code> - Callback. 
+<ul>
+<li><strong>Boolean</strong> <code>success</code> Was loading successfull?</li>
+<li><strong>String</strong> <code>message</code> If <code>success == false</code> then a message why it failed. </li>
+</ul></li>
+</ul></li>
+<li><strong>Function</strong> <code>JOBAD.repo.provides(repos, modules)</code> - Checks if all modules are provided by some repository in repos. 
+<ul>
+<li><strong>String</strong> <code>repos</code> - Optional. Repositories to check. Defaults to all. </li>
+<li><strong>String|Array</strong> <code>modules</code> Module(s) to check. </li>
+</ul></li>
+<li><strong>Function</strong> <code>JOBAD.repo.provide(modules, callback)</code> - Loads modules from some repository. 
+<ul>
+<li><strong>String|Array</strong> <code>modules</code> Modules to load. </li>
+<li><strong>Function</strong> <code>callback(success, message)</code> - Callback. 
+<ul>
+<li><strong>Boolean</strong> <code>success</code> Was loading successfull?</li>
+<li><strong>String</strong> <code>message</code> If <code>success == false</code> then a message why it failed. </li>
+</ul></li>
+</ul></li>
+<li><strong>Function</strong> <code>JOBAD.repo.buildPage(element, repo, callback)</code> - Builds a JOBAD repo page. 
+<ul>
+<li><strong>jQuery</strong> <code>element</code> Element to build page in. </li>
+<li><strong>String</strong> <code>repo</code> Repository to build page about. </li>
+<li><strong>Function</strong> <code>callback(element)</code> Optional. Callback once the page has finsihed loading. 
+<ul>
+<li><code>element</code> The built page element. </li>
+</ul></li>
 </ul></li>
 </ul>
 

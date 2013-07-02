@@ -256,6 +256,24 @@ JOBAD.util.forceBool = function(obj, def){
 };
 
 /*
+	Forces an object to be an array. 
+*/
+JOBAD.util.forceArray = function(obj, def){
+	var def = def; 
+	if(typeof def == "undefined"){
+		if(typeof obj == "undefined"){
+			def =  []; 
+		} else {
+			def = [obj];
+		}
+	}
+	if(!JOBAD.util.isArray(def)){
+		def = [def]; 
+	}
+	return JOBAD.util.isArray(obj)?obj:def; 
+}
+
+/*
 	Forces obj to be a function. 
 	@param func	Function to check. 
 	@param def	Optional. Default to use instead. 
@@ -378,6 +396,102 @@ JOBAD.util.containsAll = function(container, contained, includeSelf){
 		}).get()
 	);
 };
+
+/*
+	Loads an external javascript file. 
+	@param url	Url(s) of script(s) to load. 
+	@param	callback	Callback of script to load. 
+	@param	scope	Scope of callback. 
+*/
+JOBAD.util.loadExternalJS = function(url, callback, scope){
+	var TIMEOUT_CONST = 15000; //timeout for bad links
+	var has_called = false; 
+
+	var do_call = function(suc){
+		if(has_called){
+			return;
+		}
+		has_called = true;
+
+		var func = JOBAD.util.forceFunction(callback, function(){});
+		var scope = (typeof scope == "undefined")?window:scope;
+
+		func.call(scope, url, suc);
+		
+	}
+
+	
+	if(JOBAD.util.isArray(url)){
+		var i=0;
+		var next = function(urls, suc){
+			if(i>=url.length || !suc){
+				window.setTimeout(function(){
+					do_call(suc);
+				}, 0);
+			} else {
+				JOBAD.util.loadExternalJS(url[i], function(urls, suc){
+					i++;
+					next(urls, suc);
+				});
+			}
+		}
+
+		window.setTimeout(function(){
+			next("", true);
+		}, 0);
+
+		return url.length;
+	} else {
+		//adapted from: http://www.nczonline.net/blog/2009/07/28/the-best-way-to-load-external-javascript/
+		var script = document.createElement("script")
+	    script.type = "text/javascript";
+
+	    if (script.readyState){  //IE
+	        script.onreadystatechange = function(){
+	            if (script.readyState == "loaded" ||
+	                    script.readyState == "complete"){
+	                script.onreadystatechange = null;
+	                window.setTimeout(function(){
+						do_call(true);
+					}, 0);
+	            }
+	        };
+	    } else {  //Others
+	        script.onload = function(){
+	            window.setTimeout(function(){
+					do_call(true);
+				}, 0);
+	        };
+	    }
+
+	    script.src = url;
+	    document.getElementsByTagName("head")[0].appendChild(script);
+
+	    window.setTimeout(function(){
+	    	do_call(false);
+	    }, TIMEOUT_CONST);
+	    return 1;
+	}
+    
+}
+
+/*
+	escapes a string for HTML
+	@param	str	String to escape
+*/
+JOBAD.util.escapeHTML = function(s){
+	return s.split('&').join('&amp;').split('<').join('&lt;').split('"').join('&quot;');
+}
+
+/*
+	Resolves a relative url
+	@param url	Url to resolve
+*/
+JOBAD.util.resolve = function(url){
+    var el= document.createElement('div');
+    el.innerHTML= '<a href="'+JOBAD.util.escapeHTML(url)+'">x</a>';
+    return el.firstChild.href;
+}
 
 
 //Merge underscore and JOBAD.util namespace

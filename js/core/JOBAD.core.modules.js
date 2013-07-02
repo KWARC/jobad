@@ -20,69 +20,260 @@
 */
 
 
-
 JOBAD.ifaces.push(function(me, args){
-	var InstanceModules = {};
-	var disabledModules = [];
-	
+
+	//modules namespace
 	this.modules = {};
 
-	/*
-		loads a JOBAD module if not yet loaded. 
-		@param module Name of module to load. 
-		@param options Array of options to pass to the module. 
-		@param ignoredeps Boolean. Ignore dependencies? (Default: false). 
-		@param auto_activate Boolean. Automatically activate a module? (Default: true). 
-		@returns boolean
-	*/
-	this.modules.load = function(module, options, auto_activate, ignoredeps){
-		if(me.modules.loaded(module)){
-			return;	
-		}
+	var InstanceModules = {}; //Modules loaded
+	var disabledModules = []; //Modules disabled
 
-		var ignoredeps = (typeof ignoredeps == 'boolean')?ignoredeps:false;
+	var loadQuenue = []; //the quenue of things to load
+	var loadQuenueIndex = -1; //the loadQuenueIndex
+
+	var loadQuenueOptions = {}; //options Array
+	var loadQuenueAutoActivate = []; //auto activate
+	var execQuenue = []; //quenue of exec callbacks
+
+	var loadFail = []; //load failed
+
+	var isQuenueRunning = false;
 	
-		if(ignoredeps){
-			if(!JOBAD.modules.available(module)){
-				JOBAD.error('Error loading module '+module);			
-			}
-			InstanceModules[module] = new JOBAD.modules.loadedModule(module, options, me);
-			
-			if((typeof auto_activate == 'boolean')?auto_activate:true){
-				if(this.Setup.isEnabled()){
-					InstanceModules[module].onActivate(me);
-				} else {
-					
-					this.Setup.deferUntilEnabled(function(){
-						InstanceModules[module].onActivate(me);
-					});
-				}
-			}
-			
-			return true;
-		} else {
-			var deps = JOBAD.modules.getDependencyList(module);
-		    if(!deps){
-				JOBAD.console.warn("Unresolved dependencies for module '"+module+"'. "); //Module not found (has no dependecnies)
-				return false;	
-			}
-			for(var i=0;i<deps.length;i++){
-				me.modules.load(deps[i], options, auto_activate, true);
-			}
-			return true;
-		}
-		
+	/*
+		runs the load Quenue
+	*/
+	var runLoadQuenue = function(){
+		isQuenueRunning = true; //we are running
 
+		//run the quenue
+		loadQuenueIndex++;
+		if(loadQuenue.length > loadQuenueIndex){ //do we have memebers
+			var modName = loadQuenue[loadQuenueIndex];
+			var options = loadQuenueOptions[modName];
+			if(typeof options == "undefined"){
+				options = [];
+			}
+			doLoad(modName, options, runFinishQuenue);
+		} else {
+			runFinishQuenue(function(){
+				loadQuenueIndex--; //reset the index
+				isQuenueRunning = false; //STOP
+			});
+		}
+	};
+
+	var runFinishQuenue = function(next){
+		window.setTimeout(function(){
+			//run the finish quenue
+			execQuenue = execQuenue.filter(function(m){
+				if(me.modules.loaded(m[0])){
+					try{
+						m[1].call(m[2], me.modules.loadedOK(m[0]), m[0]);
+					} catch(e){}
+					return false;
+				} else {
+					return true;
+				}
+			});
+
+			window.setTimeout(next, 0); //run the load quenue again
+		}, 0);
+	}
+
+	/*
+		Loads a module
+		@param	options	Options to pass to the module
+		@param	callback	Callback to execute
+	*/
+	var doLoad = function(module, options){
+		var auto_activate = loadQuenueAutoActivate.indexOf(module) != -1; //TODO: Add option somewhere
+		try{
+			InstanceModules[module] = new JOBAD.modules.loadedModule(module, options, me, function(suc, msg){
+				if(!suc){
+					markLoadAsFailed(module, msg);
+				} else {
+					disabledModules.push(module); //we are disabled by default
+
+					if(auto_activate){
+						me.modules.activate(module);
+					}
+				}
+				runFinishQuenue(runLoadQuenue);
+				
+			});
+		} catch(e){
+			markLoadAsFailed(module, String(e));
+			runFinishQuenue(runLoadQuenue);
+		}
+	 };
+
+	var markLoadAsFailed = function(module, message){
+		loadFail.push(module);
+		try{
+			delete InstanceModules[module];
+		} catch(e){}
+
+		JOBAD.console.error("Warning: Failed to load module '"+module+"': "+String(message));
+	};
+
+	var properLoadObj = function(obj){
+		var res = [];
+
+		if(JOBAD.util.isArray(obj)){
+			for(var i=0;i<obj.length;i++){
+				var proper = JOBAD.util.forceArray(obj[i]);
+
+				if(typeof proper[1] == "boolean"){
+					proper[2] = proper[1];
+					proper[1] = [];
+				}
+
+				res.push(proper); 
+			}
+		} else {
+			for(var key in obj){
+				res.push([key, obj[key]]);
+			}
+		}
+
+		return res;
+	};
+
+	/*
+		Loads a module
+		@param	modules	Modules to load
+		@param config	Configuration. 
+			config.ready	Callback when ready
+			config.load		Callback on singular load
+			config.activate	Should we automatically activate all modules? Default: True
+	*/
+	this.modules.load = function(modules, config, option){
+		if(typeof modules == "string"){
+			if(JOBAD.util.isArray(config)){
+				return me.modules.load([[modules, config]], option);
+			} else {
+				return me.modules.load([modules], config, option);
+			}
+		}
+
+		config = JOBAD.util.defined(config);
+		config = (typeof config == "function")?{"ready": config}:config; 
+		config = (typeof config == "booelan")?{"activate": config}:config; 
+
+
+		var ready = JOBAD.util.forceFunction(config.ready, function(){});
+		var load = JOBAD.util.forceFunction(config.load, function(){});
+
+		var activate = JOBAD.util.forceBool(config.activate, true);
+
+		var triggers = [];
+
+		var everything = JOBAD.util.map(properLoadObj(modules), function(m){
+			var mod = m[0];
+			var opt = m[1];
+			var act = m[2];
+
+			triggers.push(mod); //add to the trigegrs
+
+			if(typeof loadQuenueOptions[mod] == "undefined" && JOBAD.util.isArray(opt)){
+				loadQuenueOptions[mod] = opt;
+			}
+
+			if(typeof act == "undefined"){
+				act = activate; 
+			}
+
+			if(act){
+				loadQuenueAutoActivate.push(mod); //auto activate
+			}
+
+			if(!me.modules.inLoadProcess(mod)){
+				var deps = JOBAD.modules.getDependencyList(mod);
+				if(!deps){
+					markLoadAsFailed(mod);
+					return [];
+				} else {
+					return deps;
+				}
+			} else {
+				if(act && me.modules.loadedOK(mod) && !me.modules.isActive(mod)){
+					me.modules.activate(mod); 
+				}
+				return []; //it's already in load process
+			}
+		});
+
+		//clean up
+		everything = JOBAD.util.flatten(everything);
+		everything = JOBAD.util.union(everything);
+		triggers = JOBAD.util.union(triggers)
+
+		//register all the callbacks
+		JOBAD.util.map(triggers, function(m){
+			me.modules.once(m, load, me, false);
+		});
+		me.modules.once(triggers, ready, me, false);
+
+		//add them to the quenue and run it
+		loadQuenue = JOBAD.util.union(loadQuenue, everything);
+
+		if(!isQuenueRunning){
+			runLoadQuenue(); 
+		}
+	}
+
+	 /*
+	 	Defers a callback until the specefied modules are loaded. 
+	 */
+	this.modules.once = function(modules, cb, scope, run){
+		execQuenue.push([modules, cb, (typeof scope == "undefined")?me:scope]);
+
+		var run = JOBAD.util.forceBool(run, true);
+
+		//if we are inactive run the quenue
+		if(!isQuenueRunning && run){
+			runLoadQuenue(); 
+		}
 	 };
 
 	/*
 		Checks if a module is loaded. 
-		@param module Name of the module to check. 
+		@param module Name of the module(s) to check. 
 		@returns boolean
 	*/
 	this.modules.loaded = function(module){
-		return InstanceModules.hasOwnProperty(module);
+		return (me.modules.loadedOK(module) || me.modules.loadedFail(module)); 
 	}
+
+	this.modules.loadedOK = function(module){
+		if(JOBAD.util.isArray(module)){
+			return JOBAD.util.lAnd(JOBAD.util.map(module, function(m){
+				return me.modules.loadedOK(m);
+			}));
+		} else {
+			return InstanceModules.hasOwnProperty(module);
+		}
+	}
+
+	this.modules.loadedFail = function(module){
+		if(JOBAD.util.isArray(module)){
+			return JOBAD.util.lOr(JOBAD.util.map(module, function(m){
+				return me.modules.loadedFail(m);
+			}));
+		} else {
+			return (JOBAD.util.indexOf(loadFail, module) != -1);
+		}
+	}
+
+	this.modules.inLoadProcess = function(module){
+		if(JOBAD.util.isArray(module)){
+			return JOBAD.util.lAnd(JOBAD.util.map(module, function(m){
+				return me.modules.inLoadProcess(m);
+			}));
+		} else {
+			return (JOBAD.util.indexOf(loadQuenue, module) != -1);
+		}
+	};
 
 	/*
 		Deactivates a module
@@ -99,30 +290,39 @@ JOBAD.ifaces.push(function(me, args){
 	}
 
 	/*
-		Activates a module
+		Activates a module if it is not yet actiavted
 		@param module Module to be activated. 
 	*/
 	this.modules.activate = function(module){
 	
 		if(me.modules.isActive(module)){
-			JOBAD.console.warn("Module '"+module+"' is already activated. ");
-			return;	
+			return false; 	
 		}
-		
-		
-		disabledModules = JOBAD.util.without(disabledModules, module);
-		
-		
-		var deps = JOBAD.modules.getDependencyList(module);
-		
-				
-		for(var i=0;i<deps.length-1;i++){
-			me.modules.activate(deps[i]);
+
+		var todo = function(){
+			if(me.modules.isActive(module)){
+				return; 	
+			}
+
+			disabledModules = JOBAD.util.without(disabledModules, module);
+
+			var deps = JOBAD.modules.getDependencyList(module);		
+			for(var i=0;i<deps.length-1;i++){
+				me.modules.activate(deps[i]); // i am last
+			}
+			
+
+			InstanceModules[module].onActivate(me);
+			me.element.trigger('JOBAD.Event', ['activate', module]);
 		}
-		
-		InstanceModules[module].onActivate(me);
-		
-		this.element.trigger('JOBAD.Event', ['activate', module]);
+
+		if(me.Setup.isEnabled()){
+			todo();
+		} else {
+			me.Setup.deferUntilEnabled(todo);
+		}
+
+		return true; 
 	};
 	
 	/*
@@ -130,7 +330,15 @@ JOBAD.ifaces.push(function(me, args){
 		@param module Module to check. 
 	*/
 	this.modules.isActive = function(module){
-		return (JOBAD.util.indexOf(disabledModules, module)==-1); 
+		return (JOBAD.util.indexOf(disabledModules, module)==-1 && me.modules.loadedOK(module)); 
+	};
+
+	/*
+		Checks if a module is inactive. 
+		@param module Module to check. 
+	*/
+	this.modules.isInActive = function(module){
+		return (JOBAD.util.indexOf(disabledModules, module)!=-1 && me.modules.loadedOK(module)); 
 	};
 	
 	/*
@@ -266,6 +474,7 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 	if(!JOBAD.util.isObject(ModuleObject)){
 		return false;
 	}
+
 	var properObject = 
 	{
 		"globalinit": function(){},
@@ -298,6 +507,31 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 			properObject.info['version'] = info['version'];
 		}
 
+		if(info.hasOwnProperty('externals')){
+			if(JOBAD.util.isArray(info["externals"])){
+				properObject.info.externals = info["externals"];
+			} else {
+				return false;
+			}
+		} else {
+			properObject.info.externals = [];
+		}
+
+		if(info.hasOwnProperty('async')){
+			properObject.info.async = JOBAD.util.forceBool(info.async);
+		} else {
+			properObject.info.async = false;
+		}
+
+		if(!properObject.info.async){
+			var sync_init = properObject.globalinit;
+			properObject.globalinit = function(next){
+				sync_init(); 
+				window.setTimeout(next, 0);
+			}
+		}
+		
+
 		if(info.hasOwnProperty('hasCleanNamespace')){
 			if(info['hasCleanNamespace'] == false){
 				properObject.info.hasCleanNamespace = false;
@@ -314,6 +548,15 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 				return false;			
 			}
 			properObject.info['dependencies'] = arr;
+		}
+
+		if(info.hasOwnProperty('url')){
+			if(!JOBAD.util.isUrl(info.url)){
+				return false;			
+			}
+			properObject.info['url'] = info.url;
+		} else {
+			info.url = false; 
 		}
 
 		try{
@@ -359,6 +602,10 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 			}
 			
 			properObject[key] = mod.init(av, prop, ModuleObject, properObject);
+
+			if(typeof mod["onRegister"] == "function"){
+				mod.onRegister(properObject[key], properObject, ModuleObject);
+			}
 		}
 		
 		for(var i=0;i<JOBAD.modules.ifaces.length;i++){
@@ -411,7 +658,78 @@ JOBAD.modules.getDependencyList = function(name){
 	for(var i=deps.length-1;i>=0;i--){
 		depArray = JOBAD.util.union(depArray, JOBAD.modules.getDependencyList(deps[i]));
 	}
+
+	depArray.reverse(); //reverse it
+
 	return depArray;
+};
+
+/*
+	Storage shared accross all module instances. 
+*/
+JOBAD.modules.globalStore = 
+{
+	"get": function(name, prop){
+		if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+			var prop = JOBAD.util.keys(prop);
+		}
+
+		if(JOBAD.util.isArray(prop)){
+			var res = {};
+
+			JOBAD.util.map(prop, function(key){
+				res[key] = JOBAD.modules.globalStore.get(name, key); 
+			});
+
+			return res;
+		}
+
+		return  moduleStorage[name][prop+"_"];
+	},
+	"set": function(name, prop, val){
+		if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+			var prop = JOBAD.util.keys(prop);
+		}
+
+		if(JOBAD.util.isArray(prop)){
+
+			return JOBAD.util.map(prop, function(key){
+				return JOBAD.modules.globalStore.set(name, key, prop[key]); 
+			});
+		}
+
+		moduleStorage[name][prop+"_"] = val;
+
+		return prop;
+	},
+	"delete": function(name, prop){
+		delete moduleStorage[name][prop+"_"];
+	},
+	"keys": function(name){
+		var keys = [];
+		for(var key in moduleStorage[name]){
+			if(moduleStorage[name].hasOwnProperty(key) && key[key.length-1] == "_"){
+				keys.push(key.substr(0, key.length-1));
+			}
+		}
+		return keys;
+	},
+	"getFor": function(name){
+		return {
+			"get": function(prop){
+				return JOBAD.modules.globalStore.get(name, prop);	
+			},
+			"set": function(prop, val){
+				return JOBAD.modules.globalStore.set(name, prop, val);	
+			},
+			"delete": function(prop){
+				return JOBAD.modules.globalStore["delete"](name, prop);	
+			},
+			"keys": function(){
+				JOBAD.modules.globalStore.keys(name);	
+			}
+		};
+	}
 };
 
 /*
@@ -420,7 +738,10 @@ JOBAD.modules.getDependencyList = function(name){
 	@param args Arguments to pass to the module. 
 	@returns new JOBAD.modules.loadedModule instance. 
 */
-JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
+JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
+
+	var me = this;
+	var next = JOBAD.util.forceFunction(next, function(){});
 
 	if(!JOBAD.modules.available(name)){
 		JOBAD.error("Module is not available and cant be loaded. ");	
@@ -430,30 +751,7 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 		var args = []; //we force arguments
 	}
 
-	/*
-		Storage shared accross all module instances. 
-	*/
-	this.globalStore = 
-	{
-		"get": function(prop){
-			return  moduleStorage[name][prop+"_"];		
-		},
-		"set": function(prop, val){
-			moduleStorage[name][prop+"_"] = val;
-		},
-		"delete": function(prop){
-			delete moduleStorage[name][prop+"_"];
-		},
-		"keys": function(){
-			var keys = [];
-			for(var key in moduleStorage[name]){
-				if(moduleStorage[name].hasOwnProperty(key) && key[key.length-1] == "_"){
-					keys.push(key.substr(0, key.length-1));
-				}
-			}
-			return keys;
-		}
-	}
+	this.globalStore = JOBAD.modules.globalStore.getFor(name);
 	
 	var storage = {};
 	/*
@@ -462,10 +760,36 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 	this.localStore = 
 	{
 		"get": function(prop){
+			if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+				var prop = JOBAD.util.keys(prop);
+			}
+
+			if(JOBAD.util.isArray(prop)){
+				var res = {};
+
+				JOBAD.util.map(prop, function(key){
+					res[key] = storage[key];
+				});
+
+				return res;
+			}
 			return  storage[prop];		
 		},
 		"set": function(prop, val){
+			if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+				var prop = JOBAD.util.keys(prop);
+			}
+
+			if(JOBAD.util.isArray(prop)){
+
+				return JOBAD.util.map(prop, function(key){
+					storage[key] = prop[key];
+				});
+
+			}
+
 			storage[prop] = val;
+			return prop;
 		},
 		"delete": function(prop){
 			delete storage[name];
@@ -502,33 +826,26 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 		return JOBADInstance.modules.isActive(this.info().identifier);
 	}
 
-	//Initilisation
-
-	if(!moduleStorage[name]["init"]){
-		moduleStorage[name]["init"] = true;
-		ServiceObject.globalinit.apply(undefined, []);
-		for(var key in JOBAD.modules.extensions){
-			var mod = JOBAD.modules.extensions[key];
-			var val = ServiceObject[key];
-			if(typeof mod["onFirstLoad"] == 'function'){
-				mod.onFirstLoad(this.globalStore);
-			}
-		}
-	}
-
 	//add JOBADINstance
 	var params = args.slice(0);
 	params.unshift(JOBADInstance);
+
+	var limited = {}; //limited this for globalinit
+	limited.info = ServiceObject.info;
+	limited.globalStore = this.globalStore;
 
 	if(JOBAD.config.cleanModuleNamespace){
 		if(!ServiceObject.info.hasCleanNamespace){
 			JOBAD.console.warn("Warning: Module '"+name+"' may have unclean namespace, but JOBAD.config.cleanModuleNamespace is true. ");		
 		}
+
 	} else {
 		var orgClone = JOBAD.util.clone(ServiceObject.namespace);
+		
 		for(var key in orgClone){
 			if(!JOBAD.modules.cleanProperties.hasOwnProperty(key) && orgClone.hasOwnProperty(key)){
 				this[key] = orgClone[key];
+				limited[key] = orgClone[key];
 			}
 		};
 	}
@@ -539,6 +856,12 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 		var val = ServiceObject[key];
 		if(typeof mod["onLoad"] == 'function'){
 			mod.onLoad.call(this, val, ServiceObject, this);
+		}
+		if(JOBAD.util.isArray(mod["globalProperties"])){
+			for(var i=0;i<mod["globalProperties"].length;i++){
+				var prop = mod["globalProperties"][i];
+				limited[prop] = this[prop];
+			}
 		}
 	}
 	
@@ -559,6 +882,34 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 	this.deactivate = function(){
 		return JOBADInstance.modules.deactivate(this.info().identifier);
 	}
+
+	var do_next = function(){
+		ServiceObject.init.apply(me, params); 
+		next(true);
+	};
+
+	if(!moduleStorage[name]["init"]){
+		moduleStorage[name]["init"] = true;
+
+		for(var key in JOBAD.modules.extensions){
+			var mod = JOBAD.modules.extensions[key];
+			var val = ServiceObject[key];
+			if(typeof mod["onFirstLoad"] == 'function'){
+				mod.onFirstLoad(me.globalStore);
+			}
+		}
+
+		JOBAD.util.loadExternalJS(ServiceObject.info.externals, function(urls, suc){
+			if(!suc){
+				next(false, "Can't load external dependencies: Timeout. "); 
+			} else {
+				ServiceObject.globalinit.call(limited, do_next);
+			}
+			
+		});
+	} else {
+		do_next();
+	}
 	
-	ServiceObject.init.apply(this, params);		
+	
 };

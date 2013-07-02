@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Thu, 27 Jun 2013 11:21:32 +0200
+	built: Tue, 02 Jul 2013 13:06:14 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -106,7 +106,7 @@ var JOBAD = function(element){
 JOBAD.ifaces = []; //JOBAD interfaces
 
 /* JOBAD Version */
-JOBAD.version = "3.1.0"; 
+JOBAD.version = "3.1.5"; 
 
 /*
 	JOBAD.toString
@@ -1686,6 +1686,24 @@ JOBAD.util.forceBool = function(obj, def){
 };
 
 /*
+	Forces an object to be an array. 
+*/
+JOBAD.util.forceArray = function(obj, def){
+	var def = def; 
+	if(typeof def == "undefined"){
+		if(typeof obj == "undefined"){
+			def =  []; 
+		} else {
+			def = [obj];
+		}
+	}
+	if(!JOBAD.util.isArray(def)){
+		def = [def]; 
+	}
+	return JOBAD.util.isArray(obj)?obj:def; 
+}
+
+/*
 	Forces obj to be a function. 
 	@param func	Function to check. 
 	@param def	Optional. Default to use instead. 
@@ -1809,6 +1827,102 @@ JOBAD.util.containsAll = function(container, contained, includeSelf){
 	);
 };
 
+/*
+	Loads an external javascript file. 
+	@param url	Url(s) of script(s) to load. 
+	@param	callback	Callback of script to load. 
+	@param	scope	Scope of callback. 
+*/
+JOBAD.util.loadExternalJS = function(url, callback, scope){
+	var TIMEOUT_CONST = 15000; //timeout for bad links
+	var has_called = false; 
+
+	var do_call = function(suc){
+		if(has_called){
+			return;
+		}
+		has_called = true;
+
+		var func = JOBAD.util.forceFunction(callback, function(){});
+		var scope = (typeof scope == "undefined")?window:scope;
+
+		func.call(scope, url, suc);
+		
+	}
+
+	
+	if(JOBAD.util.isArray(url)){
+		var i=0;
+		var next = function(urls, suc){
+			if(i>=url.length || !suc){
+				window.setTimeout(function(){
+					do_call(suc);
+				}, 0);
+			} else {
+				JOBAD.util.loadExternalJS(url[i], function(urls, suc){
+					i++;
+					next(urls, suc);
+				});
+			}
+		}
+
+		window.setTimeout(function(){
+			next("", true);
+		}, 0);
+
+		return url.length;
+	} else {
+		//adapted from: http://www.nczonline.net/blog/2009/07/28/the-best-way-to-load-external-javascript/
+		var script = document.createElement("script")
+	    script.type = "text/javascript";
+
+	    if (script.readyState){  //IE
+	        script.onreadystatechange = function(){
+	            if (script.readyState == "loaded" ||
+	                    script.readyState == "complete"){
+	                script.onreadystatechange = null;
+	                window.setTimeout(function(){
+						do_call(true);
+					}, 0);
+	            }
+	        };
+	    } else {  //Others
+	        script.onload = function(){
+	            window.setTimeout(function(){
+					do_call(true);
+				}, 0);
+	        };
+	    }
+
+	    script.src = url;
+	    document.getElementsByTagName("head")[0].appendChild(script);
+
+	    window.setTimeout(function(){
+	    	do_call(false);
+	    }, TIMEOUT_CONST);
+	    return 1;
+	}
+    
+}
+
+/*
+	escapes a string for HTML
+	@param	str	String to escape
+*/
+JOBAD.util.escapeHTML = function(s){
+	return s.split('&').join('&amp;').split('<').join('&lt;').split('"').join('&quot;');
+}
+
+/*
+	Resolves a relative url
+	@param url	Url to resolve
+*/
+JOBAD.util.resolve = function(url){
+    var el= document.createElement('div');
+    el.innerHTML= '<a href="'+JOBAD.util.escapeHTML(url)+'">x</a>';
+    return el.firstChild.href;
+}
+
 
 //Merge underscore and JOBAD.util namespace
 _.mixin(JOBAD.util);
@@ -1922,6 +2036,480 @@ JOBAD.resources.provide("icon", {
 	"open": "data:image/png;base64,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",
 	"close": "data:image/png;base64,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"
 });/* end   <JOBAD.resources.js> */
+/* start <JOBAD.repo.js> */
+/*
+	JOBAD.repo.js - Contains the JOBAD repo implementation
+	
+	Copyright (C) 2013 KWARC Group <kwarc.info>
+	
+	This file is part of JOBAD.
+	
+	JOBAD is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	JOBAD is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+var JOBAD_Repo_Urls = {}; //urls per repo
+var JOBAD_Repo_Mods = {}; //primary modules
+
+/*
+	Marks the current page as a repository page and generates a repository about page. 
+*/
+JOBAD.repo = function(){
+	JOBAD.repo.buildPage("body", "./");
+}
+
+/*
+	Builds an information page about a repository. 
+	@param	element	Element to generate page info in. 
+	@param	repo	Repository to build page about. 
+	@param	callback	A Callback; 
+	
+*/
+JOBAD.repo.buildPage = function(element, repo, callback){
+
+	var callback = JOBAD.util.forceFunction(callback, function(){}); 
+
+	var body = JOBAD.refs.$("<div class='JOBAD JOBAD_Repo JOBAD_Repo_Body'>").appendTo(JOBAD.refs.$(element).empty());
+
+	var msgBox = JOBAD.refs.$("<div>");
+
+	msgBox.wrap("<div class='JOBAD JOBAD_Repo JOBAD_Repo_MsgBox'>").parent().appendTo(body); 
+
+	var label = JOBAD.refs.$("<div class='progress-label'>").text("Loading Repository, please wait ...").appendTo(msgBox);
+	
+	msgBox.progressbar({
+		value: 0
+	})
+
+	var baseUrl = JOBAD.util.resolve(repo);
+	baseUrl = baseUrl.substring(0, baseUrl.length - 1); // no slash at the end
+
+	JOBAD.repo.init(baseUrl, function(suc, cache){
+		msgBox.progressbar("option", "value", 25); 
+		if(!suc){
+			label.text("Repository loading failed: "+cache);
+			return; 
+		}
+
+		var title = cache.name; 
+		var desc = cache.description; 
+
+		body.append(
+			JOBAD.refs.$("<h1 class='JOBAD JOBAD_Repo JOBAD_Repo_Title'>").text(title),
+			JOBAD.refs.$("<div class='JOBAD JOBAD_Repo JOBAD_Repo_Desc'>").text(desc)
+		)
+
+
+		var table = JOBAD.refs.$("<table class='JOBAD JOBAD_Repo JOBAD_Repo_Table'>").appendTo(body);
+
+		table.append(
+			JOBAD.refs.$("<thead>").append(
+				JOBAD.refs.$("<tr>")
+				.append(
+					JOBAD.refs.$("<th>").text("Identifier"),
+					JOBAD.refs.$("<th>").text("Name"),
+					JOBAD.refs.$("<th>").text("Author"),
+					JOBAD.refs.$("<th>").text("Version"),
+					JOBAD.refs.$("<th>").text("Homepage"),
+					JOBAD.refs.$("<th>").text("Description"),
+					JOBAD.refs.$("<th>").text("Module Dependencies"),
+					JOBAD.refs.$("<th>").text("External Dependencies")
+				).children("th").click(function(){
+					JOBAD.UI.sortTableBy(this, "rotate", function(i){
+						this.parent().find("span").remove(); 
+						if(i==1){
+							this.append("<span class='JOBAD JOBAD_Repo JOBAD_Sort_Ascend'>");
+						} else if(i==2){
+							this.append("<span class='JOBAD JOBAD_Repo JOBAD_Sort_Descend'>");
+						}
+					}); 
+					return false; 
+				}).end() 
+			)
+		);
+
+		//Init everything
+
+		label.text("Loading module information ...")
+
+		var modules = JOBAD.util.keys(JOBAD_Repo_Urls[baseUrl]);
+		var count = modules.length; 
+
+		var i=0;
+
+
+		var next = function(){
+
+			msgBox.progressbar("option", "value", 25+75*((i+1)/(modules.length))); 
+
+			var name = modules[i]; 
+
+			if(i >= modules.length){
+				label.text("Finished. ");
+				msgBox.fadeOut(1000);
+				callback(body); 
+				return;
+			}
+
+			label.text("Loading module information ["+(i+1)+"/"+count+"]: \""+name+"\"");
+
+			JOBAD.repo.loadFrom(baseUrl, modules[i], function(suc){
+
+				if(!suc){
+					table.append(
+						JOBAD.refs.$("<tr>")
+						.append(
+							JOBAD.refs.$("<td></td>").text(name),
+							"<td colspan='7'>Loading failed: Timeout</td>"
+						).css("color", "red")
+					);
+				} else if(typeof moduleList[name] == "undefined"){
+					table.append(
+						JOBAD.refs.$("<tr>")
+						.append(
+							JOBAD.refs.$("<td></td>").text(name),
+							"<td colspan='7'>Loading failed: Module specification incorrect. </td>"
+						).css("color", "red")
+					);
+				} else {
+					var info = moduleList[name].info;
+
+					var row = JOBAD.refs.$("<tr>").appendTo(table); 
+					
+					//id
+					JOBAD.refs.$("<td></td>").text(info.identifier).appendTo(row);
+					
+					//name
+					JOBAD.refs.$("<td></td>").text(info.title).appendTo(row);
+					
+					//author
+					JOBAD.refs.$("<td></td>").text(info.author).appendTo(row);
+					
+					//version
+					if(info.version !== ""){
+						JOBAD.refs.$("<td></td>").text(info.version).appendTo(row);
+					} else {
+						JOBAD.refs.$("<td><span class='JOBAD JOBAD_Repo JOBAD_Repo_NA'></span></td>").appendTo(row); 
+					}
+
+					//homepage
+					if(typeof info.url == "string"){
+						JOBAD.refs.$("<td></td>").append(
+							JOBAD.refs.$("<a>").text(info.url).attr("href", info.url).attr("target", "_blank").button()
+						).appendTo(row); 
+					} else {
+						JOBAD.refs.$("<td><span class='JOBAD JOBAD_Repo JOBAD_Repo_NA'></span></td>").appendTo(row); 
+					}
+
+					//description
+					JOBAD.refs.$("<td></td>").text(info.description).appendTo(row);
+
+
+					//dependencies (internal)
+					var deps = info.dependencies;
+
+					if(deps.length == 0){
+						JOBAD.refs.$("<td></td>").text("(None)").appendTo(row);
+					} else {
+						var cell = JOBAD.refs.$("<td></td>").appendTo(row); 
+						for(var j=0;j<deps.length;j++){
+							cell.append("\"");
+							if(JOBAD.util.indexOf(modules, deps[j]) == -1){
+								cell.append(
+									JOBAD.refs.$("<span>").addClass("JOBAD JOBAD_Repo JOBAD_Repo_Dependency JOBAD_Repo_Dependency_NotFound")
+									.text("\""+deps[j]+"\"")
+								)
+							} else {
+								cell.append(
+									JOBAD.refs.$("<span>").addClass("JOBAD JOBAD_Repo JOBAD_Repo_Dependency JOBAD_Repo_Dependency_Found")
+									.text(deps[j])
+								)
+							}
+							cell.append("\"");
+							if(j != deps.length - 1 ){
+								cell.append(" , "); 
+							}
+						}
+					}
+
+					var edeps = info.externals;
+
+					if(edeps.length == 0){
+						JOBAD.refs.$("<td></td>").text("(None)").appendTo(row);
+					} else {
+						var cell = JOBAD.refs.$("<td></td>").appendTo(row); 
+						for(var j=0;j<edps.length;j++){
+							cell.append(
+								"\"", 
+								JOBAD.refs.$("<span>")
+									.addClass("JOBAD JOBAD_Repo JOBAD_Repo_External_Dependency")
+									.text(edeps[j]),
+								"\""
+							);
+
+							if(j != edeps.length - 1 ){
+								cell.append(" , "); 
+							}
+						}
+					}
+
+				}
+
+				delete moduleList[name];
+				i++;
+				next(); 
+			})
+		};
+		
+		next(); 
+	})
+}
+
+var repo_is_initing = false; 
+
+/*
+	Register a given set of repositories
+	@param baseUrl	Base urls of the repositories
+	@param callback	Callback on success / failure
+*/
+JOBAD.repo.init = function(baseUrl, callback){
+
+	var callback = JOBAD.util.forceFunction(callback, function(){}); 
+
+	if(JOBAD.util.isArray(baseUrl)){
+		if(baseUrl.length == 0){
+			return callback(); 
+		} else {
+			var now = baseUrl[0];
+			var next = baseUrl.slice(1);
+
+			return JOBAD.repo.init(now, function(){
+				JOBAD.repo.init(next, callback)
+			})
+		}
+	}
+
+	if(JOBAD.repo.hasInit(baseUrl)){
+		return callback(true);  //we already have init
+	}
+
+	//we have a single item
+	if(repo_is_initing){
+		return false; 
+	}
+	repo_is_initing = true; 
+
+	var baseUrl = JOBAD.util.resolve(baseUrl); 
+
+	var repo_cache; 
+
+	JOBAD.repo.config = function(obj){
+		repo_cache = obj; //cache it
+	}
+
+	JOBAD.util.loadExternalJS(baseUrl+"/jobad_repo.js", function(s){
+
+		delete JOBAD.repo.config; //delete the function again
+
+		if(!s){
+			callback(false, "Repository Main File Timeout"); 
+			repo_is_initing = false; 
+			return; 
+		}
+
+		//parse it
+
+		if(!JOBAD.util.isObject(repo_cache)){
+			callback(false, "Repository in wrong Format: Not an object"); 
+			repo_is_initing = false; 
+			return; 
+		}
+
+		if(!JOBAD.util.isArray(repo_cache.versions)){
+			callback(false, "Repository Spec in wrong Format: Versions missing or not an array. "); 
+			repo_is_initing = false; 
+			return; 
+		}
+
+
+		if(JOBAD.util.indexOf(repo_cache.versions, JOBAD.version) == -1){
+			callback(false, "Repository incompatible with this version of JOBAD. "); 
+			repo_is_initing = false; 
+			return; 
+		}
+
+		if(!JOBAD.util.isArray(repo_cache.provides)){
+			callback(false, "Repository Spec in wrong Format: Modules missing or not an array. "); 
+			repo_is_initing = false; 
+			return; 
+		}
+
+
+		var overrides = {};
+
+		if(JOBAD.util.isObject(repo_cache.at)){
+			overrides = repo_cache.at; 
+		}
+
+		var modules = repo_cache.provides.slice(0); //available modules
+		
+		JOBAD_Repo_Urls[baseUrl] = {}; //Create a new cache object
+
+		for(var i=0;i<modules.length;i++){
+			var key = modules[i]; 
+			//is the url set manually
+			if(overrides.hasOwnProperty(key)){
+				JOBAD_Repo_Urls[baseUrl][key] = baseUrl+"/"+overrides[key]; 
+			} else {
+				JOBAD_Repo_Urls[baseUrl][key] = baseUrl+"/"+key+".js"; 
+			}
+
+
+			//register the repo with the modules stuff
+			if(JOBAD_Repo_Mods.hasOwnProperty(key)){
+				JOBAD_Repo_Mods[key].push(baseUrl);
+			} else {
+				JOBAD_Repo_Mods[key] = [baseUrl]; 
+			}
+		}
+
+		repo_is_initing = false;  //we are done
+		callback(true, repo_cache); 
+	});
+
+}
+
+/*
+	Checks if a repository has been initialised
+	@param	baseUrl	Repository to check. 
+*/
+JOBAD.repo.hasInit = function(baseUrl){
+	return JOBAD_Repo_Urls.hasOwnProperty(baseUrl); 
+}
+
+/*
+	Loads modules from a repository
+	@param	repo	Repository to load module from. 
+	@param	modules	Module to load
+	@param	callback	Callback once finished. 
+*/
+JOBAD.repo.loadFrom = function(repo, modules, callback){
+
+	var callback = JOBAD.util.forceFunction(callback, function(){}); 
+	var modules = JOBAD.util.forceArray(modules); 
+	var repo = JOBAD.util.resolve(repo);
+
+	JOBAD.repo.init(repo, function(res, msg){
+
+		//we failed to initialise it
+		if(!res){
+			return callback(false, "Repo init failed: "+msg);
+		}
+
+		if(!JOBAD.repo.provides(repo, modules)){
+			return callback(false, "Modules are not provided by repo. ");
+		}
+
+		var m2 = JOBAD.util.map(modules, function(mod){
+			return JOBAD_Repo_Urls[repo][mod]; 
+		});
+
+
+		JOBAD.util.loadExternalJS(m2, function(suc){
+			if(suc){
+				callback(true)
+			} else {
+				callback(false, "Failed to load one or more Modules: Timeout")
+			}
+		});
+	});
+}
+
+JOBAD.repo.loadAllFrom = function(repo, callback){
+
+	var callback = JOBAD.util.forceFunction(callback, function(){}); 
+	var repo = JOBAD.util.resolve(repo);
+
+	JOBAD.repo.init(repo, function(res, msg){
+
+		//we failed to initialise it
+		if(!res){
+			return callback(false, "Repo init failed: "+msg);
+		}
+
+		JOBAD.repo.loadFrom(repo, JOBAD.util.keys(JOBAD_Repo_Urls[repo]), callback); 
+	});
+}
+
+/*
+	Check if repo provides module
+	@param	repo	Repositorie(s) to look in. Optional. 
+	@param	module	Module(s) to look for. 
+*/
+JOBAD.repo.provides = function(repo, module){
+
+	var Repos = JOBAD.util.forceArray(repo); 
+	var Modules = JOBAD.util.forceArray(module); 
+	
+	if(typeof module == "undefined"){
+		Modules = Repos; 
+		Repos = JOBAD.util.keys(JOBAD_Repo_Urls); 
+	}
+
+	return JOBAD.util.lAnd(JOBAD.util.map(Modules, function(mod){
+		return JOBAD.util.lOr(JOBAD.util.map(Repos, function(rep){
+			//check repo for module safely
+			var rep = JOBAD.util.resolve(rep);
+
+			return JOBAD.util.indexOf(JOBAD_Repo_Mods[mod], rep) != -1; 
+		}));
+	}));
+
+}
+
+/*
+	Provide a module
+	@param	modules	Modules to provide. 
+	@param	callback	Callback to use. 
+*/
+JOBAD.repo.provide = function(modules, callback){
+	var callback = JOBAD.util.forceFunction(callback, function(){}); 
+
+	if(!JOBAD.repo.provides(modules)){
+		return callback(false, "Modules are not provided by any repo");
+	}
+
+	var modules = JOBAD.util.forceArray(modules);
+	var i = 0;
+
+	var load_next = function(){
+		if(i >= modules.length){
+			return callback(true); 
+		}
+		var mod = modules[i]; 
+		var repo = JOBAD_Repo_Mods[mod][0]; //take the first provider
+		JOBAD.repo.loadFrom(repo, mod, function(suc, msg){
+			if(!suc){
+				callback(false, msg); 
+			} else {
+				i++; 
+				load_next(); 
+			}
+		})
+	}
+
+	load_next(); 
+}/* end   <JOBAD.repo.js> */
 /* start <core/JOBAD.core.modules.js> */
 /*
 	JOBAD Core Module logic
@@ -1945,69 +2533,260 @@ JOBAD.resources.provide("icon", {
 */
 
 
-
 JOBAD.ifaces.push(function(me, args){
-	var InstanceModules = {};
-	var disabledModules = [];
-	
+
+	//modules namespace
 	this.modules = {};
 
-	/*
-		loads a JOBAD module if not yet loaded. 
-		@param module Name of module to load. 
-		@param options Array of options to pass to the module. 
-		@param ignoredeps Boolean. Ignore dependencies? (Default: false). 
-		@param auto_activate Boolean. Automatically activate a module? (Default: true). 
-		@returns boolean
-	*/
-	this.modules.load = function(module, options, auto_activate, ignoredeps){
-		if(me.modules.loaded(module)){
-			return;	
-		}
+	var InstanceModules = {}; //Modules loaded
+	var disabledModules = []; //Modules disabled
 
-		var ignoredeps = (typeof ignoredeps == 'boolean')?ignoredeps:false;
+	var loadQuenue = []; //the quenue of things to load
+	var loadQuenueIndex = -1; //the loadQuenueIndex
+
+	var loadQuenueOptions = {}; //options Array
+	var loadQuenueAutoActivate = []; //auto activate
+	var execQuenue = []; //quenue of exec callbacks
+
+	var loadFail = []; //load failed
+
+	var isQuenueRunning = false;
 	
-		if(ignoredeps){
-			if(!JOBAD.modules.available(module)){
-				JOBAD.error('Error loading module '+module);			
-			}
-			InstanceModules[module] = new JOBAD.modules.loadedModule(module, options, me);
-			
-			if((typeof auto_activate == 'boolean')?auto_activate:true){
-				if(this.Setup.isEnabled()){
-					InstanceModules[module].onActivate(me);
-				} else {
-					
-					this.Setup.deferUntilEnabled(function(){
-						InstanceModules[module].onActivate(me);
-					});
-				}
-			}
-			
-			return true;
-		} else {
-			var deps = JOBAD.modules.getDependencyList(module);
-		    if(!deps){
-				JOBAD.console.warn("Unresolved dependencies for module '"+module+"'. "); //Module not found (has no dependecnies)
-				return false;	
-			}
-			for(var i=0;i<deps.length;i++){
-				me.modules.load(deps[i], options, auto_activate, true);
-			}
-			return true;
-		}
-		
+	/*
+		runs the load Quenue
+	*/
+	var runLoadQuenue = function(){
+		isQuenueRunning = true; //we are running
 
+		//run the quenue
+		loadQuenueIndex++;
+		if(loadQuenue.length > loadQuenueIndex){ //do we have memebers
+			var modName = loadQuenue[loadQuenueIndex];
+			var options = loadQuenueOptions[modName];
+			if(typeof options == "undefined"){
+				options = [];
+			}
+			doLoad(modName, options, runFinishQuenue);
+		} else {
+			runFinishQuenue(function(){
+				loadQuenueIndex--; //reset the index
+				isQuenueRunning = false; //STOP
+			});
+		}
+	};
+
+	var runFinishQuenue = function(next){
+		window.setTimeout(function(){
+			//run the finish quenue
+			execQuenue = execQuenue.filter(function(m){
+				if(me.modules.loaded(m[0])){
+					try{
+						m[1].call(m[2], me.modules.loadedOK(m[0]), m[0]);
+					} catch(e){}
+					return false;
+				} else {
+					return true;
+				}
+			});
+
+			window.setTimeout(next, 0); //run the load quenue again
+		}, 0);
+	}
+
+	/*
+		Loads a module
+		@param	options	Options to pass to the module
+		@param	callback	Callback to execute
+	*/
+	var doLoad = function(module, options){
+		var auto_activate = loadQuenueAutoActivate.indexOf(module) != -1; //TODO: Add option somewhere
+		try{
+			InstanceModules[module] = new JOBAD.modules.loadedModule(module, options, me, function(suc, msg){
+				if(!suc){
+					markLoadAsFailed(module, msg);
+				} else {
+					disabledModules.push(module); //we are disabled by default
+
+					if(auto_activate){
+						me.modules.activate(module);
+					}
+				}
+				runFinishQuenue(runLoadQuenue);
+				
+			});
+		} catch(e){
+			markLoadAsFailed(module, String(e));
+			runFinishQuenue(runLoadQuenue);
+		}
+	 };
+
+	var markLoadAsFailed = function(module, message){
+		loadFail.push(module);
+		try{
+			delete InstanceModules[module];
+		} catch(e){}
+
+		JOBAD.console.error("Warning: Failed to load module '"+module+"': "+String(message));
+	};
+
+	var properLoadObj = function(obj){
+		var res = [];
+
+		if(JOBAD.util.isArray(obj)){
+			for(var i=0;i<obj.length;i++){
+				var proper = JOBAD.util.forceArray(obj[i]);
+
+				if(typeof proper[1] == "boolean"){
+					proper[2] = proper[1];
+					proper[1] = [];
+				}
+
+				res.push(proper); 
+			}
+		} else {
+			for(var key in obj){
+				res.push([key, obj[key]]);
+			}
+		}
+
+		return res;
+	};
+
+	/*
+		Loads a module
+		@param	modules	Modules to load
+		@param config	Configuration. 
+			config.ready	Callback when ready
+			config.load		Callback on singular load
+			config.activate	Should we automatically activate all modules? Default: True
+	*/
+	this.modules.load = function(modules, config, option){
+		if(typeof modules == "string"){
+			if(JOBAD.util.isArray(config)){
+				return me.modules.load([[modules, config]], option);
+			} else {
+				return me.modules.load([modules], config, option);
+			}
+		}
+
+		config = JOBAD.util.defined(config);
+		config = (typeof config == "function")?{"ready": config}:config; 
+		config = (typeof config == "booelan")?{"activate": config}:config; 
+
+
+		var ready = JOBAD.util.forceFunction(config.ready, function(){});
+		var load = JOBAD.util.forceFunction(config.load, function(){});
+
+		var activate = JOBAD.util.forceBool(config.activate, true);
+
+		var triggers = [];
+
+		var everything = JOBAD.util.map(properLoadObj(modules), function(m){
+			var mod = m[0];
+			var opt = m[1];
+			var act = m[2];
+
+			triggers.push(mod); //add to the trigegrs
+
+			if(typeof loadQuenueOptions[mod] == "undefined" && JOBAD.util.isArray(opt)){
+				loadQuenueOptions[mod] = opt;
+			}
+
+			if(typeof act == "undefined"){
+				act = activate; 
+			}
+
+			if(act){
+				loadQuenueAutoActivate.push(mod); //auto activate
+			}
+
+			if(!me.modules.inLoadProcess(mod)){
+				var deps = JOBAD.modules.getDependencyList(mod);
+				if(!deps){
+					markLoadAsFailed(mod);
+					return [];
+				} else {
+					return deps;
+				}
+			} else {
+				if(act && me.modules.loadedOK(mod) && !me.modules.isActive(mod)){
+					me.modules.activate(mod); 
+				}
+				return []; //it's already in load process
+			}
+		});
+
+		//clean up
+		everything = JOBAD.util.flatten(everything);
+		everything = JOBAD.util.union(everything);
+		triggers = JOBAD.util.union(triggers)
+
+		//register all the callbacks
+		JOBAD.util.map(triggers, function(m){
+			me.modules.once(m, load, me, false);
+		});
+		me.modules.once(triggers, ready, me, false);
+
+		//add them to the quenue and run it
+		loadQuenue = JOBAD.util.union(loadQuenue, everything);
+
+		if(!isQuenueRunning){
+			runLoadQuenue(); 
+		}
+	}
+
+	 /*
+	 	Defers a callback until the specefied modules are loaded. 
+	 */
+	this.modules.once = function(modules, cb, scope, run){
+		execQuenue.push([modules, cb, (typeof scope == "undefined")?me:scope]);
+
+		var run = JOBAD.util.forceBool(run, true);
+
+		//if we are inactive run the quenue
+		if(!isQuenueRunning && run){
+			runLoadQuenue(); 
+		}
 	 };
 
 	/*
 		Checks if a module is loaded. 
-		@param module Name of the module to check. 
+		@param module Name of the module(s) to check. 
 		@returns boolean
 	*/
 	this.modules.loaded = function(module){
-		return InstanceModules.hasOwnProperty(module);
+		return (me.modules.loadedOK(module) || me.modules.loadedFail(module)); 
 	}
+
+	this.modules.loadedOK = function(module){
+		if(JOBAD.util.isArray(module)){
+			return JOBAD.util.lAnd(JOBAD.util.map(module, function(m){
+				return me.modules.loadedOK(m);
+			}));
+		} else {
+			return InstanceModules.hasOwnProperty(module);
+		}
+	}
+
+	this.modules.loadedFail = function(module){
+		if(JOBAD.util.isArray(module)){
+			return JOBAD.util.lOr(JOBAD.util.map(module, function(m){
+				return me.modules.loadedFail(m);
+			}));
+		} else {
+			return (JOBAD.util.indexOf(loadFail, module) != -1);
+		}
+	}
+
+	this.modules.inLoadProcess = function(module){
+		if(JOBAD.util.isArray(module)){
+			return JOBAD.util.lAnd(JOBAD.util.map(module, function(m){
+				return me.modules.inLoadProcess(m);
+			}));
+		} else {
+			return (JOBAD.util.indexOf(loadQuenue, module) != -1);
+		}
+	};
 
 	/*
 		Deactivates a module
@@ -2024,30 +2803,39 @@ JOBAD.ifaces.push(function(me, args){
 	}
 
 	/*
-		Activates a module
+		Activates a module if it is not yet actiavted
 		@param module Module to be activated. 
 	*/
 	this.modules.activate = function(module){
 	
 		if(me.modules.isActive(module)){
-			JOBAD.console.warn("Module '"+module+"' is already activated. ");
-			return;	
+			return false; 	
 		}
-		
-		
-		disabledModules = JOBAD.util.without(disabledModules, module);
-		
-		
-		var deps = JOBAD.modules.getDependencyList(module);
-		
-				
-		for(var i=0;i<deps.length-1;i++){
-			me.modules.activate(deps[i]);
+
+		var todo = function(){
+			if(me.modules.isActive(module)){
+				return; 	
+			}
+
+			disabledModules = JOBAD.util.without(disabledModules, module);
+
+			var deps = JOBAD.modules.getDependencyList(module);		
+			for(var i=0;i<deps.length-1;i++){
+				me.modules.activate(deps[i]); // i am last
+			}
+			
+
+			InstanceModules[module].onActivate(me);
+			me.element.trigger('JOBAD.Event', ['activate', module]);
 		}
-		
-		InstanceModules[module].onActivate(me);
-		
-		this.element.trigger('JOBAD.Event', ['activate', module]);
+
+		if(me.Setup.isEnabled()){
+			todo();
+		} else {
+			me.Setup.deferUntilEnabled(todo);
+		}
+
+		return true; 
 	};
 	
 	/*
@@ -2055,7 +2843,15 @@ JOBAD.ifaces.push(function(me, args){
 		@param module Module to check. 
 	*/
 	this.modules.isActive = function(module){
-		return (JOBAD.util.indexOf(disabledModules, module)==-1); 
+		return (JOBAD.util.indexOf(disabledModules, module)==-1 && me.modules.loadedOK(module)); 
+	};
+
+	/*
+		Checks if a module is inactive. 
+		@param module Module to check. 
+	*/
+	this.modules.isInActive = function(module){
+		return (JOBAD.util.indexOf(disabledModules, module)!=-1 && me.modules.loadedOK(module)); 
 	};
 	
 	/*
@@ -2191,6 +2987,7 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 	if(!JOBAD.util.isObject(ModuleObject)){
 		return false;
 	}
+
 	var properObject = 
 	{
 		"globalinit": function(){},
@@ -2223,6 +3020,31 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 			properObject.info['version'] = info['version'];
 		}
 
+		if(info.hasOwnProperty('externals')){
+			if(JOBAD.util.isArray(info["externals"])){
+				properObject.info.externals = info["externals"];
+			} else {
+				return false;
+			}
+		} else {
+			properObject.info.externals = [];
+		}
+
+		if(info.hasOwnProperty('async')){
+			properObject.info.async = JOBAD.util.forceBool(info.async);
+		} else {
+			properObject.info.async = false;
+		}
+
+		if(!properObject.info.async){
+			var sync_init = properObject.globalinit;
+			properObject.globalinit = function(next){
+				sync_init(); 
+				window.setTimeout(next, 0);
+			}
+		}
+		
+
 		if(info.hasOwnProperty('hasCleanNamespace')){
 			if(info['hasCleanNamespace'] == false){
 				properObject.info.hasCleanNamespace = false;
@@ -2239,6 +3061,15 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 				return false;			
 			}
 			properObject.info['dependencies'] = arr;
+		}
+
+		if(info.hasOwnProperty('url')){
+			if(!JOBAD.util.isUrl(info.url)){
+				return false;			
+			}
+			properObject.info['url'] = info.url;
+		} else {
+			info.url = false; 
 		}
 
 		try{
@@ -2284,6 +3115,10 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 			}
 			
 			properObject[key] = mod.init(av, prop, ModuleObject, properObject);
+
+			if(typeof mod["onRegister"] == "function"){
+				mod.onRegister(properObject[key], properObject, ModuleObject);
+			}
 		}
 		
 		for(var i=0;i<JOBAD.modules.ifaces.length;i++){
@@ -2336,7 +3171,78 @@ JOBAD.modules.getDependencyList = function(name){
 	for(var i=deps.length-1;i>=0;i--){
 		depArray = JOBAD.util.union(depArray, JOBAD.modules.getDependencyList(deps[i]));
 	}
+
+	depArray.reverse(); //reverse it
+
 	return depArray;
+};
+
+/*
+	Storage shared accross all module instances. 
+*/
+JOBAD.modules.globalStore = 
+{
+	"get": function(name, prop){
+		if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+			var prop = JOBAD.util.keys(prop);
+		}
+
+		if(JOBAD.util.isArray(prop)){
+			var res = {};
+
+			JOBAD.util.map(prop, function(key){
+				res[key] = JOBAD.modules.globalStore.get(name, key); 
+			});
+
+			return res;
+		}
+
+		return  moduleStorage[name][prop+"_"];
+	},
+	"set": function(name, prop, val){
+		if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+			var prop = JOBAD.util.keys(prop);
+		}
+
+		if(JOBAD.util.isArray(prop)){
+
+			return JOBAD.util.map(prop, function(key){
+				return JOBAD.modules.globalStore.set(name, key, prop[key]); 
+			});
+		}
+
+		moduleStorage[name][prop+"_"] = val;
+
+		return prop;
+	},
+	"delete": function(name, prop){
+		delete moduleStorage[name][prop+"_"];
+	},
+	"keys": function(name){
+		var keys = [];
+		for(var key in moduleStorage[name]){
+			if(moduleStorage[name].hasOwnProperty(key) && key[key.length-1] == "_"){
+				keys.push(key.substr(0, key.length-1));
+			}
+		}
+		return keys;
+	},
+	"getFor": function(name){
+		return {
+			"get": function(prop){
+				return JOBAD.modules.globalStore.get(name, prop);	
+			},
+			"set": function(prop, val){
+				return JOBAD.modules.globalStore.set(name, prop, val);	
+			},
+			"delete": function(prop){
+				return JOBAD.modules.globalStore["delete"](name, prop);	
+			},
+			"keys": function(){
+				JOBAD.modules.globalStore.keys(name);	
+			}
+		};
+	}
 };
 
 /*
@@ -2345,7 +3251,10 @@ JOBAD.modules.getDependencyList = function(name){
 	@param args Arguments to pass to the module. 
 	@returns new JOBAD.modules.loadedModule instance. 
 */
-JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
+JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
+
+	var me = this;
+	var next = JOBAD.util.forceFunction(next, function(){});
 
 	if(!JOBAD.modules.available(name)){
 		JOBAD.error("Module is not available and cant be loaded. ");	
@@ -2355,30 +3264,7 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 		var args = []; //we force arguments
 	}
 
-	/*
-		Storage shared accross all module instances. 
-	*/
-	this.globalStore = 
-	{
-		"get": function(prop){
-			return  moduleStorage[name][prop+"_"];		
-		},
-		"set": function(prop, val){
-			moduleStorage[name][prop+"_"] = val;
-		},
-		"delete": function(prop){
-			delete moduleStorage[name][prop+"_"];
-		},
-		"keys": function(){
-			var keys = [];
-			for(var key in moduleStorage[name]){
-				if(moduleStorage[name].hasOwnProperty(key) && key[key.length-1] == "_"){
-					keys.push(key.substr(0, key.length-1));
-				}
-			}
-			return keys;
-		}
-	}
+	this.globalStore = JOBAD.modules.globalStore.getFor(name);
 	
 	var storage = {};
 	/*
@@ -2387,10 +3273,36 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 	this.localStore = 
 	{
 		"get": function(prop){
+			if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+				var prop = JOBAD.util.keys(prop);
+			}
+
+			if(JOBAD.util.isArray(prop)){
+				var res = {};
+
+				JOBAD.util.map(prop, function(key){
+					res[key] = storage[key];
+				});
+
+				return res;
+			}
 			return  storage[prop];		
 		},
 		"set": function(prop, val){
+			if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+				var prop = JOBAD.util.keys(prop);
+			}
+
+			if(JOBAD.util.isArray(prop)){
+
+				return JOBAD.util.map(prop, function(key){
+					storage[key] = prop[key];
+				});
+
+			}
+
 			storage[prop] = val;
+			return prop;
 		},
 		"delete": function(prop){
 			delete storage[name];
@@ -2427,33 +3339,26 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 		return JOBADInstance.modules.isActive(this.info().identifier);
 	}
 
-	//Initilisation
-
-	if(!moduleStorage[name]["init"]){
-		moduleStorage[name]["init"] = true;
-		ServiceObject.globalinit.apply(undefined, []);
-		for(var key in JOBAD.modules.extensions){
-			var mod = JOBAD.modules.extensions[key];
-			var val = ServiceObject[key];
-			if(typeof mod["onFirstLoad"] == 'function'){
-				mod.onFirstLoad(this.globalStore);
-			}
-		}
-	}
-
 	//add JOBADINstance
 	var params = args.slice(0);
 	params.unshift(JOBADInstance);
+
+	var limited = {}; //limited this for globalinit
+	limited.info = ServiceObject.info;
+	limited.globalStore = this.globalStore;
 
 	if(JOBAD.config.cleanModuleNamespace){
 		if(!ServiceObject.info.hasCleanNamespace){
 			JOBAD.console.warn("Warning: Module '"+name+"' may have unclean namespace, but JOBAD.config.cleanModuleNamespace is true. ");		
 		}
+
 	} else {
 		var orgClone = JOBAD.util.clone(ServiceObject.namespace);
+		
 		for(var key in orgClone){
 			if(!JOBAD.modules.cleanProperties.hasOwnProperty(key) && orgClone.hasOwnProperty(key)){
 				this[key] = orgClone[key];
+				limited[key] = orgClone[key];
 			}
 		};
 	}
@@ -2464,6 +3369,12 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 		var val = ServiceObject[key];
 		if(typeof mod["onLoad"] == 'function'){
 			mod.onLoad.call(this, val, ServiceObject, this);
+		}
+		if(JOBAD.util.isArray(mod["globalProperties"])){
+			for(var i=0;i<mod["globalProperties"].length;i++){
+				var prop = mod["globalProperties"][i];
+				limited[prop] = this[prop];
+			}
 		}
 	}
 	
@@ -2484,10 +3395,37 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance){
 	this.deactivate = function(){
 		return JOBADInstance.modules.deactivate(this.info().identifier);
 	}
+
+	var do_next = function(){
+		ServiceObject.init.apply(me, params); 
+		next(true);
+	};
+
+	if(!moduleStorage[name]["init"]){
+		moduleStorage[name]["init"] = true;
+
+		for(var key in JOBAD.modules.extensions){
+			var mod = JOBAD.modules.extensions[key];
+			var val = ServiceObject[key];
+			if(typeof mod["onFirstLoad"] == 'function'){
+				mod.onFirstLoad(me.globalStore);
+			}
+		}
+
+		JOBAD.util.loadExternalJS(ServiceObject.info.externals, function(urls, suc){
+			if(!suc){
+				next(false, "Can't load external dependencies: Timeout. "); 
+			} else {
+				ServiceObject.globalinit.call(limited, do_next);
+			}
+			
+		});
+	} else {
+		do_next();
+	}
 	
-	ServiceObject.init.apply(this, params);		
-};
-/* end   <core/JOBAD.core.modules.js> */
+	
+};/* end   <core/JOBAD.core.modules.js> */
 /* start <core/JOBAD.core.events.js> */
 /*
 	JOBAD Core Event Logic
@@ -2532,8 +3470,7 @@ JOBAD.ifaces.push(function(me, args){
 			return me.Setup.enable();
 		}
 	}
-
-
+	
 	/*
 		Checks if this Instance is enabled. 
 	*/
@@ -2745,7 +3682,68 @@ JOBAD.UI.unhighlight = function(element){
 			element.removeData("JOBAD.UI.highlight.orgColor");
 		}
 	}, 1000);		
-};/* end   <ui/JOBAD.ui.js> */
+};
+
+/*
+	Sorts a table. 
+	@param	el	Table Row Head to sort. 
+	@param sortFunction	A function, `ascending`, `descending`, `reset` or `rotate`
+	@param callback(state) Callback only for rotate state. 0 = originial, 1=ascend, 2=descend
+*/
+JOBAD.UI.sortTableBy = function(el, sortFunction, callback){
+	//get the table
+	var el = JOBAD.refs.$(el); 
+	var table = el.closest("table"); //the table
+	var rows = JOBAD.refs.$("tbody > tr", table); //find the rows
+	var colIndex = el.parents().children().index(el); //colIndex
+
+	if(!table.data("JOBAD.UI.TableSort.OrgOrder")){
+		table.data("JOBAD.UI.TableSort.OrgOrder", rows); 
+	}
+
+	if(typeof sortFunction == "undefined"){
+		sortFunction = "rotate"; 
+	}
+	if(typeof sortFunction == "string"){
+		if(sortFunction == "rotate"){
+			var now = el.data("JOBAD.UI.TableSort.rotationIndex");
+			if(typeof now != "number"){
+				now = 0;
+			}
+			
+			now = (now+1) % 3; 
+
+			sortFunction = ["reset", "ascending", "descending"][now]; 
+
+			el.data("JOBAD.UI.TableSort.rotationIndex", now); 
+
+			callback.call(el, now); 
+		}
+
+		if(sortFunction == "ascending"){
+			var sortFunction = function(a, b){return (a>b)?1:0; };
+		} else if(sortFunction == "descending"){
+			var sortFunction = function(a, b){return (a<b)?1:0; };
+		} else if(sortFunction == "reset"){
+			table.data("JOBAD.UI.TableSort.OrgOrder").each(function(){
+				var row = JOBAD.refs.$(this); 
+				row.detach().appendTo(table); 
+			});
+			return el;  
+		}
+	}
+
+	rows.sort(function(a, b){
+		var textA = JOBAD.refs.$("td", a).eq(colIndex).text();
+		var textB = JOBAD.refs.$("td", b).eq(colIndex).text();
+		return sortFunction(textA, textB); 
+	}).each(function(i){
+		var row = JOBAD.refs.$(this); 
+		row.detach().appendTo(table); 
+	})
+
+	return el; 
+}/* end   <ui/JOBAD.ui.js> */
 /* start <ui/JOBAD.ui.hover.js> */
 /*
 	JOBAD 3 UI Functions - Hover Text
@@ -2854,7 +3852,7 @@ JOBAD.UI.ContextMenu = {}
 JOBAD.UI.ContextMenu.config = {
 	'margin': 20, //margin from page borders
 	'width': 250, //menu width
-	'radiusConst': 25, //Radius spacing constant
+	'radiusConst': 50, //Radius spacing constant
 	'radius': 20 //small radius size
 };
 
@@ -2897,7 +3895,6 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 	var block = JOBAD.util.forceBool(config.block, false);
 
 	element.on('contextmenu.JOBAD.UI.ContextMenu', function(e){
-
 		//control overrides
 
 		if(e.ctrlKey){
@@ -3105,7 +4102,7 @@ JOBAD.UI.ContextMenu.buildContextMenuList = function(items, element, orgElement,
 
 		if(item[2] != "none" ){
 			$a.prepend(
-				JOBAD.refs.$("<span class='JOBAD JOBAD_Contextmenu JOBAD_Contextmenu_Icon'>")
+				JOBAD.refs.$("<span class='JOBAD JOBAD_InlineIcon'>")
 				.css({
 					"background-image": "url('"+JOBAD.resources.getIconResource(item[2])+"')"
 				})
@@ -3710,8 +4707,6 @@ JOBAD.UI.Toolbar.clear = function(element){
 */
 JOBAD.UI.Toolbar.update = function(element){
 
-	//TODO: Group elements (like in sidebar. )
-
 	var element = JOBAD.refs.$(element);
 
 	if(element.length > 1){
@@ -3728,7 +4723,7 @@ JOBAD.UI.Toolbar.update = function(element){
 		var position = /*JOBAD.util.closest(element, function(e){
 				//check if an element is visible
 				return !JOBAD.util.isHidden(e);
-		}).*/element.offset(); //TODO: Make this element wise. 
+		}).*/element.offset();
 		
 		toolbar.css({
 			"position": "absolute",
@@ -3753,8 +4748,8 @@ JOBAD.UI.Toolbar.update = function(element){
 	adds an items to the toolbar. 
 	@param element The element the toolbar belongs to. 
 	@param config Configuration of new item. Eitehr an object or a string tobe used as text.  
-		config.class:	Notificaton class. Default: none.  TBD
-		config.icon:	Icon (Default: Based on notification class. TBD 
+		config.class:	Notificaton class. Default: none.
+		config.icon:	Icon
 		config.text:	Text
 		config.menu:	Context Menu
 		config.menuThis: This for menu callbacks
@@ -3786,7 +4781,7 @@ JOBAD.UI.Toolbar.addItem = function(element, config){
 			}, function(){
 				JOBAD.refs.$(this).stop().fadeTo(300, 0.5);
 			}).fadeTo(0, 0.5)
-			.bind("contextmenu", function(){return false;})
+			.bind("contextmenu", function(e){return e.ctrlKey;})
 		);
 		
 		var cb = function(){
@@ -3810,7 +4805,20 @@ JOBAD.UI.Toolbar.addItem = function(element, config){
 	} else if(typeof config == "undefined"){
 		var config = {}
 	}
+
+	var icon = "none";  
 	
+	//get icon and class
+	if(typeof config["class"] == 'string'){	
+		var notClass = config["class"];	
+		if(JOBAD.resources.available("icon", notClass)){
+			icon = notClass;
+		}
+	}
+
+	if(typeof config.icon == "string"){
+		icon = config.icon; 
+	}
 	
 	//new Item
 
@@ -3836,17 +4844,31 @@ JOBAD.UI.Toolbar.addItem = function(element, config){
 		});
 		JOBAD.UI.ContextMenu.enable(newItem, function(){return entries;});
 	}
-	
-	
-	
-	newItem.appendTo(element.data("JOBAD.UI.Toolbar.ToolBarElement")).button()
+
+	newItem.appendTo(element.data("JOBAD.UI.Toolbar.ToolBarElement")).button();
+
+	//icon
+	if(icon != "none"){
+		icon = JOBAD.resources.getIconResource(icon); //get icon url
+		JOBAD.refs.$("<span class='JOBAD JOBAD_InlineIcon'>")
+		.css({
+			"position": "absolute",
+			"top": "50%",
+			"margin-top": "-8px",
+			"left": ".5em",
+			"background-image": "url('"+icon+"')"
+		}).prependTo(newItem); 
+
+		newItem.find(".ui-button-text").css({
+			"padding": ".4em 1em .4em 2.1em"
+		}) 
+	}
 	
 	newItem.data("JOBAD.UI.Toolbar.element", element);
 	
 	//store the data
 	element
 	.data("JOBAD.UI.Toolbar.active", true)
-	//.data("JOBAD.UI.Toolbar.hide", typeof(config.hide=='boolean')?true:false); //TODO: Make this element wise. 
 	
 	
 	JOBAD.UI.Toolbar.update(element);
@@ -5566,7 +6588,190 @@ JOBAD.modules.getDefaultConfigSetting = function(obj, key){
 };
 
 //Config Settings - module
-var configCache = {};
+var configCache = {}; //cache of set values
+var configSpec = {};
+
+var userConfigMessages = {}; //messages for userconfig
+
+
+JOBAD.UserConfig = {};
+
+/*
+	Sets a user configuration. 
+	@param id   Id of module to use UserConfig from. 
+	@param prop	Property to set
+	@param val	Value to set. 
+*/
+JOBAD.UserConfig.set = function(id, prop, val){
+	var value = JOBAD.UserConfig.getTypes(id);
+
+	if(JOBAD.util.isObject(prop)){
+		var keys = JOBAD.util.keys(prop);
+		return JOBAD.util.map(keys, function(key){
+			return JOBAD.UserConfig.set(id, key, prop[key]);
+		});
+	}
+
+	if(JOBAD.UserConfig.canSet(id, prop, val)){
+		if(JOBAD.util.objectEquals(val, JOBAD.UserConfig.get(id, prop))){
+			return; //we have it already; no change neccessary. 
+		}
+		configCache[id][prop] = val;
+		
+	} else {
+		JOBAD.console.warn("Can not set user config '"+prop+"' of module '"+id+"': Validation failure. ");
+		return; 
+	}
+	JOBAD.storageBackend.setKey(id, configCache[id]);
+	JOBAD.refs.$("body").trigger("JOBAD.ConfigUpdateEvent", [prop, id]);
+
+	return prop;
+};
+
+/*
+	Checks if a user configuration can be set. 
+	@param id   Id of module to use UserConfig from. 
+	@param prop	Property to set
+	@param val	Value to set. 
+*/
+JOBAD.UserConfig.canSet = function(id, prop, val){
+	var value = JOBAD.UserConfig.getTypes(id);
+	if(JOBAD.util.isObject(prop)){
+		var keys = JOBAD.util.keys(prop);
+		return JOBAD.util.lAnd(JOBAD.util.map(keys, function(key){
+			return JOBAD.modules.validateConfigSetting(value, key, prop[key]);
+		}));
+	} else {
+		return JOBAD.modules.validateConfigSetting(value, prop, val);
+	}
+};
+
+/*
+	Retrieves a user configuration setting. 
+	@param id   Id of module to use UserConfig from. 
+	@param prop	Property to get
+	@param val	Value to get. 
+*/
+JOBAD.UserConfig.get = function(id, prop){
+	var value = JOBAD.UserConfig.getTypes(id);
+
+	if(JOBAD.util.isObject(prop) && !JOBAD.util.isArray(prop)){
+		var prop = JOBAD.util.keys(prop);
+	}
+	if(JOBAD.util.isArray(prop)){
+		var res = {};
+
+		JOBAD.util.map(prop, function(key){
+			res[key] = JOBAD.UserConfig.get(id, key);
+		});
+
+		return res;
+	}
+
+	var res = configCache[id][prop];
+	if(JOBAD.modules.validateConfigSetting(value, prop, res)){
+		return res;
+	} else {
+		JOBAD.console.log("Failed to access user setting '"+prop+"'");
+		return;
+	}
+};
+
+/*
+	Gets the user configuration types. 
+	@param id   Id of module to use UserConfig from. 
+*/
+JOBAD.UserConfig.getTypes = function(id){
+	if(!configSpec.hasOwnProperty(id)){
+		JOBAD.error("Can't access UserConfig for module '"+id+"': Module not found (is it registered yet? )");
+		return; 
+	}
+	return configSpec[id];
+}
+
+/*
+	Resets the user configuration. 
+	@param id   Id of module to use UserConfig from. 
+	@param prop Optional. Property to reset. 
+*/
+JOBAD.UserConfig.reset = function(id, prop){
+	var value = JOBAD.UserConfig.getTypes(id);
+	configCache[id] = JOBAD.storageBackend.getKey(id);
+	if(typeof configCache[id] == "undefined"){
+		configCache[id] = {};
+		for(var key in value){
+			configCache[id][key] = JOBAD.modules.getDefaultConfigSetting(value, key);
+			JOBAD.refs.$("body").trigger("JOBAD.ConfigUpdateEvent", [key, id]);
+		}
+	}
+};
+
+
+/*
+	Gets the current message set by the module. 
+	@param	id	Id of module to use. 
+*/
+JOBAD.UserConfig.getMessage = function(id){
+	if(!configSpec.hasOwnProperty(id)){
+		JOBAD.error("Can't access UserConfig for module '"+id+"': Module not found (is it registered yet? )");
+		return; 
+	}
+
+	var msg = userConfigMessages[id];
+
+	return (typeof msg == "undefined"?"":msg); 
+}
+
+/*
+	Sets the current message set by the module. 
+	@param	id	Id of module to use. 
+	@param	msg	New message
+*/
+JOBAD.UserConfig.setMessage = function(id, msg){
+	if(!configSpec.hasOwnProperty(id)){
+		JOBAD.error("Can't access UserConfig for module '"+id+"': Module not found (is it registered yet? )");
+		return; 
+	}
+	userConfigMessages[id] = msg;
+	return msg;
+}
+
+/*
+	Gets a UserConfig Object for the sepecefied module id. 
+	@param id	Identifier of module to get UserConfig for. 
+*/
+JOBAD.UserConfig.getFor = function(id){
+	if(!configSpec.hasOwnProperty(id)){
+		JOBAD.error("Can't access UserConfig for module '"+id+"': Module not found (is it registered yet? )");
+		return; 
+	}
+
+	return {
+		"set": function(prop, val){
+			return JOBAD.UserConfig.set(id, prop, val);
+		},
+		"setMessage": function(msg){
+			return JOBAD.UserConfig.setMessage(id, msg);
+		},
+		"get": function(prop){
+			return JOBAD.UserConfig.get(id, prop);
+		},
+		"getMessage": function(){
+			return JOBAD.UserConfig.getMessage(id);
+		},
+		"canSet": function(prop, val){
+			return JOBAD.UserConfig.canSet(id, prop, val);
+		},
+		"getTypes": function(){
+			return JOBAD.UserConfig.getTypes(id);
+		},
+		"reset": function(prop){
+			return JOBAD.UserConfig.reset(id, prop);
+		}
+	};
+};
+
+
 
 JOBAD.modules.extensions.config = {
 	"required": false, //not required
@@ -5576,83 +6781,18 @@ JOBAD.modules.extensions.config = {
 	"init": function(available, value, originalObject, properObject){
 		return JOBAD.modules.createProperUserSettingsObject(available ? value : {}, properObject.info.identifier);
 	},
-	
-	"onLoad": function(value, properObject, loadedModule){
+	"globalProperties": ["UserConfig", "Config"],
+	"onRegister": function(value, properObject, moduleObject){
 		var id = properObject.info.identifier;
-		
-		//User Configuration Namespace
-		this.UserConfig = {};
-		
-		
-		/*
-			Sets a user configuration. 
-			@param prop	Property to set
-			@param val	Value to set. 
-		*/
-		this.UserConfig.set = function(prop, val){
-			if(this.UserConfig.canSet(prop, val)){
-				if(JOBAD.util.objectEquals(val, this.UserConfig.get(prop))){
-					return; //we have it already; no change neccessary. 
-				}
-				configCache[id][prop] = val;
-				
-			} else {
-				JOBAD.console.warn("Can not set user config '"+prop+"': Validation failure. ");
-				return; 
-			}
-			JOBAD.storageBackend.setKey(id, configCache[id]);
-			JOBAD.refs.$("body").trigger("JOBAD.ConfigUpdateEvent", [prop, this.info().identifier]);
-		};
-		
-		/*
-			Checks if a user configuration can be set. 
-			@param prop	Property to set
-			@param val	Value to set. 
-		*/
-		this.UserConfig.canSet = function(prop, val){
-			return JOBAD.modules.validateConfigSetting(value, prop, val);
-		};
-		
-		/*
-			Retrieves a user configuration setting. 
-			@param prop	Property to get
-			@param val	Value to get. 
-		*/
-		this.UserConfig.get = function(prop){
-			var res = configCache[id][prop];
-			if(JOBAD.modules.validateConfigSetting(value, prop, res)){
-				return res;
-			} else {
-				JOBAD.console.log("Failed to access user setting '"+prop+"'");
-			}
-		};
-		
-		/*
-			Gets the user configuration types. 
-		*/
-		this.UserConfig.getTypes = function(){
-			return JOBAD.util.clone(value); 
+
+		configSpec[id] = value; //store the specification in the cache; it is now open. 
+
+		if(!configCache.hasOwnProperty()){
+			JOBAD.UserConfig.reset(properObject.info.identifier);
 		}
-		
-		/*
-			Resets the user configuration. 
-		*/
-		this.UserConfig.reset = function(prop){
-			configCache[id] = JOBAD.storageBackend.getKey(id);
-			if(typeof configCache[id] == "undefined"){
-				configCache[id] = {};
-				for(var key in value){
-					configCache[id][key] = JOBAD.modules.getDefaultConfigSetting(value, key);
-					JOBAD.refs.$("body").trigger("JOBAD.ConfigUpdateEvent", [key, this.info().identifier]);
-				}
-			}
-		};
-		
-		this.UserConfig = JOBAD.util.bindEverything(this.UserConfig, this);
-		
-		if(!configCache.hasOwnProperty(id)){//not yet loaded by some other JOBAD
-			this.UserConfig.reset();
-		}
+	},
+	"onLoad": function(value, properObject, loadedModule){
+		this.UserConfig = JOBAD.UserConfig.getFor(properObject.info.identifier);		
 	}
 }
 
@@ -5876,7 +7016,8 @@ JOBAD.ifaces.push(function(){
 	
 		var me = this;
 	
-		var $Div = JOBAD.refs.$("<div>");
+		var $Div = JOBAD.refs.$("<div>")
+		.on("mousemove", JOBAD.UI.hover.disable);
 		
 		$Div.attr("title", "JOBAD Configuration Utility");
 
@@ -5993,8 +7134,17 @@ JOBAD.ifaces.push(function(){
 				JOBAD.refs.$("<span>").css("text-decoration", "italic").text(info.author),
 				"<br />",
 				OnOff,
+				"<br />")
+			if(typeof info.url == "string"){
+				$info.append(
+					JOBAD.refs.$("<a>").text(info.url).attr("href", info.url).attr("target", "_blank").button(),
+					"<br />"
+				);
+			}
+			$info.append(
+				JOBAD.refs.$("<span>").text(info.description),
 				"<br />",
-				JOBAD.refs.$("<span>").text(info.description)
+				JOBAD.refs.$("<span>").text(JOBAD.UserConfig.getMessage(info.identifier))
 			);
 			
 			//Config

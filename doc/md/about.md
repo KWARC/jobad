@@ -15,8 +15,25 @@ It is known not to be compatible with:
 The official JOBAD repository is located at [https://github.com/KWARC/jobad](https://github.com/KWARC/jobad). 
 
 ## Changelog
-### Version 3.1
+### Version 3.1.5 (Stable)
+* made module loading asynchronous 
+* added repositories
+	* a nice way to store modules in
+	* can be loaded dynamically loaded from code
+* added "externals" to module info
+	* allows to load external scripts as dependencies
+	* added a MathJax module which uses this
+	* allowing globalinit functions to be async if a module info peropety `async` is set to true. 
+* added `url` to module info, to provide a module homepage
+* improved globalStore, localStore and UserConfig
+	* you can now get and set multiple values at once
+	* UserConfig and globalStore now accessible outside of loadedModule Instances (via JOBAD.modules.globalStore and JOBAD.UserConfig)
+* added `.UserConfig.setMessage` and `.UserConfig.getMessage`
+* improved ToolBar, now supports icons
+* minor CSS fixes
+* more doc updates
 
+### Version 3.1.0
 * improved Sidebar
 	* added sidebar postions: left, right and bound to element. 
 	* default width reduced to 50px. 
@@ -32,7 +49,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 	* either on the left or on the right. 
 	* always inside of the sidebar. 
 * added the radial menu (also known as the icon menu)
-	* as an alternative tto the normal menu. 
+	* as an alternative to the normal menu. 
 	* only configurable via code. 
 	* also allowing custom icons
 * added configUpdate event
@@ -40,10 +57,11 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 * split up the CSS in one JOBAD.css file and one user-configurable JOBAD.theme.css file. 
 * updated jQuery to version 2.0.2
 * updated the documentation (a lot)
-* a bunch of internal fixes and improvements
 
-### Version 3.0
+### Version 3.0.1
+* minor bug fixes
 
+### Version 3.0.0
 * Initial stable release
 
 ## License

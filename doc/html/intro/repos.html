@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>[JOBAD.UI] - JOBAD Documentation</title>
+		<title>[Module Repositories] - JOBAD Documentation</title>
 		<style type="text/css">
 /* Basic styles https://gist.github.com/cpatuzzo/3331384 */
 		body {
@@ -478,40 +478,33 @@
 -->
 	</head>
 	<body>
-<p><a href="../../../index.html">Start</a> &gt; <a href="../../index.html">API Documentation</a> &gt; <a href="../index.html">JOBAD</a> &gt; <strong>JOBAD.UI</strong></p>
-<h1>JOBAD.UI</h1>
+<p><a href="../index.html">Start</a> &gt; <a href="index.html">Introduction to JOBAD</a> &gt; <strong>Module Repositories</strong></p>
+<h1>Module Repositories</h1>
 
-<p>This object contains the JOBAD User interface</p>
+<p>The idea of repositories is not having to load modules manually. Repositories contain different modules, depending on the repository. 
+To take a look which modules a repository provides, visit the repository url with your browser. 
+To load some modules from a repository, use: </p>
+
+<div class="codehilite"><pre><code><span class="nx">JOBAD</span><span class="p">.</span><span class="nx">repo</span><span class="p">.</span><span class="nx">loadFrom</span><span class="p">(</span><span class="s2">&quot;/path/to/repo&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a.sample.module&quot;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">msg</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">s</span><span class="p">){</span>
+        <span class="c1">//success; modules have been loaded</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">//failed to load modules, msg will contain a reason</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<h2>Providing your own repository</h2>
+
+<p>To provide your own repository, all you need is a static WebServer. Each repository is in its own directory. It contains three types of files: </p>
 
 <ul>
-<li><strong>Object</strong> <a href="hover.html"><code>JOBAD.UI.hover</code></a> Namespace for the hover UI. </li>
-<li><strong>Object</strong> <a href="contextmenu.html"><code>JOBAD.UI.ContextMenu</code></a> Namespace for the Context Menu UI. </li>
-<li><strong>Object</strong> <a href="sidebar.html"><code>JOBAD.UI.Sidebar</code></a> Namespace for the Sidebar UI. </li>
-<li><strong>Object</strong> <a href="toolbar.html"><code>JOBAD.UI.Toolbar</code></a> Namespace for the Toolbar UI. </li>
-<li><strong>Object</strong> <a href="folding.html"><code>JOBAD.UI.Folding</code></a> Namespace for the Folding UI. </li>
-<li><strong>Object</strong> <a href="overlay.html"><code>JOBAD.UI.Overlay</code></a> Namespace for the Overlay UI. </li>
-<li><strong>Function</strong> <code>JOBAD.UI.highlight(element, color)</code> Highlights an element
-<ul>
-<li><strong>jQuery</strong> <code>element</code> Element to highlight. </li>
-<li><strong>String</strong> <code>color</code> Optional. Color to use. </li>
-</ul></li>
-<li><strong>Function</strong> <code>JOBAD.UI.unhighlight(element)</code> Reverts an element to its normal state. 
-<ul>
-<li><strong>jQuery</strong> <code>element</code> Element to unhighlight. </li>
-</ul></li>
-<li><strong>Function</strong> <code>JOBAD.UI.sortTableBy(element, sortFunction, callback)</code> - Sorts a table
-<ul>
-<li><strong>jQuery</strong> <code>element</code> A th in the header of the table representing by which column to sort by. </li>
-<li><strong>String|Function</strong> <code>sortFunction(a, b)</code> A string-based sorting function which sorts the table. Can also be a string: 
-<ul>
-<li><code>ascending</code> - Sort ascending</li>
-<li><code>descending</code>- Sort descending</li>
-<li><code>reset</code> - Go back to the original state</li>
-<li><code>rotate</code> - Rotate through the above. </li>
-</ul></li>
-<li><strong>Function</strong> <code>callback(state)</code> Optional. If <code>sortFunction == 'rotate'</code>,  this function will be called with the current (new) state. (0 = 'reset', 1=<code>ascending</code>, 2=<code>descending</code>)</li>
-</ul></li>
+<li><code>index.html</code> - An index pages which automatically provides some information about the contained modules. </li>
+<li><code>jobad_repo.js</code> - A file containing general joabd repository information. </li>
+<li>Module files, named <code>[id_of_module].js</code></li>
 </ul>
+
+<p>A sample repository can be found in the <a href="../../../modules/index.html"><code>modules</code></a> folder of the main repository. It can be used as a template. </p>
 
 	</body>
 </html>
