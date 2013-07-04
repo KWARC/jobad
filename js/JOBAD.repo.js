@@ -249,7 +249,7 @@ JOBAD.repo.init = function(baseUrl, callback){
 
 	if(JOBAD.util.isArray(baseUrl)){
 		if(baseUrl.length == 0){
-			return callback(); 
+			return callback(true); 
 		} else {
 			var now = baseUrl[0];
 			var next = baseUrl.slice(1);
@@ -278,7 +278,7 @@ JOBAD.repo.init = function(baseUrl, callback){
 		repo_cache = obj; //cache it
 	}
 
-	JOBAD.util.loadExternalJS(baseUrl+"/jobad_repo.js", function(s){
+	JOBAD.util.loadExternalJS(JOBAD.util.resolve("jobad_repo.js", baseUrl), function(s){
 
 		delete JOBAD.repo.config; //delete the function again
 
@@ -330,9 +330,9 @@ JOBAD.repo.init = function(baseUrl, callback){
 			var key = modules[i]; 
 			//is the url set manually
 			if(overrides.hasOwnProperty(key)){
-				JOBAD_Repo_Urls[baseUrl][key] = baseUrl+"/"+overrides[key]; 
+				JOBAD_Repo_Urls[baseUrl][key] = JOBAD.util.resolve(overrides[key], baseUrl); 
 			} else {
-				JOBAD_Repo_Urls[baseUrl][key] = baseUrl+"/"+key+".js"; 
+				JOBAD_Repo_Urls[baseUrl][key] = JOBAD.util.resolve(key+".js", baseUrl);
 			}
 
 
@@ -359,7 +359,7 @@ JOBAD.repo.hasInit = function(baseUrl){
 }
 
 /*
-	Loads modules from a repository
+	Loads modules from a repository. 
 	@param	repo	Repository to load module from. 
 	@param	modules	Module to load
 	@param	callback	Callback once finished. 
@@ -380,6 +380,11 @@ JOBAD.repo.loadFrom = function(repo, modules, callback){
 		if(!JOBAD.repo.provides(repo, modules)){
 			return callback(false, "Modules are not provided by repo. ");
 		}
+
+		//only load thigns that we don't already have
+		modules = JOBAD.util.filter(modules, function(mod){
+			return !JOBAD.modules.available(mod, false);
+		});
 
 		var m2 = JOBAD.util.map(modules, function(mod){
 			return JOBAD_Repo_Urls[repo][mod]; 
@@ -441,33 +446,60 @@ JOBAD.repo.provides = function(repo, module){
 /*
 	Provide a module
 	@param	modules	Modules to provide. 
+	@param	repos	Additionally to repos already available, check these. Optional. 
 	@param	callback	Callback to use. 
+	@param	provideDependencies	Should we provide depndencies?
 */
-JOBAD.repo.provide = function(modules, callback){
-	var callback = JOBAD.util.forceFunction(callback, function(){}); 
-
-	if(!JOBAD.repo.provides(modules)){
-		return callback(false, "Modules are not provided by any repo");
+JOBAD.repo.provide = function(modules, repos, callback, provideDependencies){
+	if(typeof repos == "function"){
+		provideDependencies = callback;
+		callback = repos; 
+		repos = []; 
 	}
+
+	var callback = JOBAD.util.forceFunction(callback, function(){}); 
 
 	var modules = JOBAD.util.forceArray(modules);
 	var i = 0;
+	var repos = JOBAD.util.forceArray(repos);
+	var provideDependencies = JOBAD.util.forceBool(provideDependencies, true);
 
 	var load_next = function(){
 		if(i >= modules.length){
 			return callback(true); 
 		}
+
 		var mod = modules[i]; 
+
 		var repo = JOBAD_Repo_Mods[mod][0]; //take the first provider
 		JOBAD.repo.loadFrom(repo, mod, function(suc, msg){
 			if(!suc){
 				callback(false, msg); 
 			} else {
+				if(provideDependencies){
+					var deps = moduleList[mod].info.dependencies;
+
+					if(!JOBAD.repo.provides(deps)){
+						return callback(false, "Dependencies for module '"+mod+"' are not provided by any repo. ")
+					}
+
+					modules = JOBAD.util.union(modules, deps); //add dependencies in the end
+				}
+				
 				i++; 
 				load_next(); 
 			}
 		})
 	}
 
-	load_next(); 
+	JOBAD.repo.init(repos, function(suc, msg){
+		if(!JOBAD.repo.provides(modules)){
+			return callback(false, "Modules are not provided by any repo. ");
+		}
+		if(suc){
+			load_next();
+		} else {
+			callback(false, msg); 
+		}
+	})
 }

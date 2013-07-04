@@ -70,5 +70,26 @@ In addition to these functions, JOBAD.util also contains all underscore (version
 		* **Boolean** `success` Have the files been loaded or has there been a timeout?
 * **Function** `JOBAD.util.escapeHTML(str)` - Escapes a string for use within html. 
 	* **String** `str` String to escape
-* **Function** `JOBAD.util.resolve(url)` - Resolves a url. 
+* **Function** `JOBAD.util.resolve(url, base, isDir)` - Resolves a url. 
 	* **String** `url` Url to resolve. 
+	* **String** `base` Optional. A Base url. 
+	* **Boolean** `isDir` Assume a directory.  
+* **Function** `JOBAD.util.on(query, event, handler)` - Adds an event listener to a query. 
+	* **jQuery** `query` A jQuery element to use as query. 
+	* **String** `event` Event to listen to. 
+	* **Function* `handler(param1, param2, ...)` Event listener
+	* **returns** Id of the newly added handler. 
+* **Function** `JOBAD.util.once(query, event, handler)` - Adds a one-time  event listener to a query. 
+	* **jQuery** `query` A jQuery element to use as query. 
+	* **String** `event` Event to listen to. 
+	* **Function* `handler(param1, param2, ...)` Event listener
+	* **returns** Id of the newly added handler. 
+
+* **Function** `JOBAD.util.off(query, id)` - Removes an event listener from a query. 
+	* **jQuery** `query` A jQuery element to use as query. 
+	* **String** `id` Id of handler to remove. 
+* **Function** `JOBAD.util.trigger(query, event, params)` - Triggers an event on a query. 
+	* **jQuery** `query` A jQuery element to use as query. 
+	* **String** `event` Event to trigger. 
+	* **Array** `params` Optional. Array of parameters to pass to event handlers.
+	* **returns** `Array of results`

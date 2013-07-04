@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Tue, 02 Jul 2013 13:06:14 +0200
+	built: Thu, 04 Jul 2013 14:48:25 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -106,7 +106,7 @@ var JOBAD = function(element){
 JOBAD.ifaces = []; //JOBAD interfaces
 
 /* JOBAD Version */
-JOBAD.version = "3.1.5"; 
+JOBAD.version = "3.1.6"; 
 
 /*
 	JOBAD.toString
@@ -1894,7 +1894,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope){
 	        };
 	    }
 
-	    script.src = url;
+	    script.src = JOBAD.util.resolve(url);
 	    document.getElementsByTagName("head")[0].appendChild(script);
 
 	    window.setTimeout(function(){
@@ -1916,11 +1916,111 @@ JOBAD.util.escapeHTML = function(s){
 /*
 	Resolves a relative url
 	@param url	Url to resolve
+	@param base	Optional. Base url to use. 
+	@param isDir	Optional. If set to true, will return a directory name ending with a slash
 */
-JOBAD.util.resolve = function(url){
+JOBAD.util.resolve = function(url, base, isDir){
+
+	var resolveWithBase = false; 
+	var baseUrl, oldBase, newBase; 
+
+	if(typeof base == "string"){
+		resolveWithBase = true; 
+		baseUrl = JOBAD.util.resolve(base, true); 
+		oldBase = JOBAD.refs.$("base").detach(); 
+		newBase = JOBAD.refs.$("<base>").attr("href", baseUrl).appendTo("head"); 
+	}
+	
     var el= document.createElement('div');
     el.innerHTML= '<a href="'+JOBAD.util.escapeHTML(url)+'">x</a>';
-    return el.firstChild.href;
+    var url = el.firstChild.href;
+   
+    if(resolveWithBase){
+    	newBase.remove(); 
+    	oldBase.appendTo("head"); 
+	}
+
+	if( (base === true || isDir === true ) && url[url.length - 1] != "/"){url = url + "/"; }
+    return url; 
+}
+/*
+	Adds an event listener to a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	event Event to register trigger for. 
+	@param	handler	Handler to add
+	@returns an id for the added handler. 
+*/
+JOBAD.util.on = function(query, event, handler){
+	var query = JOBAD.refs.$(query);
+	var id = JOBAD.util.UID(); 
+	var handler = JOBAD.util.forceFunction(handler, function(){});
+	handler = JOBAD.util.argSlice(handler, 1); 
+
+	query.on(event+".core."+id, function(ev){
+		var result = JOBAD.util.forceArray(ev.result);
+
+		result.push(handler.apply(this, arguments));
+
+		return result; 
+	});
+	return event+".core."+id;
+}
+
+/*
+	Adds a one-time event listener to a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	event Event to register trigger for. 
+	@param	handler	Handler to add
+	@returns an id for the added handler. 
+*/
+JOBAD.util.once = function(query, event, handler){
+	var id;
+
+	id = JOBAD.util.on(query, event, function(){
+		var result = handler.apply(this, arguments); 
+		JOBAD.util.off(query, id); 
+	});
+}
+
+/*
+	Removes an event handler from a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	id	Id of handler to remove. 
+*/
+JOBAD.util.off = function(event, id){
+	var query = JOBAD.refs.$(query);
+	query.off(id); 
+}
+
+/*
+	Triggers an event on a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	event Event to trigger. 
+	@param	params	Parameters to give to the event. 
+*/
+JOBAD.util.trigger = function(query, event, params){
+
+	var query = JOBAD.refs.$(query);
+
+	var result; 
+
+	var params = JOBAD.util.forceArray(params).slice(0);
+	params.unshift(event); 
+
+	
+
+	var id = JOBAD.util.UID(); 
+
+	query.on(event+"."+id, function(ev){
+		result = ev.result; 
+	})
+
+	query.trigger.apply(query, params);
+
+	query.off(event+"."+id);
+
+	return result; 
+
 }
 
 
@@ -2288,7 +2388,7 @@ JOBAD.repo.init = function(baseUrl, callback){
 
 	if(JOBAD.util.isArray(baseUrl)){
 		if(baseUrl.length == 0){
-			return callback(); 
+			return callback(true); 
 		} else {
 			var now = baseUrl[0];
 			var next = baseUrl.slice(1);
@@ -2317,7 +2417,7 @@ JOBAD.repo.init = function(baseUrl, callback){
 		repo_cache = obj; //cache it
 	}
 
-	JOBAD.util.loadExternalJS(baseUrl+"/jobad_repo.js", function(s){
+	JOBAD.util.loadExternalJS(JOBAD.util.resolve("jobad_repo.js", baseUrl), function(s){
 
 		delete JOBAD.repo.config; //delete the function again
 
@@ -2369,9 +2469,9 @@ JOBAD.repo.init = function(baseUrl, callback){
 			var key = modules[i]; 
 			//is the url set manually
 			if(overrides.hasOwnProperty(key)){
-				JOBAD_Repo_Urls[baseUrl][key] = baseUrl+"/"+overrides[key]; 
+				JOBAD_Repo_Urls[baseUrl][key] = JOBAD.util.resolve(overrides[key], baseUrl); 
 			} else {
-				JOBAD_Repo_Urls[baseUrl][key] = baseUrl+"/"+key+".js"; 
+				JOBAD_Repo_Urls[baseUrl][key] = JOBAD.util.resolve(key+".js", baseUrl);
 			}
 
 
@@ -2398,7 +2498,7 @@ JOBAD.repo.hasInit = function(baseUrl){
 }
 
 /*
-	Loads modules from a repository
+	Loads modules from a repository. 
 	@param	repo	Repository to load module from. 
 	@param	modules	Module to load
 	@param	callback	Callback once finished. 
@@ -2419,6 +2519,11 @@ JOBAD.repo.loadFrom = function(repo, modules, callback){
 		if(!JOBAD.repo.provides(repo, modules)){
 			return callback(false, "Modules are not provided by repo. ");
 		}
+
+		//only load thigns that we don't already have
+		modules = JOBAD.util.filter(modules, function(mod){
+			return !JOBAD.modules.available(mod, false);
+		});
 
 		var m2 = JOBAD.util.map(modules, function(mod){
 			return JOBAD_Repo_Urls[repo][mod]; 
@@ -2480,35 +2585,62 @@ JOBAD.repo.provides = function(repo, module){
 /*
 	Provide a module
 	@param	modules	Modules to provide. 
+	@param	repos	Additionally to repos already available, check these. Optional. 
 	@param	callback	Callback to use. 
+	@param	provideDependencies	Should we provide depndencies?
 */
-JOBAD.repo.provide = function(modules, callback){
-	var callback = JOBAD.util.forceFunction(callback, function(){}); 
-
-	if(!JOBAD.repo.provides(modules)){
-		return callback(false, "Modules are not provided by any repo");
+JOBAD.repo.provide = function(modules, repos, callback, provideDependencies){
+	if(typeof repos == "function"){
+		provideDependencies = callback;
+		callback = repos; 
+		repos = []; 
 	}
+
+	var callback = JOBAD.util.forceFunction(callback, function(){}); 
 
 	var modules = JOBAD.util.forceArray(modules);
 	var i = 0;
+	var repos = JOBAD.util.forceArray(repos);
+	var provideDependencies = JOBAD.util.forceBool(provideDependencies, true);
 
 	var load_next = function(){
 		if(i >= modules.length){
 			return callback(true); 
 		}
+
 		var mod = modules[i]; 
+
 		var repo = JOBAD_Repo_Mods[mod][0]; //take the first provider
 		JOBAD.repo.loadFrom(repo, mod, function(suc, msg){
 			if(!suc){
 				callback(false, msg); 
 			} else {
+				if(provideDependencies){
+					var deps = moduleList[mod].info.dependencies;
+
+					if(!JOBAD.repo.provides(deps)){
+						return callback(false, "Dependencies for module '"+mod+"' are not provided by any repo. ")
+					}
+
+					modules = JOBAD.util.union(modules, deps); //add dependencies in the end
+				}
+				
 				i++; 
 				load_next(); 
 			}
 		})
 	}
 
-	load_next(); 
+	JOBAD.repo.init(repos, function(suc, msg){
+		if(!JOBAD.repo.provides(modules)){
+			return callback(false, "Modules are not provided by any repo. ");
+		}
+		if(suc){
+			load_next();
+		} else {
+			callback(false, msg); 
+		}
+	})
 }/* end   <JOBAD.repo.js> */
 /* start <core/JOBAD.core.modules.js> */
 /*
@@ -2626,7 +2758,7 @@ JOBAD.ifaces.push(function(me, args){
 			delete InstanceModules[module];
 		} catch(e){}
 
-		JOBAD.console.error("Warning: Failed to load module '"+module+"': "+String(message));
+		JOBAD.console.error("Failed to load module '"+module+"': "+String(message));
 	};
 
 	var properLoadObj = function(obj){
@@ -2700,10 +2832,15 @@ JOBAD.ifaces.push(function(me, args){
 				loadQuenueAutoActivate.push(mod); //auto activate
 			}
 
+			if(!JOBAD.modules.available(mod)){
+				markLoadAsFailed(mod, "Module not available. (Did loading fail?)");
+				return [];
+			}
+
 			if(!me.modules.inLoadProcess(mod)){
 				var deps = JOBAD.modules.getDependencyList(mod);
 				if(!deps){
-					markLoadAsFailed(mod);
+					markLoadAsFailed(mod, "Failed to resolve dependencies (Is a dependent module missing? )");
 					return [];
 				} else {
 					return deps;

@@ -464,7 +464,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope){
 	        };
 	    }
 
-	    script.src = url;
+	    script.src = JOBAD.util.resolve(url);
 	    document.getElementsByTagName("head")[0].appendChild(script);
 
 	    window.setTimeout(function(){
@@ -486,11 +486,111 @@ JOBAD.util.escapeHTML = function(s){
 /*
 	Resolves a relative url
 	@param url	Url to resolve
+	@param base	Optional. Base url to use. 
+	@param isDir	Optional. If set to true, will return a directory name ending with a slash
 */
-JOBAD.util.resolve = function(url){
+JOBAD.util.resolve = function(url, base, isDir){
+
+	var resolveWithBase = false; 
+	var baseUrl, oldBase, newBase; 
+
+	if(typeof base == "string"){
+		resolveWithBase = true; 
+		baseUrl = JOBAD.util.resolve(base, true); 
+		oldBase = JOBAD.refs.$("base").detach(); 
+		newBase = JOBAD.refs.$("<base>").attr("href", baseUrl).appendTo("head"); 
+	}
+	
     var el= document.createElement('div');
     el.innerHTML= '<a href="'+JOBAD.util.escapeHTML(url)+'">x</a>';
-    return el.firstChild.href;
+    var url = el.firstChild.href;
+   
+    if(resolveWithBase){
+    	newBase.remove(); 
+    	oldBase.appendTo("head"); 
+	}
+
+	if( (base === true || isDir === true ) && url[url.length - 1] != "/"){url = url + "/"; }
+    return url; 
+}
+/*
+	Adds an event listener to a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	event Event to register trigger for. 
+	@param	handler	Handler to add
+	@returns an id for the added handler. 
+*/
+JOBAD.util.on = function(query, event, handler){
+	var query = JOBAD.refs.$(query);
+	var id = JOBAD.util.UID(); 
+	var handler = JOBAD.util.forceFunction(handler, function(){});
+	handler = JOBAD.util.argSlice(handler, 1); 
+
+	query.on(event+".core."+id, function(ev){
+		var result = JOBAD.util.forceArray(ev.result);
+
+		result.push(handler.apply(this, arguments));
+
+		return result; 
+	});
+	return event+".core."+id;
+}
+
+/*
+	Adds a one-time event listener to a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	event Event to register trigger for. 
+	@param	handler	Handler to add
+	@returns an id for the added handler. 
+*/
+JOBAD.util.once = function(query, event, handler){
+	var id;
+
+	id = JOBAD.util.on(query, event, function(){
+		var result = handler.apply(this, arguments); 
+		JOBAD.util.off(query, id); 
+	});
+}
+
+/*
+	Removes an event handler from a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	id	Id of handler to remove. 
+*/
+JOBAD.util.off = function(event, id){
+	var query = JOBAD.refs.$(query);
+	query.off(id); 
+}
+
+/*
+	Triggers an event on a query. 
+	@param	query A jQuery element to use as as query. 
+	@param	event Event to trigger. 
+	@param	params	Parameters to give to the event. 
+*/
+JOBAD.util.trigger = function(query, event, params){
+
+	var query = JOBAD.refs.$(query);
+
+	var result; 
+
+	var params = JOBAD.util.forceArray(params).slice(0);
+	params.unshift(event); 
+
+	
+
+	var id = JOBAD.util.UID(); 
+
+	query.on(event+"."+id, function(ev){
+		result = ev.result; 
+	})
+
+	query.trigger.apply(query, params);
+
+	query.off(event+"."+id);
+
+	return result; 
+
 }
 
 
