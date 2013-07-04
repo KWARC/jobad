@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Thu, 04 Jul 2013 14:48:25 +0200
+	built: Thu, 04 Jul 2013 15:41:44 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -4621,7 +4621,7 @@ JOBAD.UI.Sidebar.wrap = function(element, align){
 		}
 	})
 	
-	$(window).on("resize", function(){
+	JOBAD.refs.$(window).on("resize", function(){
 		JOBAD.UI.Sidebar.forceNotificationUpdate();
 	});
 
