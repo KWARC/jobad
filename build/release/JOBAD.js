@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Mon, 08 Jul 2013 13:17:15 +0200
+	built: Wed, 31 Jul 2013 10:39:13 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -106,7 +106,7 @@ var JOBAD = function(element){
 JOBAD.ifaces = []; //JOBAD interfaces
 
 /* JOBAD Version */
-JOBAD.version = "3.1.6"; 
+JOBAD.version = "3.1.7"; 
 
 /*
 	JOBAD.toString
@@ -176,10 +176,9 @@ JOBAD.noConflict = function(){
 }; //No conflict mode
 /* end   <core/JOBAD.core.js> */
 /* start <util/underscore.js> */
-//     Underscore.js 1.4.4
+//     Underscore.js 1.5.1
 //     http://underscorejs.org
-//     (c) 2009-2011 Jeremy Ashkenas, DocumentCloud Inc.
-//     (c) 2011-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Underscore may be freely distributed under the MIT license.
 
 (function() {
@@ -244,7 +243,7 @@ JOBAD.noConflict = function(){
   }
 
   // Current version.
-  _.VERSION = '1.4.4';
+  _.VERSION = '1.5.1';
 
   // Collection Functions
   // --------------------
@@ -602,6 +601,9 @@ JOBAD.noConflict = function(){
 
   // Internal implementation of a recursive `flatten` function.
   var flatten = function(input, shallow, output) {
+    if (shallow && _.every(input, _.isArray)) {
+      return concat.apply(output, input);
+    }
     each(input, function(value) {
       if (_.isArray(value) || _.isArguments(value)) {
         shallow ? push.apply(output, value) : flatten(value, shallow, output);
@@ -670,20 +672,10 @@ JOBAD.noConflict = function(){
   // Zip together multiple lists into a single array -- elements that share
   // an index go together.
   _.zip = function() {
-    return _.unzip(slice.call(arguments));
-  };
-
-  // The inverse operation to `_.zip`. If given an array of pairs it
-  // returns an array of the paired elements split into two left and
-  // right element arrays, if given an array of triples it returns a
-  // three element array and so on. For example, `_.unzip` given
-  // `[['a',1],['b',2],['c',3]]` returns the array
-  // [['a','b','c'],[1,2,3]].
-  _.unzip = function(list) {
-    var length = _.max(_.pluck(list, "length").concat(0));
+    var length = _.max(_.pluck(arguments, "length").concat(0));
     var results = new Array(length);
     for (var i = 0; i < length; i++) {
-      results[i] = _.pluck(list, '' + i);
+      results[i] = _.pluck(arguments, '' + i);
     }
     return results;
   };
@@ -827,19 +819,23 @@ JOBAD.noConflict = function(){
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time.
-  _.throttle = function(func, wait, immediate) {
+  // during a given window of time. Normally, the throttled function will run
+  // as much as it can, without ever going more than once per `wait` duration;
+  // but if you'd like to disable the execution on the leading edge, pass
+  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+  _.throttle = function(func, wait, options) {
     var context, args, result;
     var timeout = null;
     var previous = 0;
+    options || (options = {});
     var later = function() {
-      previous = new Date;
+      previous = options.leading === false ? 0 : new Date;
       timeout = null;
       result = func.apply(context, args);
     };
     return function() {
       var now = new Date;
-      if (!previous && immediate === false) previous = now;
+      if (!previous && options.leading === false) previous = now;
       var remaining = wait - (now - previous);
       context = this;
       args = arguments;
@@ -848,7 +844,7 @@ JOBAD.noConflict = function(){
         timeout = null;
         previous = now;
         result = func.apply(context, args);
-      } else if (!timeout) {
+      } else if (!timeout && options.trailing !== false) {
         timeout = setTimeout(later, remaining);
       }
       return result;
@@ -915,7 +911,6 @@ JOBAD.noConflict = function(){
 
   // Returns a function that will only be executed after being called N times.
   _.after = function(times, func) {
-    if (times <= 0) return func();
     return function() {
       if (--times < 1) {
         return func.apply(this, arguments);
@@ -1069,6 +1064,13 @@ JOBAD.noConflict = function(){
       // unique nested structures.
       if (aStack[length] == a) return bStack[length] == b;
     }
+    // Objects with different constructors are not equivalent, but `Object`s
+    // from different frames are.
+    var aCtor = a.constructor, bCtor = b.constructor;
+    if (aCtor !== bCtor && !(_.isFunction(aCtor) && (aCtor instanceof aCtor) &&
+                             _.isFunction(bCtor) && (bCtor instanceof bCtor))) {
+      return false;
+    }
     // Add the first object to the stack of traversed objects.
     aStack.push(a);
     bStack.push(b);
@@ -1085,13 +1087,6 @@ JOBAD.noConflict = function(){
         }
       }
     } else {
-      // Objects with different constructors are not equivalent, but `Object`s
-      // from different frames are.
-      var aCtor = a.constructor, bCtor = b.constructor;
-      if (aCtor !== bCtor && !(_.isFunction(aCtor) && (aCtor instanceof aCtor) &&
-                               _.isFunction(bCtor) && (bCtor instanceof bCtor))) {
-        return false;
-      }
       // Deep compare objects.
       for (var key in a) {
         if (_.has(a, key)) {
@@ -1484,61 +1479,132 @@ JOBAD.util.UID = function(prefix){
 };
 
 /*
-	Creates a radio button for use with jQuery UI. 
+	Creates a dropdown (<select>) control. 
+	@param values	Values to use. 
+	@param texts	Texts to use. 
+	@param start	Initially selected id. 
+*/
+JOBAD.util.createDropDown = function(values, texts, start){
+	var select = JOBAD.refs.$("<select>"); 
+
+	for(var i=0;i<texts.length;i++){
+		select.append(
+			JOBAD.refs.$("<option>")
+			.attr("value", values[i])
+			.text(texts[i])
+		);
+	}
+
+	select.find("option").eq((typeof start == "number")?start:0).prop('selected', true); 
+
+	return select; 
+}
+
+/*
+	Creates a radio button for use with Bootsrap
 	@param texts	Texts to use. 
 	@param start	Initial selection
 */
 JOBAD.util.createRadio = function(texts, start){
-	var id = JOBAD.util.UID();
-	
+	var id = JOBAD.util.UID(); //Id for the radio buttons
+	var selfChange = false; 
+
 	if(typeof start !== 'number'){
 		start = 0;
 	}
-	
-	var Labeller = JOBAD.refs.$('<span>');
-	
+
+	var Div = JOBAD.refs.$('<div>').addClass("btn-group");
+	var Div2 = JOBAD.refs.$('<div>').hide(); 
 					
 	for(var i=0;i<texts.length;i++){
-		var nid = JOBAD.util.UID();
-		Labeller.append(
-			JOBAD.refs.$("<input type='radio' name='"+id+"' id='"+nid+"'>"),
-			JOBAD.refs.$("<label>").attr("for", nid).text(texts[i])
-		)
+		Div.append(
+			JOBAD.refs.$("<button>").addClass("btn").text(texts[i])
+		);
+		Div2.append(
+			JOBAD.refs.$("<input type='radio' name='"+id+"' value='"+JOBAD.util.UID()+"'>")
+		);
 	}
+
+
+	var Buttons = Div.find("button"); 
+	var Inputs = Div2.find("input"); 
+
+	Buttons.on("click", function(){
+		var radio = Inputs.eq(Buttons.index(this)); 
+		radio[0].checked = true; 
+		Inputs.change(); 
+	})
+
+	Inputs
+	.change(function(e){
+		Buttons.removeClass("active"); 
+
+		Inputs.each(function(i){
+			var me = JOBAD.refs.$(this); 
+			if(me.is(":checked")){
+				Buttons.eq(i).addClass("active"); 
+			}
+		})
+		e.stopPropagation(); 
+	});
 	
-	Labeller.find("input").eq(start)[0].checked = true;
+	Inputs.eq(start)[0].checked = true;
+	Inputs.change(); 
+
 	
-	return Labeller.buttonset();
+	return JOBAD.refs.$("<div>").append(Div, Div2); 
 };
 
 /*
-	Creates tab data compatible with jQuery UI. 
+	Creates tab data compatible with Bootstrap. 
 	@param names	Texts to use. 
-	@param divs	Divs to use as content
-	@üaram height Maximum tab height
-	@param options Options for tabs. 
+	@param divs	Divs to use as content. 
+	@param config Configuration. Optional. 
+		@param config.tabParams	Params for Tab creation. 
+		@param config.type Type of tabs to use. CSS class. 
+		@param config.select Select Hook. function(tabName, tabDiv) To be called on selection of a div. 
+		@param config.unselect Deselect Hook. function(tabName, tabDiv) Top be called on the deselection of a div. 
 */
-JOBAD.util.createTabs = function(names, divs, options, height){
-	var div = JOBAD.refs.$("<div>");
-	var ul = JOBAD.refs.$("<ul>").appendTo(div);
+JOBAD.util.createTabs = function(names, divs, config){
+	var config = JOBAD.util.defined(config); 
+
+	var options = JOBAD.util.defined(config.tabParams); 
+	var tabtype = (typeof config.type == "string")?config.type:"";
+	var enableHook = (typeof config.select == "function")?config.select:function(){}; 
+	var disableHook = (typeof config.unselect == "function")?config.unselect:function(){}; 
+
+	var ids = []; 
+
+	var div = JOBAD.refs.$("<div>").addClass("tabbable "+tabtype);
+	var ul = JOBAD.refs.$("<ul>").appendTo(div).addClass("nav nav-tabs");
+	var cdiv = JOBAD.refs.$("<div>").addClass("tab-content").appendTo(div);
 	for(var i=0;i<names.length;i++){
 		var id = JOBAD.util.UID();
+		ids.push("#"+id); 
 		ul.append(
-			JOBAD.refs.$("<li>").append(JOBAD.refs.$("<a>").attr("href", "#"+id).text(names[i]))
+			JOBAD.refs.$("<li>").append(JOBAD.refs.$("<a>").attr("data-toggle", "tab").attr("href", "#"+id).text(names[i]))
 		);
 		
-		var ndiv = JOBAD.refs.$("<div>").append(divs[i]).attr("id", id);
-		
-		if(typeof height == 'number'){
-			ndiv.css({
-				"height": height, 
-				"overflow": "auto"
-			});
-		}
-		
-		div.append(ndiv);
+		JOBAD.refs.$("<div>").append(divs[i]).attr("id", id).addClass("tab-pane").appendTo(cdiv);
 	}
-	return div.tabs(options);
+	cdiv.children().eq(0).addClass("active"); 
+
+	JOBAD.refs.$('a[data-toggle="tab"]', ul).on("shown", function(e){
+		if(typeof e.relatedTarget != "undefined"){
+			var relatedTarget = JOBAD.refs.$(e.relatedTarget); 
+			var tabId = ids.indexOf(relatedTarget.attr("href")); 
+
+			disableHook(relatedTarget.text(), JOBAD.refs.$(divs[tabId])); 
+		}
+
+		var Target = JOBAD.refs.$(e.target); 
+		var tabId = ids.indexOf(Target.attr("href")); 
+		enableHook(Target.text(), JOBAD.refs.$(divs[tabId]));
+	}); 
+
+	JOBAD.refs.$('a[data-toggle="tab"]', ul).eq(0).tab("show"); 
+
+	return div; 
 };
 
 /*
@@ -1832,10 +1898,12 @@ JOBAD.util.containsAll = function(container, contained, includeSelf){
 	@param url	Url(s) of script(s) to load. 
 	@param	callback	Callback of script to load. 
 	@param	scope	Scope of callback. 
+	@param preLoadHack. Function to call before laoding a specific file. 
 */
-JOBAD.util.loadExternalJS = function(url, callback, scope){
+JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
 	var TIMEOUT_CONST = 15000; //timeout for bad links
 	var has_called = false; 
+	var preLoadHack = JOBAD.util.forceFunction(preLoadHack, function(){}); 
 
 	var do_call = function(suc){
 		if(has_called){
@@ -1862,7 +1930,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope){
 				JOBAD.util.loadExternalJS(url[i], function(urls, suc){
 					i++;
 					next(urls, suc);
-				});
+				}, scope, preLoadHack);
 			}
 		}
 
@@ -1895,12 +1963,130 @@ JOBAD.util.loadExternalJS = function(url, callback, scope){
 	    }
 
 	    script.src = JOBAD.util.resolve(url);
+	    preLoadHack(url); 
 	    document.getElementsByTagName("head")[0].appendChild(script);
 
 	    window.setTimeout(function(){
 	    	do_call(false);
 	    }, TIMEOUT_CONST);
 	    return 1;
+	}
+    
+}
+
+/*
+	Loads an external css file. 
+	@param url	Url(s) of css to load. 
+	@param	callback	Callback of css to load. 
+	@param	scope	Scope of callback. 
+	@param preLoadHack. Function to call before laoding a specific file. 
+*/
+JOBAD.util.loadExternalCSS = function(url, callback, scope, preLoadHack){
+	var TIMEOUT_CONST = 15000; //timeout for bad links
+	var has_called = false; 
+	var interval_id, timeout_id; 
+	var preLoadHack = JOBAD.util.forceFunction(preLoadHack, function(){}); 
+
+	var do_call = function(suc){
+		if(has_called){
+			return;
+		}
+		has_called = true;
+		try{
+
+		} catch(e){
+			clearInterval(interval_id); 
+			clearTimeout(timeout_id);
+		}
+
+		var func = JOBAD.util.forceFunction(callback, function(){});
+		var scope = (typeof scope == "undefined")?window:scope;
+
+		func.call(scope, url, suc);
+		
+	}
+
+	
+	if(JOBAD.util.isArray(url)){
+		var i=0;
+		var next = function(urls, suc){
+			if(i>=url.length || !suc){
+				window.setTimeout(function(){
+					do_call(suc);
+				}, 0);
+			} else {
+				JOBAD.util.loadExternalCSS(url[i], function(urls, suc){
+					i++;
+					next(urls, suc);
+				}, scope, preLoadHack);
+			}
+		}
+
+		window.setTimeout(function(){
+			next("", true);
+		}, 0);
+
+		return url.length;
+	} else {
+		//adapted from: http://stackoverflow.com/questions/5537622/dynamically-loading-css-file-using-javascript-with-callback-without-jquery
+		var head = document.getElementsByTagName('head')[0]; 
+		var link = document.createElement('link');
+		link.setAttribute( 'href', url );
+		link.setAttribute( 'rel', 'stylesheet' );
+		link.setAttribute( 'type', 'text/css' ); 
+		var sheet, cssRules;
+
+		interval_id = setInterval(function(){
+			try{
+				if("sheet" in link){
+					if(link.sheet && link.sheet.cssRules.length){
+						clearInterval(interval_id); 
+						clearTimeout(timeout_id); 
+						do_call(true); 
+					}
+				} else {
+					if(link.styleSheet && link.styleSheet.rules.length > 0){
+						clearInterval(interval_id); 
+						clearTimeout(timeout_id); 
+						do_call(true); 
+					}
+				}
+
+				if(link[sheet] && link[sheet][cssRules].length > 0){
+					clearInterval(interval_id); 
+					clearTimeout(timeout_id); 
+
+					do_call(true); 
+				}
+			}catch(e){}
+		}, 1000);
+
+		timeout_id = setTimeout(function(){
+			clearInterval(interval_id); 
+			do_call(false);
+		}, TIMEOUT_CONST);
+
+
+		link.onload = function () {
+			do_call(true); 
+		}
+		if (link.addEventListener) {
+			link.addEventListener('load', function() {
+			do_call(true); 
+			}, false);
+		}
+
+	  link.onreadystatechange = function() {
+	    var state = link.readyState;
+	    if (state === 'loaded' || state === 'complete') {
+	      link.onreadystatechange = null;
+	      do_call(true); 
+	    }
+	  };
+
+	  	preLoadHack(url);
+		head.appendChild(link); 
+		return 1;
 	}
     
 }
@@ -1943,6 +2129,8 @@ JOBAD.util.resolve = function(url, base, isDir){
 	if( (base === true || isDir === true ) && url[url.length - 1] != "/"){url = url + "/"; }
     return url; 
 }
+
+
 /*
 	Adds an event listener to a query. 
 	@param	query A jQuery element to use as as query. 
@@ -2021,6 +2209,12 @@ JOBAD.util.trigger = function(query, event, params){
 
 	return result; 
 
+}
+
+JOBAD.util.getCurrentOrigin = function(){
+	var scripts = document.getElementsByTagName('script');
+	var thisScript = scripts[scripts.length-1];
+	return thisScript.src; 
 }
 
 
@@ -2223,7 +2417,8 @@ JOBAD.repo.buildPage = function(element, repo, callback){
 					JOBAD.refs.$("<th>").text("Homepage"),
 					JOBAD.refs.$("<th>").text("Description"),
 					JOBAD.refs.$("<th>").text("Module Dependencies"),
-					JOBAD.refs.$("<th>").text("External Dependencies")
+					JOBAD.refs.$("<th>").text("External JavaScript Dependencies"),
+					JOBAD.refs.$("<th>").text("External CSS Dependencies")
 				).children("th").click(function(){
 					JOBAD.UI.sortTableBy(this, "rotate", function(i){
 						this.parent().find("span").remove(); 
@@ -2342,13 +2537,34 @@ JOBAD.repo.buildPage = function(element, repo, callback){
 						}
 					}
 
-					var edeps = info.externals;
+					var edeps = info.externals.js;
 
 					if(edeps.length == 0){
 						JOBAD.refs.$("<td></td>").text("(None)").appendTo(row);
 					} else {
 						var cell = JOBAD.refs.$("<td></td>").appendTo(row); 
-						for(var j=0;j<edps.length;j++){
+						for(var j=0;j<edeps.length;j++){
+							cell.append(
+								"\"", 
+								JOBAD.refs.$("<span>")
+									.addClass("JOBAD JOBAD_Repo JOBAD_Repo_External_Dependency")
+									.text(edeps[j]),
+								"\""
+							);
+
+							if(j != edeps.length - 1 ){
+								cell.append(" , "); 
+							}
+						}
+					}
+
+					var edeps = info.externals.css;
+
+					if(edeps.length == 0){
+						JOBAD.refs.$("<td></td>").text("(None)").appendTo(row);
+					} else {
+						var cell = JOBAD.refs.$("<td></td>").appendTo(row); 
+						for(var j=0;j<edeps.length;j++){
 							cell.append(
 								"\"", 
 								JOBAD.refs.$("<span>")
@@ -2529,13 +2745,21 @@ JOBAD.repo.loadFrom = function(repo, modules, callback){
 			return JOBAD_Repo_Urls[repo][mod]; 
 		});
 
+		JOBAD.repo.__currentFile = undefined; 
+		JOBAD.repo.__currentLoad = m2; 
+		JOBAD.repo.__currentRepo = repo; 
 
 		JOBAD.util.loadExternalJS(m2, function(suc){
+			delete JOBAD.repo.__currentFile; 
+			delete JOBAD.repo.__currentLoad; 
+			delete JOBAD.repo.__currentRepo;  
 			if(suc){
 				callback(true)
 			} else {
 				callback(false, "Failed to load one or more Modules: Timeout")
 			}
+		}, undefined, function(u){
+			JOBAD.repo.__currentFile = u; 
 		});
 	});
 }
@@ -2804,7 +3028,6 @@ JOBAD.ifaces.push(function(me, args){
 		config = JOBAD.util.defined(config);
 		config = (typeof config == "function")?{"ready": config}:config; 
 		config = (typeof config == "booelan")?{"activate": config}:config; 
-
 
 		var ready = JOBAD.util.forceFunction(config.ready, function(){});
 		var load = JOBAD.util.forceFunction(config.load, function(){});
@@ -3094,6 +3317,7 @@ JOBAD.modules.cleanProperties = ["init", "activate", "deactivate", "globalinit",
 
 var moduleList = {};
 var moduleStorage = {};
+var moduleOrigins = {}; 
 
 /* 
 	Registers a new JOBAD module with JOBAD. 
@@ -3102,6 +3326,7 @@ var moduleStorage = {};
 */
 JOBAD.modules.register = function(ModuleObject){
 	var moduleObject = JOBAD.modules.createProperModuleObject(ModuleObject);
+
 	if(!moduleObject){
 		return false;	
 	}
@@ -3109,10 +3334,36 @@ JOBAD.modules.register = function(ModuleObject){
 	if(JOBAD.modules.available(identifier)){
 		return false;	
 	} else {
+		//set the origins
+		if(JOBAD.repo.__currentFile){
+			moduleOrigins[identifier] = [JOBAD.repo.__currentFile, JOBAD.repo.__currentLoad, JOBAD.repo.__currentRepo]; //The current origin
+		} else {
+			moduleOrigins[identifier] = [JOBAD.util.getCurrentOrigin()];
+		}
+
+		//resolving all the relative urls
+		if(moduleObject.info.url){
+			moduleObject.info.url = JOBAD.modules.resolveModuleResourceURL(identifier, moduleObject.info.url); 
+		}
+
+		moduleObject.info.externals.js = JOBAD.util.map(moduleObject.info.externals.js, function(e){
+			return JOBAD.modules.resolveModuleResourceURL(identifier, e); 
+		});
+
+		moduleObject.info.externals.css = JOBAD.util.map(moduleObject.info.externals.css, function(e){
+			return JOBAD.modules.resolveModuleResourceURL(identifier, e); 
+		});
+
 		moduleList[identifier] = moduleObject;
+
+
 		moduleStorage[identifier] = {};
+		
+		
 		return true;
 	}
+
+
 };
 
 /* 
@@ -3159,12 +3410,26 @@ JOBAD.modules.createProperModuleObject = function(ModuleObject){
 
 		if(info.hasOwnProperty('externals')){
 			if(JOBAD.util.isArray(info["externals"])){
-				properObject.info.externals = info["externals"];
+				properObject.info.externals = {"js": info["externals"], "css": []};
+			} else if(JOBAD.util.isObject(info["externals"])){
+				properObject.info.externals = {}
+				if(info["externals"].hasOwnProperty("css")){
+					if(!JOBAD.util.isArray(info["externals"].css)){
+						return false; 
+					}
+					properObject.info.externals.css = info["externals"].css; 
+				}
+				if(info["externals"].hasOwnProperty("js")){
+					if(!JOBAD.util.isArray(info["externals"].js)){
+						return false; 
+					}
+					properObject.info.externals.js = info["externals"].js; 
+				}
 			} else {
 				return false;
 			}
 		} else {
-			properObject.info.externals = [];
+			properObject.info.externals = {"js":[], "css": []};
 		}
 
 		if(info.hasOwnProperty('async')){
@@ -3292,6 +3557,33 @@ JOBAD.modules.available = function(name, checkDeps){
 		return selfAvailable;
 	}
 };
+
+/*
+	Gets the origin of a module. 
+	@param	name Name of module to get origin from. 
+	@param  what what kind of orgin to get. (Optional, "file" or "group", otehrwise "repo"))
+*/
+JOBAD.modules.getOrigin = function(name, what){
+	var origin = moduleOrigins[name]; 
+	if(JOBAD.util.equalsIgnoreCase(what, "file")){
+		return origin[0]; 
+	} else if(JOBAD.util.equalsIgnoreCase(what, "group")){
+		return origin[1] || [origin[0]]; 
+	} else {
+		return origin[2]; 
+	}
+}
+
+/*
+	Resolves a resource URL for the specefied module. 
+	@param	mod	Name of module to resolve url for. 
+	@param	url Url to resolve. 
+*/
+JOBAD.modules.resolveModuleResourceURL = function(mod, url){
+	var origin = JOBAD.modules.getOrigin(mod, "file");
+	origin = origin.substring(0, origin.lastIndexOf('/'));
+	return JOBAD.util.resolve(url, origin); 
+}
 
 /* 
 	Returns an array of dependencies of name including name in such an order, thet they can all be loaded without unresolved dependencies. 
@@ -3471,6 +3763,13 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 		return JOBADInstance;	
 	};
 
+	/*
+		Gets the origin of this module. 
+	*/
+	this.getOrigin = function(what){
+		return JOBAD.modules.getOrigin(name, what); 
+	}
+
 
 	this.isActive = function(){
 		return JOBADInstance.modules.isActive(this.info().identifier);
@@ -3535,7 +3834,7 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 
 	var do_next = function(){
 		ServiceObject.init.apply(me, params); 
-		next(true);
+		next.call(me, true);
 	};
 
 	if(!moduleStorage[name]["init"]){
@@ -3549,14 +3848,23 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 			}
 		}
 
-		JOBAD.util.loadExternalJS(ServiceObject.info.externals, function(urls, suc){
+		JOBAD.util.loadExternalCSS(ServiceObject.info.externals.css, function(urls, suc){
 			if(!suc){
-				next(false, "Can't load external dependencies: Timeout. "); 
+				next(false, "Can't load external CSS dependencies: Timeout. "); 
 			} else {
-				ServiceObject.globalinit.call(limited, do_next);
+				JOBAD.util.loadExternalJS(ServiceObject.info.externals.js, function(urls, suc){
+					if(!suc){
+						next(false, "Can't load external JavaScript dependencies: Timeout. "); 
+					} else {
+						ServiceObject.globalinit.call(limited, do_next);
+					}
+					
+				});
 			}
 			
 		});
+
+		
 	} else {
 		do_next();
 	}
@@ -4255,7 +4563,9 @@ JOBAD.UI.ContextMenu.buildContextMenuList = function(items, element, orgElement,
 					JOBAD.refs.$(document).trigger('JOBAD.UI.ContextMenu.unbind');
 					callback(element, orgElement);
 					cb(element, orgElement);
-				});		
+				});	
+			} else if(item[1] === false){
+				$a.parent().addClass("ui-state-disabled"); 
 			} else {
 				$li.append(JOBAD.UI.ContextMenu.buildContextMenuList(item[1], element, orgElement, cb));
 			}
@@ -4343,8 +4653,10 @@ JOBAD.UI.ContextMenu.buildPieMenuList = function(items, element, orgElement, cal
 					callback(element, orgElement);
 					cb(element, orgElement);
 				});		
+			} else if(item[1] === false){
+				$item.addClass("JOBAD_ContextMenu_Radial_Disabled");
 			} else {
-				$item.data("JOBAD.UI.ContextMenu.subMenuData", item[1])
+				$item.data("JOBAD.UI.ContextMenu.subMenuData", item[1]);
 			}
 
 			$item.hover(function(){
@@ -4375,7 +4687,7 @@ JOBAD.UI.ContextMenu.generateMenuList = function(menu){
 			var key = menu[i][0];
 			var val = menu[i][1];
 			var icon = (typeof menu[i][2] == 'undefined')?DEFAULT_ICON:menu[i][2];
-			if(typeof val == 'function'){
+			if(typeof val == 'function' || val === false){
 				res.push([key, val, icon]);		
 			} else {
 				res.push([key, JOBAD.UI.ContextMenu.generateMenuList(val), icon]);
@@ -4385,11 +4697,11 @@ JOBAD.UI.ContextMenu.generateMenuList = function(menu){
 		for(var key in menu){
 			if(menu.hasOwnProperty(key)){
 				var val = menu[key];
-				if(typeof val == 'function'){
+				if(typeof val == 'function' || val === false){
 					res.push([key, val, DEFAULT_ICON]);	
 				} else if(JOBAD.util.isArray(val)){
 					if(typeof val[1] == 'string'){ //we have a string there => we have an icon
-						if(typeof val[0] == 'function'){
+						if(typeof val[0] == 'function' || val[0] === false){
 							res.push([key, val[0], val[1]]);
 						} else {
 							res.push([key, JOBAD.UI.ContextMenu.generateMenuList(val[0]), val[1]]);
@@ -5239,6 +5551,10 @@ JOBAD.UI.Folding.enable = function(e, c){
         })
         .on("JOBAD.UI.Folding.fold", function(event){
             event.stopPropagation();
+            if(wrapper.data("JOBAD.UI.Folding.state")){
+                //we are already folded
+                return; 
+            }
             //fold me
             wrapper.data("JOBAD.UI.Folding.state", true);
             //trigger event
@@ -5248,6 +5564,12 @@ JOBAD.UI.Folding.enable = function(e, c){
         })
         .on("JOBAD.UI.Folding.unfold", function(event){
             event.stopPropagation();
+
+            if(!wrapper.data("JOBAD.UI.Folding.state")){
+                //we are already unfolded
+                return; 
+            }
+
             //unfold me
             wrapper.data("JOBAD.UI.Folding.state", false);
             //trigger event
@@ -5509,8 +5831,6 @@ JOBAD.UI.Folding.show = function(element){
             var me = JOBAD.refs.$(this);
             return me.data("JOBAD.UI.Folding.enabled")?true:false;
         });
-
-        window.folded = folded;
 
         if(folded.length > 0){
             JOBAD.UI.Folding.unfold(folded.get().reverse()); //unfold
@@ -6329,6 +6649,7 @@ for(var key in JOBAD.events){
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 //StorageBackend
 
 JOBAD.storageBackend = {
@@ -6980,393 +7301,7 @@ JOBAD.ifaces.push(function(JOBADRootElement, params){
 	};
 	
 	this.Config = JOBAD.util.bindEverything(this.Config, this);
-})
-
-/*
-	Config Manager UI
-*/
-
-JOBAD.ifaces.push(function(){
-
-	/*
-		build a jQuery config 
-	*/
-	var buildjQueryConfig = function(UserConfig, $config, get_val){
-		for(var key in UserConfig){
-			(function(){
-			
-			var setting = UserConfig[key];
-			var val = get_val(key); // Get current value
-						
-			var item = JOBAD.refs.$("<div class='JOBAD_CONFIG_SETTTING'>")
-			.data({
-					"JOBAD.config.setting.key": key,
-					"JOBAD.config.setting.val": val
-			}).appendTo($config);
-			
-			var type = setting[0];
-			var validator = setting[1];
-			var meta = setting[3];
-			switch(type){
-				case "string":
-						item.append(
-							JOBAD.refs.$("<span>").text(meta[0]+": ").addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigTitle"),
-							JOBAD.refs.$("<input type='text'>").addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_validateOK").val(val).keyup(function(){
-								var val = JOBAD.refs.$(this).val();
-								if(validator(val)){
-									item.data("JOBAD.config.setting.val", val);
-									JOBAD.refs.$(this).removeClass("JOBAD_ConfigUI_validateFail").addClass("JOBAD_ConfigUI_validateOK");
-								} else {
-									JOBAD.refs.$(this).addClass("JOBAD_ConfigUI_validateFail").removeClass("JOBAD_ConfigUI_validateOK");
-								}
-								
-							}),
-							"<br>", 
-							JOBAD.refs.$("<span>").text(meta[1]).addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigDesc")
-						);
-					break;
-				case "bool":
-	
-					var radio = JOBAD.util.createRadio(["True", "False"], val?0:1);	
-	
-					item.append(
-						JOBAD.refs.$("<span>").text(meta[0]+": ").addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigTitle"),
-						radio,
-						"<br>", 
-						JOBAD.refs.$("<span>").text(meta[1]).addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigDesc")
-					);
-					
-					radio.find("input").change(function(){
-						item.data("JOBAD.config.setting.val", radio.find("input").eq(0).is(":checked"));
-					});
-					
-					break;
-				case "integer":
-				
-					var update = function(val){
-						if(validator(val) && val % 1 == 0){
-							item.data("JOBAD.config.setting.val", val);
-							spinner.removeClass("JOBAD_ConfigUI_validateFail").addClass("JOBAD_ConfigUI_validateOK");
-							return true;
-						} else {
-							spinner.addClass("JOBAD_ConfigUI_validateFail").removeClass("JOBAD_ConfigUI_validateOK");
-							return false;
-						}
-					}
-				
-					var id = JOBAD.util.UID();
-					
-					var spinner = JOBAD.refs.$("<input>")
-					.attr("id", id)
-					.val(val)
-					.addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_validateOK")
-					.keyup(function(){
-						var val = JOBAD.refs.$(this).val();
-						if(val != ""){
-							update(parseFloat(val));
-						}
-						
-					})
-					.spinner({
-						spin: function(ev, ui){
-							update(ui.value);
-						}
-					});
-					
-					item.append(
-						JOBAD.refs.$("<label for='"+id+"'>").text(meta[0]+": ").addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigTitle"),
-						spinner,
-						"<br>", 
-						JOBAD.refs.$("<span>").text(meta[1]).addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigDesc")				
-					);
-
-					break;
-				case "number":
-					var update = function(val){
-						if(validator(val)){
-							item.data("JOBAD.config.setting.val", val);
-							spinner.removeClass("JOBAD_ConfigUI_validateFail").addClass("JOBAD_ConfigUI_validateOK");
-							return true;
-						} else {
-							spinner.addClass("JOBAD_ConfigUI_validateFail").removeClass("JOBAD_ConfigUI_validateOK");
-							return false;
-						}
-					}
-				
-					var id = JOBAD.util.UID();
-					
-					var spinner = JOBAD.refs.$("<input>")
-					.attr("id", id)
-					.val(val)
-					.addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_validateOK")
-					.keyup(function(){
-						var val = JOBAD.refs.$(this).val();
-						if(val != ""){
-							update(parseFloat(val));
-						}
-					});
-					
-					item.append(
-						JOBAD.refs.$("<label for='"+id+"'>").text(meta[0]+": ").addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigTitle"),
-						spinner,
-						"<br>", 
-						JOBAD.refs.$("<span>").text(meta[1]).addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigDesc")				
-					);
-
-					break;
-				case "list":
-					var values = setting[4]; 
-					var meta_data = meta.slice(1)
-					
-					var $select = JOBAD.refs.$("<select>");
-					
-					for(var i=0;i<values.length;i++){
-						$select.append(
-							JOBAD.refs.$("<option>").attr("value", JSON.stringify(values[i])).text(meta_data[i])
-						)
-					}
-					
-					$select
-					.val(JSON.stringify(val))
-					.change(function(){
-						item.data("JOBAD.config.setting.val", JSON.parse(JOBAD.refs.$(this).val()));
-					});
-					
-					item.append(
-						JOBAD.refs.$("<span>").text(meta[0]+": ").addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_MetaConfigTitle"),
-						$select,
-						"<br>"
-					);
-					
-					break;
-				case "none":
-					break;
-				default:
-					JOBAD.console.warn("Unable to create config dialog: Unknown configuration type '"+type+"' for user setting '"+key+"'");
-					item.remove();
-					break;
-			}
-			
-			})();
-			
-		}
-	};
-
-
-	this.showConfigUI = function(){
-	
-		var me = this;
-	
-		var $Div = JOBAD.refs.$("<div>")
-		.on("mousemove", JOBAD.UI.hover.disable);
-		
-		$Div.attr("title", "JOBAD Configuration Utility");
-
-		var mods = this.modules.getIdentifiers();
-
-		//create the table
-		
-		var $table = JOBAD.refs.$("<table>")
-		.addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_tablemain")
-		.append(
-			JOBAD.refs.$("<colgroup>").append(
-				JOBAD.refs.$("<col>").css("width", "10%"), 
-				JOBAD.refs.$("<col>").css("width", "90%")
-			)
-		);
-		
-		var len = mods.length;		
-
-		var $displayer = JOBAD.refs.$("<td>").addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_infobox").attr("rowspan", len+1);
-
-		var showMain = function(){
-			var $config = JOBAD.refs.$("<div>");
-			buildjQueryConfig(me.Config.getTypes(), $config, function(key){return me.Config.get(key);})
-		
-		
-			//remove restricted items
-			var restricted_items = me.Config.get("restricted_user_config");
-			$config.find("div.JOBAD_CONFIG_SETTTING").each(function(i, e){
-					var e = JOBAD.refs.$(e);
-					if(JOBAD.util.indexOf(restricted_items, e.data("JOBAD.config.setting.key")) != -1){
-						e.remove();
-					}
-			});
-		
-			$displayer
-			.trigger("JOBAD.modInfoClose")	
-			.html("")
-			.append(
-				JOBAD.util.createTabs(
-					["About JOBAD", "Config", "GPL License", "jQuery", "jQuery UI", "Underscore"], 
-					[
-						JOBAD.refs.$("<div>").append(
-							JOBAD.refs.$("<span>").text("JOBAD Core Version "+JOBAD.version),
-							JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("jobad_license"))
-						),
-						$config,
-						JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("gpl_v3_text")),
-						JOBAD.refs.$("<div>").append(
-							JOBAD.refs.$("<span>").text("jQuery Version "+JOBAD.refs.$.fn.jquery),
-							JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("jquery_license"))
-						),
-						JOBAD.refs.$("<div>").append(
-							JOBAD.refs.$("<span>").text("jQuery UI Version "+JOBAD.refs.$.ui.version),
-							JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("jqueryui_license"))
-						),
-						JOBAD.refs.$("<div>").append(
-							JOBAD.refs.$("<span>").text("Underscore Version "+JOBAD.util.VERSION),
-							JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("underscore_license"))
-						)
-					], {}, 400
-				).addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_subtabs")
-			)
-			.one('JOBAD.modInfoClose', function(){
-				$config.find("div.JOBAD_CONFIG_SETTTING").each(function(i, e){
-					var e = JOBAD.refs.$(e);
-					me.Config.set(e.data("JOBAD.config.setting.key"), e.data("JOBAD.config.setting.val"));
-				});
-				
-				me.Sidebar.redraw(); //update the sidebar
-			});
-			return;
-		};
-
-		var showInfoAbout = function(mod){
-			//grab mod info
-			var info = mod.info();
-		
-			//Generate Info Tab
-			var $info = JOBAD.refs.$("<div>");
-			
-			//Title and Identifier
-			$info.append(
-				JOBAD.refs.$("<span>").text(info.title).css("font-weight", "bold"),
-				" [",
-				JOBAD.refs.$("<span>").text(info.identifier),
-				"] <br />"
-			);
-			
-			//Version
-			if(typeof info.version == 'string' && info.version != ""){
-				$info.append(
-					"Version ",
-					JOBAD.refs.$("<span>").css("text-decoration", "italic").text(info.version)
-				);
-			}
-			
-			//On / Off Switch			
-			var OnOff = JOBAD.util.createRadio(["Off", "On"], mod.isActive()?1:0);
-			
-			OnOff.find("input").change(function(){
-				if(OnOff.find("input").eq(1).is(":checked")){
-					if(!mod.isActive()){
-						mod.activate();
-					}
-				} else {
-					if(mod.isActive()){
-						mod.deactivate();
-					}
-				}
-			});
-			
-			$info.append(
-				"by ",
-				JOBAD.refs.$("<span>").css("text-decoration", "italic").text(info.author),
-				"<br />",
-				OnOff,
-				"<br />")
-			if(typeof info.url == "string"){
-				$info.append(
-					JOBAD.refs.$("<a>").text(info.url).attr("href", info.url).attr("target", "_blank").button(),
-					"<br />"
-				);
-			}
-			$info.append(
-				JOBAD.refs.$("<span>").text(info.description),
-				"<br />",
-				JOBAD.refs.$("<span>").text(JOBAD.UserConfig.getMessage(info.identifier))
-			);
-			
-			//Config
-			var $config = JOBAD.refs.$("<div>");
-			
-			//Build Config Stuff	
-			var UserConfig = mod.UserConfig.getTypes();
-			
-			buildjQueryConfig(UserConfig, $config, function(key){
-				return mod.UserConfig.get(key);
-			});
-			
-			$displayer
-			.trigger("JOBAD.modInfoClose")
-			.html("")		
-			
-			
-			.append(
-				($config.children().length > 0)?
-					JOBAD.util.createTabs(["About", "Config"], [$info, $config], {}, 400).addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_subtabs")
-				:
-					JOBAD.util.createTabs(["About"], [$info], {}, 400).addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_subtabs")
-			)
-			.one('JOBAD.modInfoClose', function(){
-				//Store all the settings
-				$config.find("div.JOBAD_CONFIG_SETTTING").each(function(i, e){
-					var e = JOBAD.refs.$(e);
-					mod.UserConfig.set(e.data("JOBAD.config.setting.key"), e.data("JOBAD.config.setting.val"));
-				});
-			});
-			
-			return;
-		};
-
-
-		JOBAD.refs.$("<tr>").append(
-			JOBAD.refs.$("<td>").text("JOBAD Core").click(showMain),
-			$displayer
-		).appendTo($table);
-
-		for(var i=0;i<len;i++){
-			var mod = this.modules.getLoadedModule(mods[i]);
-			JOBAD.refs.$("<tr>").append(
-				JOBAD.refs.$("<td>").text(mod.info().title)
-				.data("JOBAD.module", mod)
-				.click(function(){
-					showInfoAbout(JOBAD.refs.$(this).data("JOBAD.module"));
-				})
-			)
-			.addClass("JOBAD JOBAD_ConfigUI JOBAD_ConfigUI_ModEntry")
-			.appendTo($table);					
-		}
-		
-		$Div.append($table);
-		
-
-
-		$Div.dialog({
-			width: 700,
-			height: 600,
-			modal: true,
-			close: function(){
-				$displayer
-				.trigger("JOBAD.modInfoClose")
-			},
-			autoOpen: false
-		});	
-
-		showMain();
-
-		$Div
-		.dialog("open")
-		.parent().css({
-			"position": "fixed",
-			"top": Math.max(0, ((window.innerHeight - $Div.outerHeight()) / 2)),
-			"left": Math.max(0, ((window.innerWidth - $Div.outerWidth()) / 2))
-		}).end();
-	}
-});
-
-/* end   <JOBAD.config.js> */
+});/* end   <JOBAD.config.js> */
 /* start <JOBAD.wrap.js> */
 /*
 	JOBAD.wrap.js

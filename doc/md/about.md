@@ -15,7 +15,25 @@ It is known not to be compatible with:
 The official JOBAD repository is located at [https://github.com/KWARC/jobad](https://github.com/KWARC/jobad). 
 
 ## Changelog
-### Version 3.1.6 (Stable)
+### Version 3.1.7 (Stable)
+* refactored the build system, now easy with `make`
+	* also compressing all required libraries in a js and css file
+	* building will automatically pull all dependencies (npm & pip needed)
+* added bootstrap compatibility via jQuery Bootstrap
+* updated the config dialog
+	* ported the config dialog to bootstrap
+	* moved to the module `jobad.config`
+* added `moduleInstance.getOrigin()` to get the origin of a module. 
+	* all urls on modules are now resolved relative to the module. 
+* added `JOBAD.util.loadExternalCSS`
+* added CSS external dependencies for modules
+* added disabled menu items (use `false` instead of a callback)
+* better default handling of sidebar icons. 
+* improved styles
+* updated underscore to version 1.5.1
+
+
+### Version 3.1.6
 * improved repository override urls
 * removed build submodules, made them static
 * fixed 'failed to load module: undefined' error messages
@@ -86,7 +104,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 	You should have received a copy of the GNU General Public License
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 
-This project includes Underscore 1.4.4, which is licensed under [MIT License](https://github.com/documentcloud/underscore/blob/master/LICENSE). 
+This project includes Underscore 1.5.1, which is licensed under [MIT License](https://github.com/documentcloud/underscore/blob/master/LICENSE). 
 
 ## See also
 

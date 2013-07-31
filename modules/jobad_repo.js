@@ -35,7 +35,8 @@ JOBAD.repo.config({
 			"test.hover", 
 			"test.menu1", 
 			"test.menu2", 
-			"test.sidebar"
+			"test.sidebar",
+			"test.config"
 	],
 	"at": {
 			/*
@@ -51,10 +52,11 @@ JOBAD.repo.config({
 			"test.hover": "core/test/test.hover.js",
 			"test.menu1": "core/test/test.menu1.js",
 			"test.menu2": "core/test/test.menu2.js",
-			"test.sidebar": "core/test/test.sidebar.js"
+			"test.sidebar": "core/test/test.sidebar.js",
+			"test.config": "core/test/test.config.js"
 			
 	},
-	"versions": ["3.1.5", "3.1.6"], //compatible JOBAD versions
+	"versions": ["3.1.7"], //compatible JOBAD versions
 	"name": "Core JOBAD Modules Repository", //name
 	"description": "JOBAD Modules repository from the Core" //description
 });

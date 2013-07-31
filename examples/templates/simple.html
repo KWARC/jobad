@@ -1,12 +1,12 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>JOBAD v3 (CHAOS) Example Page</title>
 
 		${BUILD_COMMENTS}
 		
-		<script src="${JOBAD_BASE}/js/deps/jquery/jquery-2.0.2.min.js"></script>
-		<script src="${JOBAD_BASE}/js/deps/jquery/jquery-ui-1.10.3.js"></script>
-		<link href="${JOBAD_BASE}/css/jquery-ui.css" rel="stylesheet">
+${JS_LIBS}
+${CSS_LIBS}
 
 		<!-- Include JOBAD -->
 ${JS_INCLUDE}
@@ -14,8 +14,8 @@ ${CSS_INCLUDE}
 
 		<script type="text/javascript">
 			var JOBAD1, JOBAD2;
-
-			JOBAD.repo.loadAllFrom("../../../modules", function(){ //Load all from the repo
+			
+			JOBAD.repo.loadAllFrom("${JOBAD_BASE}/modules", function(){ //Load all from the repo
 				jQuery(function(){	
 					JOBAD1 = new JOBAD(jQuery("#1"));
 					JOBAD2 = new JOBAD(jQuery("#2"));
@@ -45,7 +45,7 @@ ${CSS_INCLUDE}
 			});	
 		</script>
 	</head>
-	<body>
+	<body class="nobs">
 		<h1>JOBAD (Instance 1)</h1>
 		<div id='1'>
 			<div id='3'>

@@ -54,61 +54,132 @@ JOBAD.util.UID = function(prefix){
 };
 
 /*
-	Creates a radio button for use with jQuery UI. 
+	Creates a dropdown (<select>) control. 
+	@param values	Values to use. 
+	@param texts	Texts to use. 
+	@param start	Initially selected id. 
+*/
+JOBAD.util.createDropDown = function(values, texts, start){
+	var select = JOBAD.refs.$("<select>"); 
+
+	for(var i=0;i<texts.length;i++){
+		select.append(
+			JOBAD.refs.$("<option>")
+			.attr("value", values[i])
+			.text(texts[i])
+		);
+	}
+
+	select.find("option").eq((typeof start == "number")?start:0).prop('selected', true); 
+
+	return select; 
+}
+
+/*
+	Creates a radio button for use with Bootsrap
 	@param texts	Texts to use. 
 	@param start	Initial selection
 */
 JOBAD.util.createRadio = function(texts, start){
-	var id = JOBAD.util.UID();
-	
+	var id = JOBAD.util.UID(); //Id for the radio buttons
+	var selfChange = false; 
+
 	if(typeof start !== 'number'){
 		start = 0;
 	}
-	
-	var Labeller = JOBAD.refs.$('<span>');
-	
+
+	var Div = JOBAD.refs.$('<div>').addClass("btn-group");
+	var Div2 = JOBAD.refs.$('<div>').hide(); 
 					
 	for(var i=0;i<texts.length;i++){
-		var nid = JOBAD.util.UID();
-		Labeller.append(
-			JOBAD.refs.$("<input type='radio' name='"+id+"' id='"+nid+"'>"),
-			JOBAD.refs.$("<label>").attr("for", nid).text(texts[i])
-		)
+		Div.append(
+			JOBAD.refs.$("<button>").addClass("btn").text(texts[i])
+		);
+		Div2.append(
+			JOBAD.refs.$("<input type='radio' name='"+id+"' value='"+JOBAD.util.UID()+"'>")
+		);
 	}
+
+
+	var Buttons = Div.find("button"); 
+	var Inputs = Div2.find("input"); 
+
+	Buttons.on("click", function(){
+		var radio = Inputs.eq(Buttons.index(this)); 
+		radio[0].checked = true; 
+		Inputs.change(); 
+	})
+
+	Inputs
+	.change(function(e){
+		Buttons.removeClass("active"); 
+
+		Inputs.each(function(i){
+			var me = JOBAD.refs.$(this); 
+			if(me.is(":checked")){
+				Buttons.eq(i).addClass("active"); 
+			}
+		})
+		e.stopPropagation(); 
+	});
 	
-	Labeller.find("input").eq(start)[0].checked = true;
+	Inputs.eq(start)[0].checked = true;
+	Inputs.change(); 
+
 	
-	return Labeller.buttonset();
+	return JOBAD.refs.$("<div>").append(Div, Div2); 
 };
 
 /*
-	Creates tab data compatible with jQuery UI. 
+	Creates tab data compatible with Bootstrap. 
 	@param names	Texts to use. 
-	@param divs	Divs to use as content
-	@üaram height Maximum tab height
-	@param options Options for tabs. 
+	@param divs	Divs to use as content. 
+	@param config Configuration. Optional. 
+		@param config.tabParams	Params for Tab creation. 
+		@param config.type Type of tabs to use. CSS class. 
+		@param config.select Select Hook. function(tabName, tabDiv) To be called on selection of a div. 
+		@param config.unselect Deselect Hook. function(tabName, tabDiv) Top be called on the deselection of a div. 
 */
-JOBAD.util.createTabs = function(names, divs, options, height){
-	var div = JOBAD.refs.$("<div>");
-	var ul = JOBAD.refs.$("<ul>").appendTo(div);
+JOBAD.util.createTabs = function(names, divs, config){
+	var config = JOBAD.util.defined(config); 
+
+	var options = JOBAD.util.defined(config.tabParams); 
+	var tabtype = (typeof config.type == "string")?config.type:"";
+	var enableHook = (typeof config.select == "function")?config.select:function(){}; 
+	var disableHook = (typeof config.unselect == "function")?config.unselect:function(){}; 
+
+	var ids = []; 
+
+	var div = JOBAD.refs.$("<div>").addClass("tabbable "+tabtype);
+	var ul = JOBAD.refs.$("<ul>").appendTo(div).addClass("nav nav-tabs");
+	var cdiv = JOBAD.refs.$("<div>").addClass("tab-content").appendTo(div);
 	for(var i=0;i<names.length;i++){
 		var id = JOBAD.util.UID();
+		ids.push("#"+id); 
 		ul.append(
-			JOBAD.refs.$("<li>").append(JOBAD.refs.$("<a>").attr("href", "#"+id).text(names[i]))
+			JOBAD.refs.$("<li>").append(JOBAD.refs.$("<a>").attr("data-toggle", "tab").attr("href", "#"+id).text(names[i]))
 		);
 		
-		var ndiv = JOBAD.refs.$("<div>").append(divs[i]).attr("id", id);
-		
-		if(typeof height == 'number'){
-			ndiv.css({
-				"height": height, 
-				"overflow": "auto"
-			});
-		}
-		
-		div.append(ndiv);
+		JOBAD.refs.$("<div>").append(divs[i]).attr("id", id).addClass("tab-pane").appendTo(cdiv);
 	}
-	return div.tabs(options);
+	cdiv.children().eq(0).addClass("active"); 
+
+	JOBAD.refs.$('a[data-toggle="tab"]', ul).on("shown", function(e){
+		if(typeof e.relatedTarget != "undefined"){
+			var relatedTarget = JOBAD.refs.$(e.relatedTarget); 
+			var tabId = ids.indexOf(relatedTarget.attr("href")); 
+
+			disableHook(relatedTarget.text(), JOBAD.refs.$(divs[tabId])); 
+		}
+
+		var Target = JOBAD.refs.$(e.target); 
+		var tabId = ids.indexOf(Target.attr("href")); 
+		enableHook(Target.text(), JOBAD.refs.$(divs[tabId]));
+	}); 
+
+	JOBAD.refs.$('a[data-toggle="tab"]', ul).eq(0).tab("show"); 
+
+	return div; 
 };
 
 /*
@@ -402,10 +473,12 @@ JOBAD.util.containsAll = function(container, contained, includeSelf){
 	@param url	Url(s) of script(s) to load. 
 	@param	callback	Callback of script to load. 
 	@param	scope	Scope of callback. 
+	@param preLoadHack. Function to call before laoding a specific file. 
 */
-JOBAD.util.loadExternalJS = function(url, callback, scope){
+JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
 	var TIMEOUT_CONST = 15000; //timeout for bad links
 	var has_called = false; 
+	var preLoadHack = JOBAD.util.forceFunction(preLoadHack, function(){}); 
 
 	var do_call = function(suc){
 		if(has_called){
@@ -432,7 +505,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope){
 				JOBAD.util.loadExternalJS(url[i], function(urls, suc){
 					i++;
 					next(urls, suc);
-				});
+				}, scope, preLoadHack);
 			}
 		}
 
@@ -465,12 +538,130 @@ JOBAD.util.loadExternalJS = function(url, callback, scope){
 	    }
 
 	    script.src = JOBAD.util.resolve(url);
+	    preLoadHack(url); 
 	    document.getElementsByTagName("head")[0].appendChild(script);
 
 	    window.setTimeout(function(){
 	    	do_call(false);
 	    }, TIMEOUT_CONST);
 	    return 1;
+	}
+    
+}
+
+/*
+	Loads an external css file. 
+	@param url	Url(s) of css to load. 
+	@param	callback	Callback of css to load. 
+	@param	scope	Scope of callback. 
+	@param preLoadHack. Function to call before laoding a specific file. 
+*/
+JOBAD.util.loadExternalCSS = function(url, callback, scope, preLoadHack){
+	var TIMEOUT_CONST = 15000; //timeout for bad links
+	var has_called = false; 
+	var interval_id, timeout_id; 
+	var preLoadHack = JOBAD.util.forceFunction(preLoadHack, function(){}); 
+
+	var do_call = function(suc){
+		if(has_called){
+			return;
+		}
+		has_called = true;
+		try{
+
+		} catch(e){
+			clearInterval(interval_id); 
+			clearTimeout(timeout_id);
+		}
+
+		var func = JOBAD.util.forceFunction(callback, function(){});
+		var scope = (typeof scope == "undefined")?window:scope;
+
+		func.call(scope, url, suc);
+		
+	}
+
+	
+	if(JOBAD.util.isArray(url)){
+		var i=0;
+		var next = function(urls, suc){
+			if(i>=url.length || !suc){
+				window.setTimeout(function(){
+					do_call(suc);
+				}, 0);
+			} else {
+				JOBAD.util.loadExternalCSS(url[i], function(urls, suc){
+					i++;
+					next(urls, suc);
+				}, scope, preLoadHack);
+			}
+		}
+
+		window.setTimeout(function(){
+			next("", true);
+		}, 0);
+
+		return url.length;
+	} else {
+		//adapted from: http://stackoverflow.com/questions/5537622/dynamically-loading-css-file-using-javascript-with-callback-without-jquery
+		var head = document.getElementsByTagName('head')[0]; 
+		var link = document.createElement('link');
+		link.setAttribute( 'href', url );
+		link.setAttribute( 'rel', 'stylesheet' );
+		link.setAttribute( 'type', 'text/css' ); 
+		var sheet, cssRules;
+
+		interval_id = setInterval(function(){
+			try{
+				if("sheet" in link){
+					if(link.sheet && link.sheet.cssRules.length){
+						clearInterval(interval_id); 
+						clearTimeout(timeout_id); 
+						do_call(true); 
+					}
+				} else {
+					if(link.styleSheet && link.styleSheet.rules.length > 0){
+						clearInterval(interval_id); 
+						clearTimeout(timeout_id); 
+						do_call(true); 
+					}
+				}
+
+				if(link[sheet] && link[sheet][cssRules].length > 0){
+					clearInterval(interval_id); 
+					clearTimeout(timeout_id); 
+
+					do_call(true); 
+				}
+			}catch(e){}
+		}, 1000);
+
+		timeout_id = setTimeout(function(){
+			clearInterval(interval_id); 
+			do_call(false);
+		}, TIMEOUT_CONST);
+
+
+		link.onload = function () {
+			do_call(true); 
+		}
+		if (link.addEventListener) {
+			link.addEventListener('load', function() {
+			do_call(true); 
+			}, false);
+		}
+
+	  link.onreadystatechange = function() {
+	    var state = link.readyState;
+	    if (state === 'loaded' || state === 'complete') {
+	      link.onreadystatechange = null;
+	      do_call(true); 
+	    }
+	  };
+
+	  	preLoadHack(url);
+		head.appendChild(link); 
+		return 1;
 	}
     
 }
@@ -513,6 +704,8 @@ JOBAD.util.resolve = function(url, base, isDir){
 	if( (base === true || isDir === true ) && url[url.length - 1] != "/"){url = url + "/"; }
     return url; 
 }
+
+
 /*
 	Adds an event listener to a query. 
 	@param	query A jQuery element to use as as query. 
@@ -591,6 +784,12 @@ JOBAD.util.trigger = function(query, event, params){
 
 	return result; 
 
+}
+
+JOBAD.util.getCurrentOrigin = function(){
+	var scripts = document.getElementsByTagName('script');
+	var thisScript = scripts[scripts.length-1];
+	return thisScript.src; 
 }
 
 

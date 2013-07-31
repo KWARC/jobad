@@ -501,7 +501,33 @@
 
 <h2>Changelog</h2>
 
-<h3>Version 3.1.6 (Stable)</h3>
+<h3>Version 3.1.7 (Stable)</h3>
+
+<ul>
+<li>refactored the build system, now easy with <code>make</code>
+<ul>
+<li>also compressing all required libraries in a js and css file</li>
+<li>building will automatically pull all dependencies (npm &amp; pip needed)</li>
+</ul></li>
+<li>added bootstrap compatibility via jQuery Bootstrap</li>
+<li>updated the config dialog
+<ul>
+<li>ported the config dialog to bootstrap</li>
+<li>moved to the module <code>jobad.config</code></li>
+</ul></li>
+<li>added <code>moduleInstance.getOrigin()</code> to get the origin of a module. 
+<ul>
+<li>all urls on modules are now resolved relative to the module. </li>
+</ul></li>
+<li>added <code>JOBAD.util.loadExternalCSS</code></li>
+<li>added CSS external dependencies for modules</li>
+<li>added disabled menu items (use <code>false</code> instead of a callback)</li>
+<li>better default handling of sidebar icons. </li>
+<li>improved styles</li>
+<li>updated underscore to version 1.5.1</li>
+</ul>
+
+<h3>Version 3.1.6</h3>
 
 <ul>
 <li>improved repository override urls</li>
@@ -604,7 +630,7 @@ You should have received a copy of the GNU General Public License
 along with JOBAD.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 </code></pre>
 
-<p>This project includes Underscore 1.4.4, which is licensed under <a href="https://github.com/documentcloud/underscore/blob/master/LICENSE">MIT License</a>. </p>
+<p>This project includes Underscore 1.5.1, which is licensed under <a href="https://github.com/documentcloud/underscore/blob/master/LICENSE">MIT License</a>. </p>
 
 <h2>See also</h2>
 
