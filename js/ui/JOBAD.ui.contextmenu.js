@@ -101,7 +101,7 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 		JOBAD.UI.ContextMenu.clear(config.parents);
 		
 		//we are empty => allow browser to handle stuff
-		if(!result){
+		if(result.length == 0 || !result){
 			onEmpty(orgElement); 
 			return !block; 
 		}
