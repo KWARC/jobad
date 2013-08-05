@@ -1,8 +1,8 @@
 # JOBAD
 
-Current Version: 3.1.8
+Current Version: 3.1.9
 
-Current Stable Version: 3.1.7
+Current Stable Version: 3.1.8
 
 Development Branch. 
 
