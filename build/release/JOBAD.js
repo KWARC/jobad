@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Mon, 05 Aug 2013 21:53:58 +0200
+	built: Tue, 06 Aug 2013 17:58:07 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -99,9 +99,9 @@ var JOBAD = function(element){
 			mod.call(this, this, this.args); 
 		}
 	}
-
-	this.ID = JOBAD.util.UID(); 
 };
+
+
 
 JOBAD.ifaces = []; //JOBAD interfaces
 
@@ -3999,6 +3999,24 @@ JOBAD.ifaces.push(function(me, args){
 	
 	/* Event namespace */
 	this.Event = {}; //redefine it
+
+	var EventHandler = JOBAD.refs.$("<div>"); 
+
+	this.Event.on = function(event, handler){
+		return JOBAD.util.on(EventHandler, event, handler);
+	};
+
+	this.Event.once = function(event, handler){
+		return JOBAD.util.once(EventHandler, event, handler);
+	};
+
+	this.Event.off = function(handler){
+		return JOBAD.util.off(EventHandler, handler);
+	};
+
+	this.Event.trigger = function(event, params){
+		return JOBAD.util.trigger(EventHandler, event, params);
+	}
 	
 	//Setup the events
 	for(var key in JOBAD.events){
@@ -6233,7 +6251,9 @@ JOBAD.events.SideBarUpdate =
 			}
 		},
 		'trigger': function(){
+			preEvent(this, "SideBarUpdate", []);
 			this.Event.SideBarUpdate.getResult();
+			postEvent(this, "SideBarUpdate", []);
 		}
 	}
 };/* end   <events/JOBAD.sidebar.js> */
@@ -6371,6 +6391,14 @@ JOBAD.ifaces.push(function(){
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+var preEvent = function(me, event, params){
+	//me.Event.trigger("event.before."+event, [event, params]);
+};
+
+var postEvent = function(me, event, params){
+	//me.Event.trigger("event.after."+event, [event, params]);
+	//me.Event.trigger("event.handlable", [event, params])
+};
 /* left click */
 JOBAD.events.leftClick = 
 {
@@ -6385,13 +6413,14 @@ JOBAD.events.leftClick =
 				switch (event.which) {
 					case 1:
 						/* left mouse button => left click */
+						preEvent(me, "leftClick", [element]); 
 						me.Event.leftClick.trigger(element);
+						postEvent(me, "leftClick", [element]); 
 						event.stopPropagation(); //Not for the parent. 
 						break;
 					default:
 						/* nothing */
 				}
-				root.trigger('JOBAD.Event', ['leftClick', element]);
 			});
 		},
 		'disable': function(root){
@@ -6428,8 +6457,9 @@ JOBAD.events.dblClick =
 			var me = this;
 			root.delegate("*", 'dblclick.JOBAD.dblClick', function(event){
 				var element = JOBAD.refs.$(event.target); //The base element.  
+				preEvent(me, "dblClick", [element]); 
 				var res = me.Event.dblClick.trigger(element);
-				root.trigger('JOBAD.Event', ['dblClick', element]);
+				postEvent(me, "dblClick", [element]); 
 				event.stopPropagation(); //Not for the parent. 
 			});
 		},
@@ -6463,12 +6493,14 @@ JOBAD.events.onEvent =
 	'Setup': {
 		'enable': function(root){
 			var me = this;
-			root.on('JOBAD.Event', function(jqe, event, args){
+
+			me.Event.onEvent.Setup.id = 
+			me.Event.on("event.handlable", function(jqe, event, args){
 				me.Event.onEvent.trigger(event, args);
 			});
 		},
 		'disable': function(root){
-			root.off('JOBAD.Event');
+			me.Event.off(me.Event.onEvent.Setup.id);
 		}
 	},
 	'namespace': 
@@ -6499,8 +6531,9 @@ JOBAD.events.contextMenuEntries =
 		'enable': function(root){
 			var me = this;
 			JOBAD.UI.ContextMenu.enable(root, function(target){
+				preEvent(me, "contextMenuEntries", [target]);
 				var res = me.Event.contextMenuEntries.getResult(target);
-				root.trigger('JOBAD.Event', ['contextMenuEntries', target]);
+				postEvent(me, "contextMenuEntries", [target]);
 				return res;
 			}, {
 				"type": function(target){
@@ -6560,7 +6593,9 @@ JOBAD.events.configUpdate =
 		'enable': function(root){
 			var me = this;
 			JOBAD.refs.$("body").on('JOBAD.ConfigUpdateEvent', function(jqe, setting, moduleId){
+				preEvent(me, "configUpdate", [setting, module]);
 				me.Event.configUpdate.trigger(setting, moduleId);
+				postEvent(me, "configUpdate", [setting, module]);
 			});
 		},
 		'disable': function(root){
@@ -6579,7 +6614,6 @@ JOBAD.events.configUpdate =
 			});
 		},
 		'trigger': function(setting, moduleId){
-			this.element.trigger("JOBAD.Event", ["configUpdate", setting, moduleId]);
 			return this.Event.configUpdate.getResult(setting, moduleId);
 		}
 	}
@@ -6662,9 +6696,11 @@ JOBAD.events.hoverText =
 				return false;		
 			}
 
+			preEvent(me, "hoverText", [source]);
 			var EventResult = this.Event.hoverText.getResult(source); //try to do the event
 		
 			if(typeof EventResult == 'boolean'){
+				postEvent(me, "hoverText", [source]);
 				return EventResult;		
 			}
 
@@ -6713,6 +6749,8 @@ JOBAD.events.hoverText =
 			this.Event.hoverText.activeHoverElement = undefined;
 
 			JOBAD.UI.hover.disable();
+
+			postEvent(me, "hoverText", [source]);
 
 			if(!source.is(this.element)){
 				this.Event.hoverText.trigger(source.parent());//we are in the parent now
@@ -7402,6 +7440,42 @@ JOBAD.ifaces.push(function(JOBADRootElement, params){
 	
 	this.Config = JOBAD.util.bindEverything(this.Config, this);
 });/* end   <JOBAD.config.js> */
+/* start <core/JOBAD.core.instances.js> */
+/*
+	JOBAD 3 Core Instances
+	
+	Copyright (C) 2013 KWARC Group <kwarc.info>
+	
+	This file is part of JOBAD.
+	
+	JOBAD is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	JOBAD is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+JOBAD.Instances = {}; 
+
+JOBAD.Instances.all = {}; 
+
+JOBAD.ifaces.push(function(){
+	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
+
+	//store a reference so it is kept
+	JOBAD.Instances.all[this.ID] = this;
+
+	this.focus = function(){
+		//Focus this JOBADInstance
+	}
+}); /* end   <core/JOBAD.core.instances.js> */
 /* start <JOBAD.wrap.js> */
 /*
 	JOBAD.wrap.js

@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>[About] - JOBAD Documentation</title>
+		<title>[JOBADInstance.Event.SideBarUpdate] - JOBAD Documentation</title>
 		<style type="text/css">
 /* Basic styles https://gist.github.com/cpatuzzo/3331384 */
 		body {
@@ -478,182 +478,18 @@
 -->
 	</head>
 	<body>
-<p><a href="index.html">Start</a> &gt; <strong>About</strong></p>
-<h1>About</h1>
-
-<p>JOBAD (JavaScript API for OMDoc-based Active Documents) is a javascript framework which makes it easy to create interactive web pages. </p>
-
-<p>JOBAD should work in all modern browsers. JOBAD has been tested successfully in: </p>
+<p><a href="../../../../index.html">Start</a> &gt; <a href="../../../index.html">API Documentation</a> &gt; <a href="../../index.html">JOBAD</a> &gt; <a href="../index.html">JOBADInstance</a> &gt; <a href="index.html">JOBADInstance.Event</a> &gt; <strong>JOBADInstance.Event.SideBarUpdate</strong></p>
+<h1>JOBADInstance.Event.SideBarUpdate</h1>
 
 <ul>
-<li>Google Chrome 26</li>
-<li>Firefox 20</li>
-<li>Internet Explorer 10</li>
+<li><p><strong>Function</strong> <code>.Event.SideBarUpdate.getResult()</code> Get the Result of the SideBarUpdate event handlers. </p></li>
+<li><p><strong>Function</strong> <code>.Event.SideBarUpdate.trigger()</code> Trigger the SideBarUpdate event. </p></li>
 </ul>
-
-<p>It is known not to be compatible with: </p>
-
-<ul>
-<li>Internet Explorer 9 and below. </li>
-</ul>
-
-<p>The official JOBAD repository is located at <a href="https://github.com/KWARC/jobad">https://github.com/KWARC/jobad</a>. </p>
-
-<h2>Changelog</h2>
-
-<h3>Version 3.1.9 (In Development)</h3>
-
-<ul>
-<li>added JOBAD.Instances</li>
-</ul>
-
-<h3>Version 3.1.8 (Stable)</h3>
-
-<ul>
-<li>improved contextMenu
-<ul>
-<li>added Ids for menus</li>
-<li>added the contextMenuOpen Event to onEvent. </li>
-<li>added the contextMenuClose Event to onEvent. </li>
-</ul></li>
-<li>added new example module <code>test.menu3</code></li>
-</ul>
-
-<h3>Version 3.1.7</h3>
-
-<ul>
-<li>refactored the build system, now easy with <code>make</code>
-<ul>
-<li>also compressing all required libraries in a js and css file</li>
-<li>building will automatically pull all dependencies (npm &amp; pip needed)</li>
-</ul></li>
-<li>added bootstrap compatibility via jQuery Bootstrap</li>
-<li>updated the config dialog
-<ul>
-<li>ported the config dialog to bootstrap</li>
-<li>moved to the module <code>jobad.config</code></li>
-</ul></li>
-<li>added <code>moduleInstance.getOrigin()</code> to get the origin of a module. 
-<ul>
-<li>all urls on modules are now resolved relative to the module. </li>
-</ul></li>
-<li>added <code>JOBAD.util.loadExternalCSS</code></li>
-<li>added CSS external dependencies for modules</li>
-<li>added disabled menu items (use <code>false</code> instead of a callback)</li>
-<li>better default handling of sidebar icons. </li>
-<li>improved styles</li>
-<li>updated underscore to version 1.5.1</li>
-</ul>
-
-<h3>Version 3.1.6 (Stable)</h3>
-
-<ul>
-<li>improved repository override urls</li>
-<li>removed build submodules, made them static</li>
-<li>fixed 'failed to load module: undefined' error messages</li>
-</ul>
-
-<h3>Version 3.1.5</h3>
-
-<ul>
-<li>made module loading asynchronous </li>
-<li>added repositories
-<ul>
-<li>a nice way to store modules in</li>
-<li>can be loaded dynamically loaded from code</li>
-</ul></li>
-<li>added "externals" to module info
-<ul>
-<li>allows to load external scripts as dependencies</li>
-<li>added a MathJax module which uses this</li>
-<li>allowing globalinit functions to be async if a module info peropety <code>async</code> is set to true. </li>
-</ul></li>
-<li>added <code>url</code> to module info, to provide a module homepage</li>
-<li>improved globalStore, localStore and UserConfig
-<ul>
-<li>you can now get and set multiple values at once</li>
-<li>UserConfig and globalStore now accessible outside of loadedModule Instances (via JOBAD.modules.globalStore and JOBAD.UserConfig)</li>
-</ul></li>
-<li>added <code>.UserConfig.setMessage</code> and <code>.UserConfig.getMessage</code></li>
-<li>improved ToolBar, now supports icons</li>
-<li>minor CSS fixes</li>
-<li>more doc updates</li>
-</ul>
-
-<h3>Version 3.1.0</h3>
-
-<ul>
-<li>improved Sidebar
-<ul>
-<li>added sidebar postions: left, right and bound to element. </li>
-<li>default width reduced to 50px. </li>
-</ul></li>
-<li>improved UserConfig
-<ul>
-<li>added cookie storageBackend</li>
-</ul></li>
-<li>removed Underscore as a dependency
-<ul>
-<li>it is now included in the <code>JOBAD.util</code> namespace, <code>JOBAD.refs._</code> has been removed. </li>
-</ul></li>
-<li>added marking elements as hidden or visible so they can be ignored by events &amp; UI. </li>
-<li>split up JOBAD into event more files; added foldes for more structure in code. </li>
-<li>added JOBAD Folding
-<ul>
-<li>allows to fold elements, at the moment only usable via code. </li>
-<li>either on the left or on the right. </li>
-<li>always inside of the sidebar. </li>
-</ul></li>
-<li>added the radial menu (also known as the icon menu)
-<ul>
-<li>as an alternative to the normal menu. </li>
-<li>only configurable via code. </li>
-<li>also allowing custom icons</li>
-</ul></li>
-<li>added configUpdate event</li>
-<li>added doubleClick event</li>
-<li>split up the CSS in one JOBAD.css file and one user-configurable JOBAD.theme.css file. </li>
-<li>a bunch of internal fixes and improvements</li>
-<li>updated jQuery to version 2.0.2</li>
-<li>updated the documentation (a lot)</li>
-</ul>
-
-<h3>Version 3.0.1</h3>
-
-<ul>
-<li>minor bug fixes</li>
-</ul>
-
-<h3>Version 3.0.0</h3>
-
-<ul>
-<li>Initial stable release</li>
-</ul>
-
-<h2>License</h2>
-
-<pre><code>Copyright (C) 2013 KWARC Group &lt;kwarc.info&gt;
-
-JOBAD is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-JOBAD is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with JOBAD.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
-</code></pre>
-
-<p>This project includes Underscore 1.5.1, which is licensed under <a href="https://github.com/documentcloud/underscore/blob/master/LICENSE">MIT License</a>. </p>
 
 <h2>See also</h2>
 
 <ul>
-<li><a href="../../LICENSE">LICENSE</a></li>
+<li><a href="../sidebar.html"><code>JOBADInstance.Sidebar</code></a></li>
 </ul>
 
 	</body>

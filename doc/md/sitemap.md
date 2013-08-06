@@ -1,6 +1,7 @@
 # Index
 
 * [About](about.md) (about.md)
+* [JOBAD.Instances](api/JOBAD/JOBAD.Instances.md) (api/JOBAD/JOBAD.Instances.md)
 * [JOBAD.Sidebar](api/JOBAD/JOBAD.Sidebar.md) (api/JOBAD/JOBAD.Sidebar.md)
 * [JOBAD.UI.ContextMenu](api/JOBAD/JOBAD.UI/contextmenu.md) (api/JOBAD/JOBAD.UI/contextmenu.md)
 * [JOBAD.UI.Folding](api/JOBAD/JOBAD.UI/folding.md) (api/JOBAD/JOBAD.UI/folding.md)
@@ -29,6 +30,7 @@
 * [JOBAD.storageBackend](api/JOBAD/JOBAD.storageBackend.md) (api/JOBAD/JOBAD.storageBackend.md)
 * [JOBAD.util](api/JOBAD/JOBAD.util.md) (api/JOBAD/JOBAD.util.md)
 * [JOBADInstance.Config](api/JOBAD/JOBADInstance/Config.md) (api/JOBAD/JOBADInstance/Config.md)
+* [JOBADInstance.Event.SideBarUpdate](api/JOBAD/JOBADInstance/event/SideBarUpdate.md) (api/JOBAD/JOBADInstance/event/SideBarUpdate.md)
 * [JOBADInstance.Event.configUpdate](api/JOBAD/JOBADInstance/event/configUpdate.md) (api/JOBAD/JOBADInstance/event/configUpdate.md)
 * [JOBADInstance.Event.contextMenuEntries](api/JOBAD/JOBADInstance/event/contextMenuEntries.md) (api/JOBAD/JOBADInstance/event/contextMenuEntries.md)
 * [JOBADInstance.Event.dblClick](api/JOBAD/JOBADInstance/event/dblClick.md) (api/JOBAD/JOBADInstance/event/dblClick.md)
@@ -36,7 +38,6 @@
 * [JOBADInstance.Event](api/JOBAD/JOBADInstance/event/index.md) (api/JOBAD/JOBADInstance/event/index.md)
 * [JOBADInstance.Event.leftClick](api/JOBAD/JOBADInstance/event/leftClick.md) (api/JOBAD/JOBADInstance/event/leftClick.md)
 * [JOBADInstance.Event.onEvent](api/JOBAD/JOBADInstance/event/onEvent.md) (api/JOBAD/JOBADInstance/event/onEvent.md)
-* [JOBADInstance.Event.SideBarUpdate](api/JOBAD/JOBADInstance/event/onSideBarUpdate.md) (api/JOBAD/JOBADInstance/event/onSideBarUpdate.md)
 * [JOBADInstance.Folding](api/JOBAD/JOBADInstance/folding.md) (api/JOBAD/JOBADInstance/folding.md)
 * [JOBADInstance](api/JOBAD/JOBADInstance/index.md) (api/JOBAD/JOBADInstance/index.md)
 * [JOBADInstance.Modules](api/JOBAD/JOBADInstance/modules.md) (api/JOBAD/JOBADInstance/modules.md)

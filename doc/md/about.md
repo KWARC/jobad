@@ -16,7 +16,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 
 ## Changelog
 ### Version 3.1.9 (In Development)
-* nothing yet
+* added JOBAD.Instances
 
 ### Version 3.1.8 (Stable)
 * improved contextMenu

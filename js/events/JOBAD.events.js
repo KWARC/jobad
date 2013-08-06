@@ -20,6 +20,14 @@
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+var preEvent = function(me, event, params){
+	me.Event.trigger("event.before."+event, [event, params]);
+};
+
+var postEvent = function(me, event, params){
+	me.Event.trigger("event.after."+event, [event, params]);
+	me.Event.trigger("event.handlable", [event, params])
+};
 /* left click */
 JOBAD.events.leftClick = 
 {
@@ -34,13 +42,14 @@ JOBAD.events.leftClick =
 				switch (event.which) {
 					case 1:
 						/* left mouse button => left click */
+						preEvent(me, "leftClick", [element]); 
 						me.Event.leftClick.trigger(element);
+						postEvent(me, "leftClick", [element]); 
 						event.stopPropagation(); //Not for the parent. 
 						break;
 					default:
 						/* nothing */
 				}
-				root.trigger('JOBAD.Event', ['leftClick', element]);
 			});
 		},
 		'disable': function(root){
@@ -77,8 +86,9 @@ JOBAD.events.dblClick =
 			var me = this;
 			root.delegate("*", 'dblclick.JOBAD.dblClick', function(event){
 				var element = JOBAD.refs.$(event.target); //The base element.  
+				preEvent(me, "dblClick", [element]); 
 				var res = me.Event.dblClick.trigger(element);
-				root.trigger('JOBAD.Event', ['dblClick', element]);
+				postEvent(me, "dblClick", [element]); 
 				event.stopPropagation(); //Not for the parent. 
 			});
 		},
@@ -112,12 +122,14 @@ JOBAD.events.onEvent =
 	'Setup': {
 		'enable': function(root){
 			var me = this;
-			root.on('JOBAD.Event', function(jqe, event, args){
+
+			me.Event.onEvent.id = 
+			me.Event.on("event.handlable", function(jqe, event, args){
 				me.Event.onEvent.trigger(event, args);
 			});
 		},
 		'disable': function(root){
-			root.off('JOBAD.Event');
+			me.Event.off(me.Event.onEvent.id);
 		}
 	},
 	'namespace': 
@@ -148,8 +160,9 @@ JOBAD.events.contextMenuEntries =
 		'enable': function(root){
 			var me = this;
 			JOBAD.UI.ContextMenu.enable(root, function(target){
+				preEvent(me, "contextMenuEntries", [target]);
 				var res = me.Event.contextMenuEntries.getResult(target);
-				root.trigger('JOBAD.Event', ['contextMenuEntries', target]);
+				postEvent(me, "contextMenuEntries", [target]);
 				return res;
 			}, {
 				"type": function(target){
@@ -209,7 +222,9 @@ JOBAD.events.configUpdate =
 		'enable': function(root){
 			var me = this;
 			JOBAD.refs.$("body").on('JOBAD.ConfigUpdateEvent', function(jqe, setting, moduleId){
+				preEvent(me, "configUpdate", [setting, module]);
 				me.Event.configUpdate.trigger(setting, moduleId);
+				postEvent(me, "configUpdate", [setting, module]);
 			});
 		},
 		'disable': function(root){
@@ -228,7 +243,6 @@ JOBAD.events.configUpdate =
 			});
 		},
 		'trigger': function(setting, moduleId){
-			this.element.trigger("JOBAD.Event", ["configUpdate", setting, moduleId]);
 			return this.Event.configUpdate.getResult(setting, moduleId);
 		}
 	}
@@ -311,9 +325,11 @@ JOBAD.events.hoverText =
 				return false;		
 			}
 
+			preEvent(this, "hoverText", [source]);
 			var EventResult = this.Event.hoverText.getResult(source); //try to do the event
 		
 			if(typeof EventResult == 'boolean'){
+				postEvent(this, "hoverText", [source]);
 				return EventResult;		
 			}
 
@@ -363,6 +379,8 @@ JOBAD.events.hoverText =
 
 			JOBAD.UI.hover.disable();
 
+			postEvent(this, "hoverText", [source]);
+
 			if(!source.is(this.element)){
 				this.Event.hoverText.trigger(source.parent());//we are in the parent now
 				return false;
@@ -371,6 +389,6 @@ JOBAD.events.hoverText =
 	}
 }
 
-for(var key in JOBAD.events){
+for(var key in JOBAD.events){//TODO: remove on, off, once, trigger from cleanPropertioes
 	JOBAD.modules.cleanProperties.push(key);
 }

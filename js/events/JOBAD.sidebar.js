@@ -310,7 +310,9 @@ JOBAD.events.SideBarUpdate =
 			}
 		},
 		'trigger': function(){
+			preEvent(this, "SideBarUpdate", []);
 			this.Event.SideBarUpdate.getResult();
+			postEvent(this, "SideBarUpdate", []);
 		}
 	}
 };

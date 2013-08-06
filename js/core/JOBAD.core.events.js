@@ -62,13 +62,17 @@ JOBAD.ifaces.push(function(me, args){
 	this.Setup.deferUntilDisabled = function(func){
 		deactivation_cache.push(func);
 	};
+
+	
+	//These are special events
+	//Do not setup these
+	var SpecialEvents = ["on", "off", "once", "trigger"]; 
 	
 	/*
 		Enables this JOBAD instance 
 		@returns boolean indicating success. 
 	*/
 	this.Setup.enable = function(){
-		
 		if(enabled){
 			return false;
 		}
@@ -76,14 +80,24 @@ JOBAD.ifaces.push(function(me, args){
 		var root = me.element;
 
 		for(var key in me.Event){
-			JOBAD.events[key].Setup.enable.call(me, root);
+			if(JOBAD.util.contains(SpecialEvents, key)){
+				continue;
+			}
+
+			try{
+				JOBAD.events[key].Setup.enable.call(me, root);
+			} catch(e){
+				JOBAD.console.error("Failed to enable Event '"+key+"': "+e.message);
+				JOBAD.console.error(e); 
+			}
+			
 		}
-		
+				
 		while(activation_cache.length > 0){
 			try{
 				activation_cache.pop()();
 			} catch(e){
-				JOBAD.console.log("Warning: Defered Activation event failed to execute: "+e.message);
+				JOBAD.console.warn("Defered Activation event failed to execute: "+e.message);
 			}
 		}
 		
@@ -103,8 +117,16 @@ JOBAD.ifaces.push(function(me, args){
 		var root = me.element;
 
 		for(var key in JOBAD.events){
+			if(JOBAD.util.contains(SpecialEvents, key)){
+				continue;
+			}
 			if(JOBAD.events.hasOwnProperty(key) && !JOBAD.isEventDisabled(key)){
-				JOBAD.events[key].Setup.disable.call(me, root);
+				try{
+					JOBAD.events[key].Setup.disable.call(me, root);
+				} catch(e){
+					JOBAD.console.error("Failed to disable Event '"+key+"': "+e.message);
+					JOBAD.console.error(e); 
+				}
 			}	
 		}
 		
@@ -121,11 +143,30 @@ JOBAD.ifaces.push(function(me, args){
 		return true;
 	};
 	
+
 	//this.Event is a cache for setup events
 	this.Setup.deferUntilDisabled(this.Event);
 	
 	/* Event namespace */
 	this.Event = {}; //redefine it
+
+	var EventHandler = JOBAD.refs.$("<div>"); 
+
+	this.Event.on = function(event, handler){
+		return JOBAD.util.on(EventHandler, event, handler);
+	};
+
+	this.Event.once = function(event, handler){
+		return JOBAD.util.once(EventHandler, event, handler);
+	};
+
+	this.Event.off = function(handler){
+		return JOBAD.util.off(EventHandler, handler);
+	};
+
+	this.Event.trigger = function(event, params){
+		return JOBAD.util.trigger(EventHandler, event, params);
+	}
 	
 	//Setup the events
 	for(var key in JOBAD.events){

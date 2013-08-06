@@ -482,12 +482,74 @@
 <h1>JOBADInstance.Event</h1>
 
 <ul>
+<li><p><strong>Function</strong> <code>.Event.on(event, handler)</code> - Adds an event listener. </p>
+
+<ul>
+<li><strong>String</strong> <code>event</code> Event to listen to. </li>
+<li><em>*Function</em> <code>handler(param1, param2, ...)</code> Event listener</li>
+<li><strong>returns</strong> Id of the newly added handler. </li>
+</ul></li>
+<li><p><strong>Function</strong> <code>.Event.once(event, handler)</code> - Adds a one-time  event listener. </p>
+
+<ul>
+<li><strong>String</strong> <code>event</code> Event to listen to. </li>
+<li><em>*Function</em> <code>handler(param1, param2, ...)</code> Event listener</li>
+<li><strong>returns</strong> Id of the newly added handler. </li>
+</ul></li>
+<li><p><strong>Function</strong> <code>.Event.off(id)</code> - Removes an event listener. </p>
+
+<ul>
+<li><strong>String</strong> <code>id</code> Id of handler to remove. </li>
+</ul></li>
+<li><p><strong>Function</strong> <code>JOBAD.util.trigger(event, params)</code> - Triggers an event. </p>
+
+<ul>
+<li><strong>String</strong> <code>event</code> Event to trigger. </li>
+<li><strong>Array</strong> <code>params</code> Optional. Array of parameters to pass to event handlers.</li>
+<li><strong>returns</strong> <code>Array of results</code></li>
+</ul></li>
+</ul>
+
+<p>The following event names are available: </p>
+
+<ul>
+<li><p><strong>unimplemented</strong>: </p>
+
+<ul>
+<li><code>instance.enable</code> This JOBADInstance was enabled. </li>
+<li><p><code>instance.disable</code> This JOBADInstance was disabled. </p></li>
+<li><p><code>module.load.$module($module)</code> The module $module was loaded. </p></li>
+<li><code>module.activate.$module($module)</code> The module $module was activated. </li>
+<li><p><code>module.deactivate.$module($module)</code> The module $module was deactivated. </p></li>
+<li><p><code>instance.focus</code> This JOBADInstance was focused. </p></li>
+<li><code>instance.unfocus</code> This JOBADInstance was unfocused. </li>
+</ul></li>
+<li><p><code>event.before.$name($name, params)</code>: Triggered before an event occurs. </p></li>
+<li><code>event.after.$name($name, params)</code>: Triggered after an event occurs. </li>
+<li><p><code>event.handlable($evt, $params)</code>: triggered on any handable event. (An event that can be handled by the onEvent Handler). </p></li>
+<li><p><code>$name(params)</code>: Triggered once an event result is fetched. </p></li>
+</ul>
+
+<p><code>$name</code> can take the following values: </p>
+
+<ul>
+<li><code>leftClick</code> - Double click on an element</li>
+<li><code>dblClick</code> - Double click on an element</li>
+<li><code>contextMenuEntries</code> - Context Menu of an element is requested</li>
+<li><code>configUpdate</code> - A specific configuration setting is updated</li>
+<li><code>hoverText</code> - Hover Text requested on an element</li>
+<li><code>SideBarUpdate</code>- The sidebar is updated. </li>
+</ul>
+
+<h1>The following specific Event Namespacesare available:</h1>
+
+<ul>
 <li><strong>Object</strong> <a href="dblClick.html"><code>.Event.dblClick</code></a> Namespace for dblClick Events. </li>
 <li><strong>Object</strong> <a href="leftClick.html"><code>.Event.leftClick</code></a> Namespace for leftClick Events. </li>
 <li><strong>Object</strong> <a href="contextMenuEntries.html"><code>.Event.contextMenuEntries</code></a> Namespace for contextMenuEntries Events. </li>
 <li><strong>Object</strong> <a href="hoverText.html"><code>.Event.hoverText</code></a> Namespace for hoverText Events. </li>
 <li><strong>Object</strong> <a href="configUpdate.html"><code>.Event.configUpdate</code></a> Namespace for onConfigUpdate Events. </li>
-<li><strong>Object</strong> <a href="onSideBarUpdate.html"><code>.Event.onSideBarUpdate</code></a> Namespace for onSideBarUpdate Events. </li>
+<li><strong>Object</strong> <a href="SideBarUpdate.html"><code>.Event.SideBarUpdate</code></a> Namespace for SideBarUpdate Events. </li>
 <li><strong>Object</strong> <a href="onEvent.html"><code>.Event.onEvent</code></a> Namespace for onEvent Events. </li>
 </ul>
 

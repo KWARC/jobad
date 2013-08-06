@@ -74,8 +74,10 @@ var JOBAD = function(element){
 		}
 	}
 
-	this.ID = JOBAD.util.UID(); 
+	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
 };
+
+
 
 JOBAD.ifaces = []; //JOBAD interfaces
 

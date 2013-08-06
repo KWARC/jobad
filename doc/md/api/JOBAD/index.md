@@ -17,6 +17,7 @@ This object is the main JOBAD Namespace.
 * **Function** `JOBAD.noConflict()` - Restores the variable $ created by jQuery to its previous state. 
     * **returns** a reference to jQuery
 * **Array** [`JOBAD.ifaces`](JOBAD.ifaces/index.md) - JOBAD ifaces
+* **Object** [`JOBAD.Instances`](JOBAD.Instances.md) - Namespace for JOBAD Instances.  
 * **Object** [`JOBAD.config`](JOBAD.config.md) - Configuration namespace
 * **Object** [`JOBAD.console`](JOBAD.console.md) - Wraps the native console object if available
 * **Object** [`JOBAD.events`](JOBAD.events/index.md) - Event namespace

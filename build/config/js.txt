@@ -16,4 +16,5 @@ events/JOBAD.sidebar.js
 events/JOBAD.folding.js
 events/JOBAD.events.js
 JOBAD.config.js
+core/JOBAD.core.instances.js
 JOBAD.wrap.js
