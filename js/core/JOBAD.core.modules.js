@@ -25,6 +25,9 @@ JOBAD.ifaces.push(function(me, args){
 	//modules namespace
 	this.modules = {};
 
+	//Event namespace
+	this.Event = JOBAD.util.EventHandler(); 
+
 	var InstanceModules = {}; //Modules loaded
 	var disabledModules = []; //Modules disabled
 
@@ -82,17 +85,18 @@ JOBAD.ifaces.push(function(me, args){
 
 	/*
 		Loads a module
+		@param	module	Module to load. 
 		@param	options	Options to pass to the module
-		@param	callback	Callback to execute
 	*/
 	var doLoad = function(module, options){
-		var auto_activate = loadQuenueAutoActivate.indexOf(module) != -1; //TODO: Add option somewhere
+		var auto_activate = loadQuenueAutoActivate.indexOf(module) != -1;
 		try{
 			InstanceModules[module] = new JOBAD.modules.loadedModule(module, options, me, function(suc, msg){
 				if(!suc){
 					markLoadAsFailed(module, msg);
 				} else {
 					disabledModules.push(module); //we are disabled by default
+					me.Event.trigger("module.load", [module, options]); 
 
 					if(auto_activate){
 						me.modules.activate(module);
@@ -109,6 +113,7 @@ JOBAD.ifaces.push(function(me, args){
 
 	var markLoadAsFailed = function(module, message){
 		loadFail.push(module);
+		me.Event.trigger("module.fail", [module, message]); 
 		try{
 			delete InstanceModules[module];
 		} catch(e){}
@@ -289,8 +294,10 @@ JOBAD.ifaces.push(function(me, args){
 			return;
 		}
 		disabledModules.push(module);
-		this.element.trigger('JOBAD.Event', ['deactivate', module]);
+
 		InstanceModules[module].onDeactivate(me);
+		me.Event.trigger("module.deactivate", [InstanceModules[module]]); 
+		me.Event.trigger("event.handlable", ["deactivate", module]); 
 	}
 
 	/*
@@ -317,13 +324,14 @@ JOBAD.ifaces.push(function(me, args){
 			
 
 			InstanceModules[module].onActivate(me);
-			me.element.trigger('JOBAD.Event', ['activate', module]);
+			me.Event.trigger("module.activate", [InstanceModules[module]]); 
+			me.Event.trigger("event.handlable", ["activate", module]); 
 		}
 
 		if(me.Setup.isEnabled()){
 			todo();
 		} else {
-			me.Setup.deferUntilEnabled(todo);
+			me.Event.once("instance.enable", todo); 
 		}
 
 		return true; 
@@ -424,18 +432,19 @@ JOBAD.ifaces.push(function(me, args){
 		});
 		
 		//reactivate all once setup is called again
-		me.Setup.deferUntilEnabled(function(){
+		this.Event.once("instance.enable", function(){
 			for(var i=0;i<cache.length;i++){
 				var name = cache[i];
 				if(!me.modules.isActive(name)){
 					me.modules.activate(name);
 				}
 			}
-			me.Setup.deferUntilDisabled(onDisable); //reregister me
+			this.Event.once("instance.disable", onDisable); //reregister me
 		});
 	};
 	
-	this.Event = onDisable; 
+
+	this.Event.once("instance.disable", onDisable); 
 	
 	this.modules = JOBAD.util.bindEverything(this.modules, this);
 });

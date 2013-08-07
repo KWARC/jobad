@@ -786,6 +786,32 @@ JOBAD.util.trigger = function(query, event, params){
 
 }
 
+/*
+	Creates a new Event Handler
+*/
+JOBAD.util.EventHandler = function(){
+	var handler = {}; 
+	var EventHandler = JOBAD.refs.$("<div>"); 
+
+	handler.on = function(event, handler){
+		return JOBAD.util.on(EventHandler, event, handler);
+	};
+
+	handler.once = function(event, handler){
+		return JOBAD.util.once(EventHandler, event, handler);
+	};
+
+	handler.off = function(handler){
+		return JOBAD.util.off(EventHandler, handler);
+	};
+
+	handler.trigger = function(event, params){
+		return JOBAD.util.trigger(EventHandler, event, params);
+	}
+
+	return handler;
+}
+
 JOBAD.util.getCurrentOrigin = function(){
 	var scripts = document.getElementsByTagName('script');
 	var thisScript = scripts[scripts.length-1];

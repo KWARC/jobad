@@ -20,22 +20,25 @@
 
 The following event names are available: 
 
+
+* `module.activate($module)` The module $module was activated. 
+* `module.deactivate($module)` The module $module was deactivated. 
+
+* `instance.enable` This JOBADInstance was enabled. 
+* `instance.disable` This JOBADInstance was disabled. 
+
+* `module.load($module, $options)` The module $module was loaded successfully. 
+* `module.fail($module, $reason)` The module $module has failed to load. 
+
+* `contextmenu.open` After the context menu has been opened
+* `contextmenu.close` After the context menu has been closed
+
 * **unimplemented**: 
-    * `instance.enable` This JOBADInstance was enabled. 
-    * `instance.disable` This JOBADInstance was disabled. 
-
-    * `module.load.$module($module)` The module $module was loaded. 
-    * `module.activate.$module($module)` The module $module was activated. 
-    * `module.deactivate.$module($module)` The module $module was deactivated. 
-
-
     * `instance.focus` This JOBADInstance was focused. 
     * `instance.unfocus` This JOBADInstance was unfocused. 
 
 * `event.before.$name($name, params)`: Triggered before an event occurs. 
 * `event.after.$name($name, params)`: Triggered after an event occurs. 
-* `event.handlable($evt, $params)`: triggered on any handable event. (An event that can be handled by the onEvent Handler). 
-
 * `$name(params)`: Triggered once an event result is fetched. 
 
 `$name` can take the following values: 
@@ -47,6 +50,7 @@ The following event names are available:
 * `hoverText` - Hover Text requested on an element
 * `SideBarUpdate`- The sidebar is updated. 
 
+* `event.handlable($evt, $params)`: triggered on any handable event. (An event that can be handled by the onEvent Handler). 
 
 # The following specific Event Namespacesare available: 
 

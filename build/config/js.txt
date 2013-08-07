@@ -4,7 +4,7 @@ util/JOBAD.util.js
 JOBAD.resources.js
 JOBAD.repo.js
 core/JOBAD.core.modules.js
-core/JOBAD.core.events.js
+core/JOBAD.core.setup.js
 ui/JOBAD.ui.js
 ui/JOBAD.ui.hover.js
 ui/JOBAD.ui.contextmenu.js

@@ -124,7 +124,7 @@ JOBAD.events.onEvent =
 			var me = this;
 
 			me.Event.onEvent.id = 
-			me.Event.on("event.handlable", function(jqe, event, args){
+			me.Event.on("event.handlable", function(event, args){
 				me.Event.onEvent.trigger(event, args);
 			});
 		},
@@ -169,10 +169,12 @@ JOBAD.events.contextMenuEntries =
 					return me.Config.get("cmenu_type");
 				}, 
 				"show": function(){
-					root.trigger('JOBAD.Event', ['contextMenuOpen']);
+					me.Event.trigger("contextmenu.open", []); 
+					me.Event.trigger("event.handlable", ["contextMenuOpen", []]); 
 				},
 				"close": function(){
-					root.trigger('JOBAD.Event', ['contextMenuClose']);
+					me.Event.trigger("contextmenu.close", []); 
+					me.Event.trigger("event.handlable", ["contextMenuClose", []]); 
 				},
 				"stopPropagnate": true
 			});

@@ -44,11 +44,9 @@
 			if(evt == "contextMenuOpen"){
 				//Context Menu is opened
 				$("#dynamic_menu_test").data("dynamic_message", "this message has been generated in another function. ");
-				console.log("Menu open"); 
 			}
 			if(evt == "contextMenuClose"){
 				//Context Menu was closed
-				console.log("Menu close"); 
 			}
 		}
 	});

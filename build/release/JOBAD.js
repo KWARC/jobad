@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Tue, 06 Aug 2013 17:58:07 +0200
+	built: Wed, 07 Aug 2013 13:59:15 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -99,6 +99,8 @@ var JOBAD = function(element){
 			mod.call(this, this, this.args); 
 		}
 	}
+
+	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
 };
 
 
@@ -2210,6 +2212,32 @@ JOBAD.util.trigger = function(query, event, params){
 
 }
 
+/*
+	Creates a new Event Handler
+*/
+JOBAD.util.EventHandler = function(){
+	var handler = {}; 
+	var EventHandler = JOBAD.refs.$("<div>"); 
+
+	handler.on = function(event, handler){
+		return JOBAD.util.on(EventHandler, event, handler);
+	};
+
+	handler.once = function(event, handler){
+		return JOBAD.util.once(EventHandler, event, handler);
+	};
+
+	handler.off = function(handler){
+		return JOBAD.util.off(EventHandler, handler);
+	};
+
+	handler.trigger = function(event, params){
+		return JOBAD.util.trigger(EventHandler, event, params);
+	}
+
+	return handler;
+}
+
 JOBAD.util.getCurrentOrigin = function(){
 	var scripts = document.getElementsByTagName('script');
 	var thisScript = scripts[scripts.length-1];
@@ -2893,6 +2921,9 @@ JOBAD.ifaces.push(function(me, args){
 	//modules namespace
 	this.modules = {};
 
+	//Event namespace
+	this.Event = JOBAD.util.EventHandler(); 
+
 	var InstanceModules = {}; //Modules loaded
 	var disabledModules = []; //Modules disabled
 
@@ -2950,17 +2981,18 @@ JOBAD.ifaces.push(function(me, args){
 
 	/*
 		Loads a module
+		@param	module	Module to load. 
 		@param	options	Options to pass to the module
-		@param	callback	Callback to execute
 	*/
 	var doLoad = function(module, options){
-		var auto_activate = loadQuenueAutoActivate.indexOf(module) != -1; //TODO: Add option somewhere
+		var auto_activate = loadQuenueAutoActivate.indexOf(module) != -1;
 		try{
 			InstanceModules[module] = new JOBAD.modules.loadedModule(module, options, me, function(suc, msg){
 				if(!suc){
 					markLoadAsFailed(module, msg);
 				} else {
 					disabledModules.push(module); //we are disabled by default
+					me.Event.trigger("module.load", [module, options]); 
 
 					if(auto_activate){
 						me.modules.activate(module);
@@ -2977,6 +3009,7 @@ JOBAD.ifaces.push(function(me, args){
 
 	var markLoadAsFailed = function(module, message){
 		loadFail.push(module);
+		me.Event.trigger("module.fail", [module, message]); 
 		try{
 			delete InstanceModules[module];
 		} catch(e){}
@@ -3157,8 +3190,10 @@ JOBAD.ifaces.push(function(me, args){
 			return;
 		}
 		disabledModules.push(module);
-		this.element.trigger('JOBAD.Event', ['deactivate', module]);
+
 		InstanceModules[module].onDeactivate(me);
+		me.Event.trigger("module.deactivate", [InstanceModules[module]]); 
+		me.Event.trigger("event.handlable", ["deactivate", module]); 
 	}
 
 	/*
@@ -3185,13 +3220,14 @@ JOBAD.ifaces.push(function(me, args){
 			
 
 			InstanceModules[module].onActivate(me);
-			me.element.trigger('JOBAD.Event', ['activate', module]);
+			me.Event.trigger("module.activate", [InstanceModules[module]]); 
+			me.Event.trigger("event.handlable", ["activate", module]); 
 		}
 
 		if(me.Setup.isEnabled()){
 			todo();
 		} else {
-			me.Setup.deferUntilEnabled(todo);
+			me.Event.once("instance.enable", todo); 
 		}
 
 		return true; 
@@ -3292,18 +3328,19 @@ JOBAD.ifaces.push(function(me, args){
 		});
 		
 		//reactivate all once setup is called again
-		me.Setup.deferUntilEnabled(function(){
+		this.Event.once("instance.enable", function(){
 			for(var i=0;i<cache.length;i++){
 				var name = cache[i];
 				if(!me.modules.isActive(name)){
 					me.modules.activate(name);
 				}
 			}
-			me.Setup.deferUntilDisabled(onDisable); //reregister me
+			this.Event.once("instance.disable", onDisable); //reregister me
 		});
 	};
 	
-	this.Event = onDisable; 
+
+	this.Event.once("instance.disable", onDisable); 
 	
 	this.modules = JOBAD.util.bindEverything(this.modules, this);
 });
@@ -3870,7 +3907,7 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 	
 	
 };/* end   <core/JOBAD.core.modules.js> */
-/* start <core/JOBAD.core.events.js> */
+/* start <core/JOBAD.core.setup.js> */
 /*
 	JOBAD Core Event Logic
 		
@@ -3899,9 +3936,6 @@ JOBAD.ifaces.push(function(me, args){
 	/* Setup on an Element */
 
 	var enabled = false;
-	
-	var activation_cache = [];
-	var deactivation_cache = [];
 
 	/*
 		Enables or disables this JOBAD instance. 
@@ -3921,27 +3955,35 @@ JOBAD.ifaces.push(function(me, args){
 	this.Setup.isEnabled = function(){
 		return enabled;
 	};
+
 	
 	/*
 		Defer an event until JOBAD is enabled. 
+		depracated
 	*/
 	this.Setup.deferUntilEnabled = function(func){
-		activation_cache.push(func);
+		JOBAD.console.warn("depracated: .Setup.deferUntilEnabled, use .Event.once('instance.enable', callback) instead. "); 
+		me.Event.once("instance.enable", func); 
 	};
 	
 	/*
 		Defer an even until JOBAD is disabled
 	*/
 	this.Setup.deferUntilDisabled = function(func){
-		deactivation_cache.push(func);
+		JOBAD.console.warn("depracated: .Setup.deferUntilDisabled, use .Event.once('instance.disable', callback) instead. "); 
+		me.Event.once("instance.disable", func);
 	};
+
+	
+	//These are special events
+	//Do not setup these
+	var SpecialEvents = ["on", "off", "once", "trigger"]; 
 	
 	/*
 		Enables this JOBAD instance 
 		@returns boolean indicating success. 
 	*/
 	this.Setup.enable = function(){
-		
 		if(enabled){
 			return false;
 		}
@@ -3949,18 +3991,21 @@ JOBAD.ifaces.push(function(me, args){
 		var root = me.element;
 
 		for(var key in me.Event){
-			JOBAD.events[key].Setup.enable.call(me, root);
-		}
-		
-		while(activation_cache.length > 0){
-			try{
-				activation_cache.pop()();
-			} catch(e){
-				JOBAD.console.log("Warning: Defered Activation event failed to execute: "+e.message);
+			if(JOBAD.util.contains(SpecialEvents, key)){
+				continue;
 			}
+
+			try{
+				JOBAD.events[key].Setup.enable.call(me, root);
+			} catch(e){
+				JOBAD.console.error("Failed to enable Event '"+key+"': "+e.message);
+				JOBAD.console.error(e); 
+			}
+			
 		}
-		
+
 		enabled = true; //we are enabled;
+		var res = me.Event.trigger("instance.enable", []); 	
 
 		return true;
 	};
@@ -3976,54 +4021,42 @@ JOBAD.ifaces.push(function(me, args){
 		var root = me.element;
 
 		for(var key in JOBAD.events){
+			if(JOBAD.util.contains(SpecialEvents, key)){
+				continue;
+			}
 			if(JOBAD.events.hasOwnProperty(key) && !JOBAD.isEventDisabled(key)){
-				JOBAD.events[key].Setup.disable.call(me, root);
+				try{
+					JOBAD.events[key].Setup.disable.call(me, root);
+				} catch(e){
+					JOBAD.console.error("Failed to disable Event '"+key+"': "+e.message);
+					JOBAD.console.error(e); 
+				}
 			}	
 		}
-		
-		while(deactivation_cache.length > 0){
-			try{
-				deactivation_cache.pop()();
-			} catch(e){
-				JOBAD.console.log("Warning: Defered Deactivation event failed to execute: "+e);
-			}
-		}
-		
+
+
 		enabled = false;
+		me.Event.trigger("instance.disable", []); 
 
 		return true;
 	};
-	
-	//this.Event is a cache for setup events
-	this.Setup.deferUntilDisabled(this.Event);
-	
-	/* Event namespace */
-	this.Event = {}; //redefine it
 
-	var EventHandler = JOBAD.refs.$("<div>"); 
-
-	this.Event.on = function(event, handler){
-		return JOBAD.util.on(EventHandler, event, handler);
-	};
-
-	this.Event.once = function(event, handler){
-		return JOBAD.util.once(EventHandler, event, handler);
-	};
-
-	this.Event.off = function(handler){
-		return JOBAD.util.off(EventHandler, handler);
-	};
-
-	this.Event.trigger = function(event, params){
-		return JOBAD.util.trigger(EventHandler, event, params);
-	}
-	
 	//Setup the events
 	for(var key in JOBAD.events){
 		if(JOBAD.events.hasOwnProperty(key) && !JOBAD.isEventDisabled(key)){
 
 			me.Event[key] = JOBAD.util.bindEverything(JOBAD.events[key].namespace, me);
 			
+			(function(){
+				var k = key; 
+				var orgResult = me.Event[k].getResult; 
+				me.Event[k].getResult = function(){
+					var augmentedResult = me.Event.trigger(k, arguments); //Trigger the event
+					var realResult = orgResult.apply(this, arguments); 
+					return realResult; 
+				}
+			})()
+
 			if(typeof JOBAD.events[key].Setup.init == "function"){
 				JOBAD.events[key].Setup.init.call(me, me);
 			} else if(typeof JOBAD.events[key].Setup.init == "object"){
@@ -4077,7 +4110,7 @@ JOBAD.events = {};
 
 //config
 JOBAD.config.disabledEvents = []; //Disabled events
-JOBAD.config.cleanModuleNamespace = false;//if set to true this.loadedModule instances will not allow additional functions/* end   <core/JOBAD.core.events.js> */
+JOBAD.config.cleanModuleNamespace = false;//if set to true this.loadedModule instances will not allow additional functions/* end   <core/JOBAD.core.setup.js> */
 /* start <ui/JOBAD.ui.js> */
 /*
 	JOBAD 3 UI Functions
@@ -6392,12 +6425,12 @@ JOBAD.ifaces.push(function(){
 */
 
 var preEvent = function(me, event, params){
-	//me.Event.trigger("event.before."+event, [event, params]);
+	me.Event.trigger("event.before."+event, [event, params]);
 };
 
 var postEvent = function(me, event, params){
-	//me.Event.trigger("event.after."+event, [event, params]);
-	//me.Event.trigger("event.handlable", [event, params])
+	me.Event.trigger("event.after."+event, [event, params]);
+	me.Event.trigger("event.handlable", [event, params])
 };
 /* left click */
 JOBAD.events.leftClick = 
@@ -6494,13 +6527,13 @@ JOBAD.events.onEvent =
 		'enable': function(root){
 			var me = this;
 
-			me.Event.onEvent.Setup.id = 
-			me.Event.on("event.handlable", function(jqe, event, args){
+			me.Event.onEvent.id = 
+			me.Event.on("event.handlable", function(event, args){
 				me.Event.onEvent.trigger(event, args);
 			});
 		},
 		'disable': function(root){
-			me.Event.off(me.Event.onEvent.Setup.id);
+			me.Event.off(me.Event.onEvent.id);
 		}
 	},
 	'namespace': 
@@ -6540,10 +6573,12 @@ JOBAD.events.contextMenuEntries =
 					return me.Config.get("cmenu_type");
 				}, 
 				"show": function(){
-					root.trigger('JOBAD.Event', ['contextMenuOpen']);
+					me.Event.trigger("contextmenu.open", []); 
+					me.Event.trigger("event.handlable", ["contextMenuOpen", []]); 
 				},
 				"close": function(){
-					root.trigger('JOBAD.Event', ['contextMenuClose']);
+					me.Event.trigger("contextmenu.close", []); 
+					me.Event.trigger("event.handlable", ["contextMenuClose", []]); 
 				},
 				"stopPropagnate": true
 			});
@@ -6696,11 +6731,11 @@ JOBAD.events.hoverText =
 				return false;		
 			}
 
-			preEvent(me, "hoverText", [source]);
+			preEvent(this, "hoverText", [source]);
 			var EventResult = this.Event.hoverText.getResult(source); //try to do the event
 		
 			if(typeof EventResult == 'boolean'){
-				postEvent(me, "hoverText", [source]);
+				postEvent(this, "hoverText", [source]);
 				return EventResult;		
 			}
 
@@ -6750,7 +6785,7 @@ JOBAD.events.hoverText =
 
 			JOBAD.UI.hover.disable();
 
-			postEvent(me, "hoverText", [source]);
+			postEvent(this, "hoverText", [source]);
 
 			if(!source.is(this.element)){
 				this.Event.hoverText.trigger(source.parent());//we are in the parent now
@@ -6760,7 +6795,7 @@ JOBAD.events.hoverText =
 	}
 }
 
-for(var key in JOBAD.events){
+for(var key in JOBAD.events){//TODO: remove on, off, once, trigger from cleanPropertioes
 	JOBAD.modules.cleanProperties.push(key);
 }
 /* end   <events/JOBAD.events.js> */
@@ -7466,15 +7501,10 @@ JOBAD.Instances = {};
 
 JOBAD.Instances.all = {}; 
 
-JOBAD.ifaces.push(function(){
-	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
+JOBAD.ifaces.push(function(me){
 
 	//store a reference so it is kept
-	JOBAD.Instances.all[this.ID] = this;
-
-	this.focus = function(){
-		//Focus this JOBADInstance
-	}
+	JOBAD.Instances.all[me.ID] = this;
 }); /* end   <core/JOBAD.core.instances.js> */
 /* start <JOBAD.wrap.js> */
 /*

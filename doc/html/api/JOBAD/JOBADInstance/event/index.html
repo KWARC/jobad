@@ -513,21 +513,23 @@
 <p>The following event names are available: </p>
 
 <ul>
+<li><code>module.activate($module)</code> The module $module was activated. </li>
+<li><p><code>module.deactivate($module)</code> The module $module was deactivated. </p></li>
+<li><p><code>instance.enable</code> This JOBADInstance was enabled. </p></li>
+<li><p><code>instance.disable</code> This JOBADInstance was disabled. </p></li>
+<li><p><code>module.load($module, $options)</code> The module $module was loaded successfully. </p></li>
+<li><p><code>module.fail($module, $reason)</code> The module $module has failed to load. </p></li>
+<li><p><code>contextmenu.open</code> After the context menu has been opened</p></li>
+<li><p><code>contextmenu.close</code> After the context menu has been closed</p></li>
 <li><p><strong>unimplemented</strong>: </p>
 
 <ul>
-<li><code>instance.enable</code> This JOBADInstance was enabled. </li>
-<li><p><code>instance.disable</code> This JOBADInstance was disabled. </p></li>
-<li><p><code>module.load.$module($module)</code> The module $module was loaded. </p></li>
-<li><code>module.activate.$module($module)</code> The module $module was activated. </li>
-<li><p><code>module.deactivate.$module($module)</code> The module $module was deactivated. </p></li>
-<li><p><code>instance.focus</code> This JOBADInstance was focused. </p></li>
+<li><code>instance.focus</code> This JOBADInstance was focused. </li>
 <li><code>instance.unfocus</code> This JOBADInstance was unfocused. </li>
 </ul></li>
 <li><p><code>event.before.$name($name, params)</code>: Triggered before an event occurs. </p></li>
 <li><code>event.after.$name($name, params)</code>: Triggered after an event occurs. </li>
-<li><p><code>event.handlable($evt, $params)</code>: triggered on any handable event. (An event that can be handled by the onEvent Handler). </p></li>
-<li><p><code>$name(params)</code>: Triggered once an event result is fetched. </p></li>
+<li><code>$name(params)</code>: Triggered once an event result is fetched. </li>
 </ul>
 
 <p><code>$name</code> can take the following values: </p>
@@ -538,7 +540,8 @@
 <li><code>contextMenuEntries</code> - Context Menu of an element is requested</li>
 <li><code>configUpdate</code> - A specific configuration setting is updated</li>
 <li><code>hoverText</code> - Hover Text requested on an element</li>
-<li><code>SideBarUpdate</code>- The sidebar is updated. </li>
+<li><p><code>SideBarUpdate</code>- The sidebar is updated. </p></li>
+<li><p><code>event.handlable($evt, $params)</code>: triggered on any handable event. (An event that can be handled by the onEvent Handler). </p></li>
 </ul>
 
 <h1>The following specific Event Namespacesare available:</h1>

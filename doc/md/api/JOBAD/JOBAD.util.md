@@ -110,3 +110,5 @@ In addition to these functions, JOBAD.util also contains all underscore (version
 	* **String** `event` Event to trigger. 
 	* **Array** `params` Optional. Array of parameters to pass to event handlers.
 	* **returns** `Array of results`
+
+* **Function** `JOBAD.util.EventHandler()` - Creates a new Event Handler which has the functions ".on", ".once", ".off", ".trigger" as above (without the first parameter)
