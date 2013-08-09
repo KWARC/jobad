@@ -13,7 +13,7 @@
 * **Function** `.Event.off(id)` - Removes an event listener. 
     * **String** `id` Id of handler to remove. 
 
-* **Function** `JOBAD.util.trigger(event, params)` - Triggers an event. 
+* **Function** `.Event.trigger(event, params)` - Calls all event handlers belonging to an event. 
     * **String** `event` Event to trigger. 
     * **Array** `params` Optional. Array of parameters to pass to event handlers.
     * **returns** `Array of results`

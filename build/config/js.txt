@@ -9,7 +9,6 @@ ui/JOBAD.ui.js
 ui/JOBAD.ui.hover.js
 ui/JOBAD.ui.contextmenu.js
 ui/JOBAD.ui.sidebar.js
-ui/JOBAD.ui.toolbar.js
 ui/JOBAD.ui.overlay.js
 ui/JOBAD.ui.folding.js
 events/JOBAD.sidebar.js

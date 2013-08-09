@@ -2,7 +2,7 @@
 
 # Build everything
 all: deps js css libs templates doc
-clean: clean-deps clean-templates clean-doc clean-release
+clean: clean-templates clean-doc clean-release
 libs: js-libs css-libs
 
 # Get the dependencies

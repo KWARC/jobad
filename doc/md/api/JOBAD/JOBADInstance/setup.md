@@ -6,7 +6,10 @@
 	* **returns** boolean indicating success. 
 * **Function** `.Setup.disable()` Disables this JOBAD instance. 
 	* **returns** boolean indicating success. 
+
 * **Function** `.Setup.deferUntilEnabled(func)` Defers a function until until this instance is enabled. 
+    * deprecated
 	* **Function** `func()` Function to defer. 
 * **Function** `.Setup.deferUntilDisabled(func)` Defers a function until until this instance is disabled. 
+    * deprecated
 	* **Function** `func()` Function to defer. 

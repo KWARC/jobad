@@ -38,7 +38,7 @@ JOBAD.Sidebar.registerSidebarStyle = function(styleName, styleDesc, registerFunc
 	
 	JOBAD.Sidebar.styles[styleName] = {
 		"register": registerFunc, //JOBAD.UI.Sidebar.addNotification
-		"deregister": deregisterFunc, //JOBAD.UI.Toolbar.removeItem(item);
+		"deregister": deregisterFunc, //JOBAD.UI.Boundbar.removeItem(item);
 		"update": updateFunc //JOBAD.UI.Sidebar.redraw
 	};
 };
@@ -65,16 +65,6 @@ JOBAD.Sidebar.registerSidebarStyle("left", "Left",
 		JOBAD.UI.Sidebar.forceNotificationUpdate();
 		if(JOBAD.util.objectEquals(this.Sidebar.PastRequestCache, {})){
 			JOBAD.UI.Sidebar.unwrap(this.element);
-		}
-	}
-);
-
-JOBAD.Sidebar.registerSidebarStyle("bound", "Bound to element", 
-	JOBAD.util.argSlice(JOBAD.UI.Toolbar.addItem, 1),
-	JOBAD.UI.Toolbar.removeItem, 
-	function(){
-		for(var key in this.Sidebar.PastRequestCache){
-			JOBAD.UI.Toolbar.update(this.Sidebar.PastRequestCache[key][0]);
 		}
 	}
 );

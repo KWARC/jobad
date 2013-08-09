@@ -17,6 +17,12 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 ## Changelog
 ### Version 3.1.9 (In Development)
 * added JOBAD.Instances
+* improved the Event System
+	* Dynamic listening to event via `.Event.on(evt, handler)` and `.Event.once(evt, handler)`
+* removed "bound to element" Sidebar Style 
+	* never seen a use case
+
+* updated Makefile
 
 ### Version 3.1.8 (Stable)
 * improved contextMenu

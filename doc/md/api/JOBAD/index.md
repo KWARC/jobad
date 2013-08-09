@@ -4,7 +4,6 @@ This object is the main JOBAD Namespace.
 * **Function** `JOBAD(element, config)` Creates a new instance of `JOBAD` bound to `element` 
 	* **jQuery** `element` a jQuery Object to bind this JOBAD INstance to. May not be empty. Collections containing more than one element may cause problems 
 	* **Object** `config` JOBAD Configuration. 
-		* **String** `config.sidebar_type` Type of sidebar to use: `right` (default), `left` or `bound`
 		* **Array** `config.restricted_user_config` An array of configuration items which can not be changed by the user
 	* **returns** a new [`JOBAD`](JOBADInstance/index.md) instance
 

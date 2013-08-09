@@ -65,7 +65,6 @@ If you want to include the unbuilt js files use this code:
 	<script src='js/ui/JOBAD.ui.hover.js'></script>
 	<script src='js/ui/JOBAD.ui.contextmenu.js'></script>
 	<script src='js/ui/JOBAD.ui.sidebar.js'></script>
-	<script src='js/ui/JOBAD.ui.toolbar.js'></script>
 	<script src='js/ui/JOBAD.ui.overlay.js'></script>
 	<script src='js/ui/JOBAD.ui.folding.js'></script>
 	<script src='js/events/JOBAD.sidebar.js'></script>

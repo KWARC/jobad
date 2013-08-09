@@ -52,7 +52,7 @@ JOBAD.ifaces.push(function(me, args){
 		depracated
 	*/
 	this.Setup.deferUntilEnabled = function(func){
-		JOBAD.console.warn("depracated: .Setup.deferUntilEnabled, use .Event.once('instance.enable', callback) instead. "); 
+		JOBAD.console.warn("deprecated: .Setup.deferUntilEnabled, use .Event.once('instance.enable', callback) instead. "); 
 		me.Event.once("instance.enable", func); 
 	};
 	
@@ -60,7 +60,7 @@ JOBAD.ifaces.push(function(me, args){
 		Defer an even until JOBAD is disabled
 	*/
 	this.Setup.deferUntilDisabled = function(func){
-		JOBAD.console.warn("depracated: .Setup.deferUntilDisabled, use .Event.once('instance.disable', callback) instead. "); 
+		JOBAD.console.warn("deprecated: .Setup.deferUntilDisabled, use .Event.once('instance.disable', callback) instead. "); 
 		me.Event.once("instance.disable", func);
 	};
 
