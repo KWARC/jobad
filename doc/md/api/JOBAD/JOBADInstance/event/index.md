@@ -18,6 +18,16 @@
     * **Array** `params` Optional. Array of parameters to pass to event handlers.
     * **returns** `Array of results`
 
+* **Function** `.Event.handle(event, param)` - Triggers a handlable event. 
+    * **String** `event` Event to trigger. 
+    * **Array** `param` Optional. Parameter for event. 
+    * **returns** `Array of results`
+
+* **Function** `.Event.bind(event, module, handlerName)` - Binds a member function of a module to an event. 
+    * **String** `event` Event to listen to. 
+    * **Instance[ [JOBAD.modules.loadedModule](../../JOBAD.modules/loadedModule.md) ]** `module` Instance of module to use. 
+    * **String** `handlerName` Name of the handler Function of the module. 
+
 The following event names are available: 
 
 
@@ -32,6 +42,9 @@ The following event names are available:
 
 * `contextmenu.open` After the context menu has been opened
 * `contextmenu.close` After the context menu has been closed
+
+* `folding.enable` Before folding is enabled
+* `folding.disable` After folding is disabled
 
 * **unimplemented**: 
     * `instance.focus` This JOBADInstance was focused. 
@@ -50,7 +63,7 @@ The following event names are available:
 * `hoverText` - Hover Text requested on an element
 * `SideBarUpdate`- The sidebar is updated. 
 
-* `event.handlable($evt, $params)`: triggered on any handable event. (An event that can be handled by the onEvent Handler). 
+* `event.handlable($evt, $param)`: triggered on any handable event. (An event that can be handled by the onEvent Handler). 
 
 # The following specific Event Namespacesare available: 
 

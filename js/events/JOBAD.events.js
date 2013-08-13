@@ -26,8 +26,9 @@ var preEvent = function(me, event, params){
 
 var postEvent = function(me, event, params){
 	me.Event.trigger("event.after."+event, [event, params]);
-	me.Event.trigger("event.handlable", [event, params])
+	me.Event.handle(event, params); 
 };
+
 /* left click */
 JOBAD.events.leftClick = 
 {
@@ -170,11 +171,11 @@ JOBAD.events.contextMenuEntries =
 				}, 
 				"show": function(){
 					me.Event.trigger("contextmenu.open", []); 
-					me.Event.trigger("event.handlable", ["contextMenuOpen", []]); 
+					me.Event.handle("contextMenuOpen");
 				},
 				"close": function(){
 					me.Event.trigger("contextmenu.close", []); 
-					me.Event.trigger("event.handlable", ["contextMenuClose", []]); 
+					me.Event.handle("contextMenuClose");
 				},
 				"stopPropagnate": true
 			});
@@ -391,6 +392,8 @@ JOBAD.events.hoverText =
 	}
 }
 
-for(var key in JOBAD.events){//TODO: remove on, off, once, trigger from cleanPropertioes
-	JOBAD.modules.cleanProperties.push(key);
+for(var key in JOBAD.events){
+	if(!JOBAD.util.contains(SpecialEvents, key)){
+		JOBAD.modules.cleanProperties.push(key);
+	}
 }

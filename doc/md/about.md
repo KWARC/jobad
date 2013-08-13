@@ -17,8 +17,14 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 ## Changelog
 ### Version 3.1.9 (In Development)
 * added JOBAD.Instances
+* added Toolbars
+	* per-module
+	* UI left to module
+	* have to be enable via config UI or via code
 * improved the Event System
 	* Dynamic listening to event via `.Event.on(evt, handler)` and `.Event.once(evt, handler)`
+	* added `.Event.bind` and `loadedModule.setHandler` to create custom events for modules
+	* added folding.enable and folding.disable events
 * removed "bound to element" Sidebar Style 
 	* never seen a use case
 

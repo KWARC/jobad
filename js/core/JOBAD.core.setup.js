@@ -19,6 +19,12 @@
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+//These are special events
+//Do not setup these
+var SpecialEvents = ["on", "off", "once", "trigger", "bind", "handle"]; 
+
+
 //Provides custom events for modules
 JOBAD.ifaces.push(function(me, args){
 
@@ -63,11 +69,6 @@ JOBAD.ifaces.push(function(me, args){
 		JOBAD.console.warn("deprecated: .Setup.deferUntilDisabled, use .Event.once('instance.disable', callback) instead. "); 
 		me.Event.once("instance.disable", func);
 	};
-
-	
-	//These are special events
-	//Do not setup these
-	var SpecialEvents = ["on", "off", "once", "trigger"]; 
 	
 	/*
 		Enables this JOBAD instance 

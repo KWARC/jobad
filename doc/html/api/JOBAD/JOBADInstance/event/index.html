@@ -508,6 +508,20 @@
 <li><strong>Array</strong> <code>params</code> Optional. Array of parameters to pass to event handlers.</li>
 <li><strong>returns</strong> <code>Array of results</code></li>
 </ul></li>
+<li><p><strong>Function</strong> <code>.Event.handle(event, param)</code> - Triggers a handlable event. </p>
+
+<ul>
+<li><strong>String</strong> <code>event</code> Event to trigger. </li>
+<li><strong>Array</strong> <code>param</code> Optional. Parameter for event. </li>
+<li><strong>returns</strong> <code>Array of results</code></li>
+</ul></li>
+<li><p><strong>Function</strong> <code>.Event.bind(event, module, handlerName)</code> - Binds a member function of a module to an event. </p>
+
+<ul>
+<li><strong>String</strong> <code>event</code> Event to listen to. </li>
+<li><strong>Instance[ <a href="../../JOBAD.modules/loadedModule.html">JOBAD.modules.loadedModule</a> ]</strong> <code>module</code> Instance of module to use. </li>
+<li><strong>String</strong> <code>handlerName</code> Name of the handler Function of the module. </li>
+</ul></li>
 </ul>
 
 <p>The following event names are available: </p>
@@ -521,6 +535,8 @@
 <li><p><code>module.fail($module, $reason)</code> The module $module has failed to load. </p></li>
 <li><p><code>contextmenu.open</code> After the context menu has been opened</p></li>
 <li><p><code>contextmenu.close</code> After the context menu has been closed</p></li>
+<li><p><code>folding.enable</code> Before folding is enabled</p></li>
+<li><p><code>folding.disable</code> After folding is disabled</p></li>
 <li><p><strong>unimplemented</strong>: </p>
 
 <ul>
@@ -541,7 +557,7 @@
 <li><code>configUpdate</code> - A specific configuration setting is updated</li>
 <li><code>hoverText</code> - Hover Text requested on an element</li>
 <li><p><code>SideBarUpdate</code>- The sidebar is updated. </p></li>
-<li><p><code>event.handlable($evt, $params)</code>: triggered on any handable event. (An event that can be handled by the onEvent Handler). </p></li>
+<li><p><code>event.handlable($evt, $param)</code>: triggered on any handable event. (An event that can be handled by the onEvent Handler). </p></li>
 </ul>
 
 <h1>The following specific Event Namespacesare available:</h1>

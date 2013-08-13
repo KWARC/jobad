@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Mon, 12 Aug 2013 16:49:16 +0200
+	built: Tue, 13 Aug 2013 20:34:25 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -2924,6 +2924,37 @@ JOBAD.ifaces.push(function(me, args){
 	//Event namespace
 	this.Event = JOBAD.util.EventHandler(); 
 
+	/*
+		Triggers a handable event. 
+		@param	evt	Name of event to trigger. 
+		@param	param	Parameter for event. 
+	*/
+	this.Event.handle = function(evt, param){
+		me.Event.trigger("event.handlable", [evt, param]); 
+	}
+
+	/*
+		Binds a custom Event handler in a module. 
+		@param	evt	Name of event to biond to. 
+		@param	module JOABd.modules.loadedModule Instance to enable binding on.
+		@param handleName Name of handle function to use. Should be a parameter of the module.  
+	*/
+	this.Event.bind = function(evt, module, handleName){
+		if(module instanceof JOBAD.modules.loadedModule){
+			me.Event.on(evt, function(){
+				if(module.isActive()){
+					var args = [me];
+					for(var i=0;i<arguments.length;i++){
+						args.push(arguments[i]); 
+					}
+					module[handleName].apply(module, args);
+				}
+			})
+		} else {
+			JOBAD.console.error("Can't bind Event Handler for '"+evt+"': module is not a loadedModuleInstance. ")
+		}
+	}
+
 	var InstanceModules = {}; //Modules loaded
 	var disabledModules = []; //Modules disabled
 
@@ -3193,7 +3224,7 @@ JOBAD.ifaces.push(function(me, args){
 
 		InstanceModules[module].onDeactivate(me);
 		me.Event.trigger("module.deactivate", [InstanceModules[module]]); 
-		me.Event.trigger("event.handlable", ["deactivate", module]); 
+		me.Event.handle("deactivate", module); 
 	}
 
 	/*
@@ -3221,7 +3252,7 @@ JOBAD.ifaces.push(function(me, args){
 
 			InstanceModules[module].onActivate(me);
 			me.Event.trigger("module.activate", [InstanceModules[module]]); 
-			me.Event.trigger("event.handlable", ["activate", module]); 
+			me.Event.handle("activate", module); 
 		}
 
 		if(me.Setup.isEnabled()){
@@ -3868,6 +3899,11 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 		return JOBADInstance.modules.deactivate(this.info().identifier);
 	}
 
+	// .setHandler, scoped alias for .Event.bind
+	this.setHandler = function(evt, handleName){
+		this.getJOBAD().Event.bind(evt, me, handleName); 
+	}
+
 	var do_next = function(){
 		ServiceObject.init.apply(me, params); 
 		next.call(me, true);
@@ -3929,6 +3965,12 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+//These are special events
+//Do not setup these
+var SpecialEvents = ["on", "off", "once", "trigger", "bind", "handle"]; 
+
+
 //Provides custom events for modules
 JOBAD.ifaces.push(function(me, args){
 
@@ -3973,11 +4015,6 @@ JOBAD.ifaces.push(function(me, args){
 		JOBAD.console.warn("deprecated: .Setup.deferUntilDisabled, use .Event.once('instance.disable', callback) instead. "); 
 		me.Event.once("instance.disable", func);
 	};
-
-	
-	//These are special events
-	//Do not setup these
-	var SpecialEvents = ["on", "off", "once", "trigger"]; 
 	
 	/*
 		Enables this JOBAD instance 
@@ -6154,6 +6191,8 @@ JOBAD.ifaces.push(function(){
 			return;
 		}
 
+		this.Event.trigger("folding.enable", [element]); 
+
 		if(element.is(this.element)){
 			if(element.data("JOBAD.UI.Folding.virtualFolding")){
 				element = element.data("JOBAD.UI.Folding.virtualFolding");
@@ -6190,6 +6229,8 @@ JOBAD.ifaces.push(function(){
 		}
 		var element = JOBAD.refs.$(element);
 
+		this.Event.trigger("folding.disable", [element]); 
+
 		if(element.data("JOBAD.UI.Folding.virtualFolding")){
 			var vElement = element.data("JOBAD.UI.Folding.virtualFolding");
 			JOBAD.UI.Folding.disable(vElement);
@@ -6218,6 +6259,187 @@ JOBAD.ifaces.push(function(){
 
 	this.Folding = JOBAD.util.bindEverything(this.Folding, this);
 });/* end   <events/JOBAD.folding.js> */
+/* start <events/JOBAD.toolbar.js> */
+/*
+	JOBAD 3 Toolbar
+	JOBAD.toolbar.js
+		
+	Copyright (C) 2013 KWARC Group <kwarc.info>
+	
+	This file is part of JOBAD.
+	
+	JOBAD is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	JOBAD is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+JOBAD.events.Toolbar = 
+{
+	'default': function(JobadInstance, Toolbar){
+		return false; 
+	},
+	'Setup': {
+		'init': function(){
+			//nothing to do here
+		},
+		'enable': function(root){
+			this.modules.iterateAnd(function(module){
+				module.Toolbar.enable(); 
+				return true;
+			});
+		},
+		'disable': function(root){
+			//Remove all toolbars
+			this.modules.iterateAnd(function(module){
+				module.Toolbar.disable(); 
+				return true;
+			});
+		}
+	},
+	'namespace': {
+		
+		'getResult': function(){
+			var me = this; 
+			this.modules.iterateAnd(function(module){
+				module.Toolbar.show(); 
+				return true;
+			});
+		},
+		'trigger': function(){
+			preEvent(this, "Toolbar", []);
+			this.Event.Toolbar.getResult();
+			postEvent(this, "Toolbar", []);
+		}
+	}
+};
+
+JOBAD.modules.ifaces.push([
+	function(properObject, ModuleObject){
+		return properObject; 
+	}, function(){
+		var me = this; 
+		var id = me.info().identifier; 
+
+		var TBElement = undefined; 
+		var JOBADInstance = me.getJOBAD(); 
+
+		var enabled = false; 
+
+
+		this.Toolbar.get = function(){
+			//gets the tollbar if available, otherwise undefined
+			return TBElement;
+		};
+
+		this.Toolbar.isEnabled = function(){
+			return enabled; 
+		}
+
+		this.Toolbar.enable = function(){
+			//enable the toolbar
+
+			if(me.Toolbar.isEnabled()){
+				//Remove any old toolbars
+				me.Toolbar.disable();
+			}
+
+			//create a new Toolbar
+			var TB = JOBAD.UI.Toolbar.add(); 
+
+
+			//check if we need it
+			var res = me.Toolbar.call(me, me.getJOBAD(), TB);
+
+			if(res !== true){
+				//we do not want it => remove it. 
+				TB.remove(); 
+				JOBAD.UI.Toolbar.update(); 
+
+				return false;  
+			} else {
+				//we need it. 
+				TBElement = TB; 
+				JOBADInstance.Event.trigger("Toolbar.add", id);
+
+				enabled = true; //it is now enabled
+
+				return true; 
+			}
+
+			
+		}
+
+		this.Toolbar.disable = function(){
+			//disable the toolbar
+
+			if(!me.Toolbar.isEnabled()){
+				//we are already disabled
+				return false; 
+			}
+
+			//remove the toolbar element
+
+			TBElement.remove(); 
+			JOBAD.UI.Toolbar.update();
+			TBElement = undefined;  
+
+			JOBADInstance.Event.trigger("Toolbar.remove", id);
+
+			enabled = false; //it is now disabled
+			return true; 
+		}
+
+		//Hide / Show the Toolbar
+
+		var visible = false; 
+
+		this.Toolbar.setVisible = function(){
+			visible = true; 
+			me.Toolbar.show(); 
+		}
+
+		this.Toolbar.setHidden = function(){
+			visible = false; 
+			me.Toolbar.disable(); 
+		}
+
+		this.Toolbar.isVisible = function(){
+			return visible; 
+		}
+
+		this.Toolbar.show = function(){
+			if(me.Toolbar.isVisible() && me.isActive()){
+				return me.Toolbar.enable(); 
+			} else {
+				return false; 
+			}
+		}
+
+
+		//Register Event Handlers for activate
+
+		JOBADInstance.Event.on("module.activate", function(m){
+			if(m.info().identifier == id){
+				me.Toolbar.show(); 
+			}
+		});
+
+		JOBADInstance.Event.on("module.deactivate", function(m){
+			if(m.info().identifier == id){
+				me.Toolbar.disable(); 
+			}
+		});
+	}]); /* end   <events/JOBAD.toolbar.js> */
 /* start <events/JOBAD.events.js> */
 /*
 	JOBAD 3 Events
@@ -6247,8 +6469,9 @@ var preEvent = function(me, event, params){
 
 var postEvent = function(me, event, params){
 	me.Event.trigger("event.after."+event, [event, params]);
-	me.Event.trigger("event.handlable", [event, params])
+	me.Event.handle(event, params); 
 };
+
 /* left click */
 JOBAD.events.leftClick = 
 {
@@ -6391,11 +6614,11 @@ JOBAD.events.contextMenuEntries =
 				}, 
 				"show": function(){
 					me.Event.trigger("contextmenu.open", []); 
-					me.Event.trigger("event.handlable", ["contextMenuOpen", []]); 
+					me.Event.handle("contextMenuOpen");
 				},
 				"close": function(){
 					me.Event.trigger("contextmenu.close", []); 
-					me.Event.trigger("event.handlable", ["contextMenuClose", []]); 
+					me.Event.handle("contextMenuClose");
 				},
 				"stopPropagnate": true
 			});
@@ -6612,8 +6835,10 @@ JOBAD.events.hoverText =
 	}
 }
 
-for(var key in JOBAD.events){//TODO: remove on, off, once, trigger from cleanPropertioes
-	JOBAD.modules.cleanProperties.push(key);
+for(var key in JOBAD.events){
+	if(!JOBAD.util.contains(SpecialEvents, key)){
+		JOBAD.modules.cleanProperties.push(key);
+	}
 }
 /* end   <events/JOBAD.events.js> */
 /* start <JOBAD.config.js> */

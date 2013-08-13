@@ -26,7 +26,7 @@
 			'author':	'Tom Wiesing',
 			'description':	'This module provides a simple configuration dialog. For backwards compatibility, this module adds the .showConfigUI() function to modules. ',
 			'hasCleanNamespace': false,
-			'version': '3.1.7a'
+			'version': '3.1.9'
 		},
 		globalinit: function(){
 			//icon source: http://openiconlibrary.sourceforge.net/gallery2/?./Icons/actions/configure-5.png, license: gplv2
@@ -328,13 +328,30 @@
 							}
 						}
 					});
+
+					//Sidebar onOff 
+
+					var TBButton = JOBAD.util.createRadio(["Hide", "Show"], mod.Toolbar.isVisible()?1:0);
+
+					TBButton.find("input").change(function(){
+						if(TBButton.find("input").eq(1).is(":checked")){
+							mod.Toolbar.setVisible(); 
+						} else {
+							mod.Toolbar.setHidden(); 
+						}
+					});
+
 					
 					$info.append(
 						"by ",
 						JOBAD.refs.$("<span>").css("text-decoration", "italic").text(info.author),
 						"<br />",
 						OnOff,
-						"<br />")
+						"<br />",
+						"Toolbar: ",
+						TBButton,
+						"<br />"
+						)
 					if(typeof info.url == "string"){
 						$info.append(
 							JOBAD.refs.$("<a>").text(info.url).attr("href", info.url).attr("target", "_blank").button(),

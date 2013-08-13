@@ -28,6 +28,37 @@ JOBAD.ifaces.push(function(me, args){
 	//Event namespace
 	this.Event = JOBAD.util.EventHandler(); 
 
+	/*
+		Triggers a handable event. 
+		@param	evt	Name of event to trigger. 
+		@param	param	Parameter for event. 
+	*/
+	this.Event.handle = function(evt, param){
+		me.Event.trigger("event.handlable", [evt, param]); 
+	}
+
+	/*
+		Binds a custom Event handler in a module. 
+		@param	evt	Name of event to biond to. 
+		@param	module JOABd.modules.loadedModule Instance to enable binding on.
+		@param handleName Name of handle function to use. Should be a parameter of the module.  
+	*/
+	this.Event.bind = function(evt, module, handleName){
+		if(module instanceof JOBAD.modules.loadedModule){
+			me.Event.on(evt, function(){
+				if(module.isActive()){
+					var args = [me];
+					for(var i=0;i<arguments.length;i++){
+						args.push(arguments[i]); 
+					}
+					module[handleName].apply(module, args);
+				}
+			})
+		} else {
+			JOBAD.console.error("Can't bind Event Handler for '"+evt+"': module is not a loadedModuleInstance. ")
+		}
+	}
+
 	var InstanceModules = {}; //Modules loaded
 	var disabledModules = []; //Modules disabled
 
@@ -297,7 +328,7 @@ JOBAD.ifaces.push(function(me, args){
 
 		InstanceModules[module].onDeactivate(me);
 		me.Event.trigger("module.deactivate", [InstanceModules[module]]); 
-		me.Event.trigger("event.handlable", ["deactivate", module]); 
+		me.Event.handle("deactivate", module); 
 	}
 
 	/*
@@ -325,7 +356,7 @@ JOBAD.ifaces.push(function(me, args){
 
 			InstanceModules[module].onActivate(me);
 			me.Event.trigger("module.activate", [InstanceModules[module]]); 
-			me.Event.trigger("event.handlable", ["activate", module]); 
+			me.Event.handle("activate", module); 
 		}
 
 		if(me.Setup.isEnabled()){
@@ -970,6 +1001,11 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 	
 	this.deactivate = function(){
 		return JOBADInstance.modules.deactivate(this.info().identifier);
+	}
+
+	// .setHandler, scoped alias for .Event.bind
+	this.setHandler = function(evt, handleName){
+		this.getJOBAD().Event.bind(evt, me, handleName); 
 	}
 
 	var do_next = function(){

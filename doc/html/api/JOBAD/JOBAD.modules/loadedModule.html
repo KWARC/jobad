@@ -503,6 +503,11 @@
 <li><strong>String</strong> <code>what</code>. Optional. If set to <code>file</code>, will get the file this module is defined in. If set to <code>group</code> will get the group this module was loaded in. FileName and group may be wrong if the module is registered within some callback. </li>
 </ul></li>
 <li><p><strong>Function</strong> <code>.isActive()</code> Checks if this module is active. </p></li>
+<li><strong>Function</strong> <code>.setHandler(event, handlerName)</code> - Binds a member function to an event. 
+<ul>
+<li><strong>String</strong> <code>event</code> Event to listen to. </li>
+<li><strong>String</strong> <code>handlerName</code> Name of the handler Function of the module. </li>
+</ul></li>
 <li><strong>Function</strong> <code>.activate()</code> Activates this module. </li>
 <li><strong>Function</strong> <code>.deactivate()</code> Deactivates this module</li>
 </ul>

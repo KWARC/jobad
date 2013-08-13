@@ -15,6 +15,9 @@
 	* **String** `what`. Optional. If set to `file`, will get the file this module is defined in. If set to `group` will get the group this module was loaded in. FileName and group may be wrong if the module is registered within some callback. 
 
 * **Function** `.isActive()` Checks if this module is active. 
+* **Function** `.setHandler(event, handlerName)` - Binds a member function to an event. 
+    * **String** `event` Event to listen to. 
+    * **String** `handlerName` Name of the handler Function of the module. 
 * **Function** `.activate()` Activates this module. 
 * **Function** `.deactivate()` Deactivates this module
 
