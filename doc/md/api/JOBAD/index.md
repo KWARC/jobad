@@ -5,6 +5,7 @@ This object is the main JOBAD Namespace.
 	* **jQuery** `element` a jQuery Object to bind this JOBAD INstance to. May not be empty. Collections containing more than one element may cause problems 
 	* **Object** `config` JOBAD Configuration. 
 		* **Array** `config.restricted_user_config` An array of configuration items which can not be changed by the user
+		* **Boolean** `config.auto_show_toolbar` Should toolbars be shows automatically? 
 	* **returns** a new [`JOBAD`](JOBADInstance/index.md) instance
 
 * **String** `JOBAD.version` - The current JOBAD Version ('3.1.9')

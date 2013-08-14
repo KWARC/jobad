@@ -20,7 +20,9 @@
 			JOBAD.repo.loadAllFrom("./../../../modules", function(){ //Load all from the repo
 				jQuery(function(){	
 					JOBAD1 = new JOBAD(jQuery("#1"));
-					JOBAD2 = new JOBAD(jQuery("#2"));
+					JOBAD2 = new JOBAD(jQuery("#2"), {
+						"auto_show_toolbar": true
+					});
 
 					JOBAD1.modules.load([
 						['test.click', ['green']],

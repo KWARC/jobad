@@ -139,7 +139,7 @@ JOBAD.modules.ifaces.push([
 
 		//Hide / Show the Toolbar
 
-		var visible = false; 
+		var visible = JOBADInstance.Config.get("auto_show_toolbar"); //get the default
 
 		this.Toolbar.setVisible = function(){
 			visible = true; 

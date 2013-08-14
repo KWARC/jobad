@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Wed, 14 Aug 2013 09:09:45 +0200
+	built: Wed, 14 Aug 2013 11:17:17 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -6513,6 +6513,17 @@ JOBAD.modules.ifaces.push([
 				me.Toolbar.disable(); 
 			}
 		});
+
+		if(JOBADInstance.Config.get("auto_show_toolbar")){
+			var evtHandler; 
+
+			evtHandler = JOBADInstance.Event.on("module.activate", function(m){
+				if(m.info().identifier == id){
+					me.Toolbar.setVisible(); //set it visible
+					JOBADInstance.Event.off(evtHandler); 
+				}
+			});
+		}
 	}]); /* end   <events/JOBAD.toolbar.js> */
 /* start <events/JOBAD.events.js> */
 /*
@@ -7558,7 +7569,8 @@ JOBAD.ifaces.push(function(JOBADRootElement, params){
 	var spec = JOBAD.modules.createProperUserSettingsObject({
 		"cmenu_type": ["list", ['standard', 'radial'], 'standard', ["Context Menu Type", "Standard", "Radial"]],
 		"sidebar_type": ["list", JOBAD.Sidebar.types, JOBAD.Sidebar.types[0], JOBAD.Sidebar.desc],
-		"restricted_user_config": ["none", []]
+		"restricted_user_config": ["none", []],
+		"auto_show_toolbar": ["bool", false, "Auto show all toolbars"]
 	}, "");
 	var cache = JOBAD.util.extend({}, (typeof config == 'undefined')?{}:config);
 

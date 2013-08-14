@@ -20,6 +20,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 * added Toolbars
 	* per-module
 	* UI left to module
+	* can be shifted up and down
 	* have to be enable via config UI or via code
 * improved the Event System
 	* Dynamic listening to event via `.Event.on(evt, handler)` and `.Event.once(evt, handler)`
@@ -30,8 +31,9 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 * improved JOBAD.util.getOrigin()
 	* better compatibility when using inline-scripts
 * more rotation for the radial context menu
-
 * updated Makefile
+* not yet implemented: 
+	* focusable JOBAD Instances
 
 ### Version 3.1.8 (Stable)
 * improved contextMenu
