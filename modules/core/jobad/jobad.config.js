@@ -333,13 +333,27 @@
 
 					var TBButton = JOBAD.util.createRadio(["Hide", "Show"], mod.Toolbar.isVisible()?1:0);
 
+					var UpButton = JOBAD.refs.$("<a>").button().text("Up").click(function(){
+						mod.Toolbar.moveUp(); 
+					});
+
+					var DownButton = JOBAD.refs.$("<a>").button().text("Down").click(function(){
+						mod.Toolbar.moveDown(); 
+					});
+
 					TBButton.find("input").change(function(){
 						if(TBButton.find("input").eq(1).is(":checked")){
 							mod.Toolbar.setVisible(); 
+							UpButton.show(); 
+							DownButton.show(); 
 						} else {
 							mod.Toolbar.setHidden(); 
+							UpButton.hide(); 
+							DownButton.hide(); 
 						}
-					});
+					}).change();
+
+					
 
 					
 					$info.append(
@@ -350,8 +364,11 @@
 						"<br />",
 						"Toolbar: ",
 						TBButton,
+						DownButton, 
+						UpButton,
 						"<br />"
-						)
+					);
+
 					if(typeof info.url == "string"){
 						$info.append(
 							JOBAD.refs.$("<a>").text(info.url).attr("href", info.url).attr("target", "_blank").button(),

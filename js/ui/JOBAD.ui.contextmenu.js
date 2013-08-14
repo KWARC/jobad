@@ -379,9 +379,17 @@ JOBAD.UI.ContextMenu.buildPieMenuList = function(items, element, orgElement, cal
 		}).addClass("JOBAD JOBAD_Contextmenu JOBAD_ContextMenu_Radial JOBAD_ContextMenu_RadialItem")
 
 		$item.animate({
+			"deg": 360,
 			"top": Y,
 			"left": X
-		}, 400);
+		}, {
+			"duration": 400,
+			"step": function(d, prop) {
+				if(prop.prop == "deg"){
+					$container.find(".JOBAD_ContextMenu_RadialItem").css({transform: 'rotate(' + d + 'deg)'})
+				}
+			}
+		});
 
 		$item.append(
 			JOBAD.refs.$("<img src='"+JOBAD.resources.getIconResource(item[2], {"none": "warning"})+"'>")

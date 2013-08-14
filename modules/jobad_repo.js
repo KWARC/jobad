@@ -37,7 +37,9 @@ JOBAD.repo.config({
 			"test.menu2", 
 			"test.menu3",
 			"test.sidebar",
-			"test.config"
+			"test.config",
+			"test.tb1", 
+			"test.tb2"
 	],
 	"at": {
 			/*
@@ -55,8 +57,9 @@ JOBAD.repo.config({
 			"test.menu2": "core/test/test.menu2.js",
 			"test.menu3": "core/test/test.menu3.js",
 			"test.sidebar": "core/test/test.sidebar.js",
-			"test.config": "core/test/test.config.js"
-			
+			"test.config": "core/test/test.config.js",
+			"test.tb1": "core/test/TB1.js",
+			"test.tb2": "core/test/TB2.js"
 	},
 	"versions": ["3.1.9"], //compatible JOBAD versions
 	"name": "Core JOBAD Modules Repository", //name

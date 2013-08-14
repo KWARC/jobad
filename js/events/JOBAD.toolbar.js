@@ -163,6 +163,14 @@ JOBAD.modules.ifaces.push([
 			}
 		}
 
+		this.Toolbar.moveUp = function(){
+			return JOBAD.UI.Toolbar.moveUp(TBElement); 
+		}
+
+		this.Toolbar.moveDown = function(){
+			return JOBAD.UI.Toolbar.moveDown(TBElement); 
+		}
+
 
 		//Register Event Handlers for activate
 

@@ -27,6 +27,9 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 	* added folding.enable and folding.disable events
 * removed "bound to element" Sidebar Style 
 	* never seen a use case
+* improved JOBAD.util.getOrigin()
+	* better compatibility when using inline-scripts
+* more rotation for the radial context menu
 
 * updated Makefile
 

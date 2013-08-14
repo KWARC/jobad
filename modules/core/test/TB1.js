@@ -1,5 +1,5 @@
 /*
-	example1.js - An example module for JOBAD. 
+	TB1.js - An example module for JOBAD. 
 	A Testing module, colors <p>s in the color given as first parameter. 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -22,13 +22,28 @@
 (function($){
 	JOBAD.modules.register({
 		info:{
-			'identifier':	'test.config',
-			'title':	'Config testing module',
+			'identifier':	'test.tb1',
+			'title':	'Test Toolbar 1',
 			'author':	'Tom Wiesing',
-			'description':	'Testing module, used to test config. '
+			'description':	' '
 		},
-		"config": {
-			"a": ["list", [1, 2, 3], 1, ["Test Setting", "1", "2", "3"]]
+		"Toolbar": function(JI, TB){
+			var me = this; 
+
+			TB.css("background-color", "green"); 
+			TB.text("I'm the first Toolbar!"); 
+
+			$("<a>").text("up").click(function(){
+				me.Toolbar.moveUp(); 
+				return false; 
+			}).appendTo(TB); 
+
+			$("<a>").text("down").click(function(){
+				me.Toolbar.moveDown(); 
+				return false; 
+			}).appendTo(TB); 
+
+			return true; 
 		}
 	});
 })(JOBAD.refs.$);

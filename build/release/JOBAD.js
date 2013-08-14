@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Tue, 13 Aug 2013 20:34:25 +0200
+	built: Wed, 14 Aug 2013 09:09:45 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -2238,11 +2238,57 @@ JOBAD.util.EventHandler = function(){
 	return handler;
 }
 
+/*
+	Gets the current script origin. 
+*/
 JOBAD.util.getCurrentOrigin = function(){
-	var scripts = document.getElementsByTagName('script');
-	var thisScript = scripts[scripts.length-1];
-	return thisScript.src; 
+
+	var scripts = JOBAD.refs.$('script'); 
+	var src = scripts[scripts.length-1].src;
+
+	//if we have an empty src or jQuery is ready, return the location.href
+	return (src == "" || jQuery.isReady || !src)?location.href:src; 
 }
+
+/*
+	Permute to members of an array. 
+	@param arr	Array to permute. 
+	@param a	Index of first element. 
+	@param b	Index of second element. 
+*/
+JOBAD.util.permuteArray = function(arr, a, b){
+
+	var arr = JOBAD.refs.$.makeArray(arr); 
+	
+	if(!JOBAD.util.isArray(arr)){
+		return arr; 
+	}
+
+	var a = JOBAD.util.limit(a, 0, arr.length); 
+	var b = JOBAD.util.limit(b, 0, arr.length); 
+
+	var arr = arr.slice(0); 
+
+	var old = arr[a];
+	arr[a] = arr[b]; 
+	arr[b] = old; 
+
+	return arr; 
+}
+
+/*
+	Limit the number x to be between a and b. 
+
+*/
+JOBAD.util.limit = function(x, a, b){
+	if(a > b){
+		return (x<b)?b:((x>a)?a:x); 
+	} else {
+		// b > a
+		return JOBAD.util.limit(x, b, a); 
+	}
+}
+
 
 
 //Merge underscore and JOBAD.util namespace
@@ -4737,9 +4783,17 @@ JOBAD.UI.ContextMenu.buildPieMenuList = function(items, element, orgElement, cal
 		}).addClass("JOBAD JOBAD_Contextmenu JOBAD_ContextMenu_Radial JOBAD_ContextMenu_RadialItem")
 
 		$item.animate({
+			"deg": 360,
 			"top": Y,
 			"left": X
-		}, 400);
+		}, {
+			"duration": 400,
+			"step": function(d, prop) {
+				if(prop.prop == "deg"){
+					$container.find(".JOBAD_ContextMenu_RadialItem").css({transform: 'rotate(' + d + 'deg)'})
+				}
+			}
+		});
 
 		$item.append(
 			JOBAD.refs.$("<img src='"+JOBAD.resources.getIconResource(item[2], {"none": "warning"})+"'>")
@@ -5834,6 +5888,18 @@ JOBAD.UI.Toolbar.update = function(){
 			return false; 
 		}
 	})
+}
+
+JOBAD.UI.Toolbar.moveUp = function(TB){
+	var x = Toolbars.index(TB); 
+	Toolbars = JOBAD.refs.$(JOBAD.util.permuteArray(Toolbars, x, x+1));
+	JOBAD.UI.Toolbar.update(); 
+}
+
+JOBAD.UI.Toolbar.moveDown = function(TB){
+	var x = Toolbars.index(TB); 
+	Toolbars = JOBAD.refs.$(JOBAD.util.permuteArray(Toolbars, x, x-1));
+	JOBAD.UI.Toolbar.update(); 
 }/* end   <ui/JOBAD.ui.toolbar.js> */
 /* start <events/JOBAD.sidebar.js> */
 /*
@@ -6423,6 +6489,14 @@ JOBAD.modules.ifaces.push([
 			} else {
 				return false; 
 			}
+		}
+
+		this.Toolbar.moveUp = function(){
+			return JOBAD.UI.Toolbar.moveUp(TBElement); 
+		}
+
+		this.Toolbar.moveDown = function(){
+			return JOBAD.UI.Toolbar.moveDown(TBElement); 
 		}
 
 
