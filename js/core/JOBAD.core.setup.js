@@ -24,6 +24,18 @@
 //Do not setup these
 var SpecialEvents = ["on", "off", "once", "trigger", "bind", "handle"]; 
 
+//preEvent and postEvent Handlers 
+//will be called for module-style events
+
+var preEvent = function(me, event, params){
+	me.Event.trigger("event.before."+event, [event, params]);
+};
+
+var postEvent = function(me, event, params){
+	me.Event.trigger("event.after."+event, [event, params]);
+	me.Event.handle(event, params); 
+};
+
 
 //Provides custom events for modules
 JOBAD.ifaces.push(function(me, args){
@@ -51,6 +63,35 @@ JOBAD.ifaces.push(function(me, args){
 	this.Setup.isEnabled = function(){
 		return enabled;
 	};
+
+
+	/*
+		Calls the function cb if this JOBADINstance is enabled, 
+		otherwise calls it once this JOBADInstance is enabled. 
+	*/
+	this.Setup.enabled = function(cb){
+		var cb = JOBAD.util.forceFunction(cb).bind(me); 
+
+		if(enabled){
+			cb(); 
+		} else {
+			me.Event.once("instance.enable", cb);
+		}
+	}
+
+	/*
+		Calls the function cb if this JOBADINstance is disabled, 
+		otherwise calls it once this JOBADInstance is disbaled. 
+	*/
+	this.Setup.disabled = function(cb){
+		var cb = JOBAD.util.forceFunction(cb).bind(me); 
+
+		if(!enabled){
+			cb(); 
+		} else {
+			me.Event.once("instance.disable", cb);
+		}
+	}
 
 	
 	/*
@@ -81,6 +122,8 @@ JOBAD.ifaces.push(function(me, args){
 
 		var root = me.element;
 
+		me.Event.trigger("instance.beforeEnable", []);
+
 		for(var key in me.Event){
 			if(JOBAD.util.contains(SpecialEvents, key)){
 				continue;
@@ -110,6 +153,8 @@ JOBAD.ifaces.push(function(me, args){
 			return false;
 		}		
 		var root = me.element;
+
+		me.Event.trigger("instance.beforeDisable", []);
 
 		for(var key in JOBAD.events){
 			if(JOBAD.util.contains(SpecialEvents, key)){

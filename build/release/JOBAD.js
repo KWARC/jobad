@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Wed, 14 Aug 2013 11:17:17 +0200
+	built: Tue, 20 Aug 2013 14:45:15 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -3405,14 +3405,14 @@ JOBAD.ifaces.push(function(me, args){
 		});
 		
 		//reactivate all once setup is called again
-		this.Event.once("instance.enable", function(){
+		me.Event.once("instance.enable", function(){
 			for(var i=0;i<cache.length;i++){
 				var name = cache[i];
 				if(!me.modules.isActive(name)){
 					me.modules.activate(name);
 				}
 			}
-			this.Event.once("instance.disable", onDisable); //reregister me
+			me.Event.once("instance.disable", onDisable); //reregister me
 		});
 	};
 	
@@ -4016,6 +4016,18 @@ JOBAD.modules.loadedModule = function(name, args, JOBADInstance, next){
 //Do not setup these
 var SpecialEvents = ["on", "off", "once", "trigger", "bind", "handle"]; 
 
+//preEvent and postEvent Handlers 
+//will be called for module-style events
+
+var preEvent = function(me, event, params){
+	me.Event.trigger("event.before."+event, [event, params]);
+};
+
+var postEvent = function(me, event, params){
+	me.Event.trigger("event.after."+event, [event, params]);
+	me.Event.handle(event, params); 
+};
+
 
 //Provides custom events for modules
 JOBAD.ifaces.push(function(me, args){
@@ -4043,6 +4055,35 @@ JOBAD.ifaces.push(function(me, args){
 	this.Setup.isEnabled = function(){
 		return enabled;
 	};
+
+
+	/*
+		Calls the function cb if this JOBADINstance is enabled, 
+		otherwise calls it once this JOBADInstance is enabled. 
+	*/
+	this.Setup.enabled = function(cb){
+		var cb = JOBAD.util.forceFunction(cb).bind(me); 
+
+		if(enabled){
+			cb(); 
+		} else {
+			me.Event.once("instance.enable", cb);
+		}
+	}
+
+	/*
+		Calls the function cb if this JOBADINstance is disabled, 
+		otherwise calls it once this JOBADInstance is disbaled. 
+	*/
+	this.Setup.disabled = function(cb){
+		var cb = JOBAD.util.forceFunction(cb).bind(me); 
+
+		if(!enabled){
+			cb(); 
+		} else {
+			me.Event.once("instance.disable", cb);
+		}
+	}
 
 	
 	/*
@@ -4073,6 +4114,8 @@ JOBAD.ifaces.push(function(me, args){
 
 		var root = me.element;
 
+		me.Event.trigger("instance.beforeEnable", []);
+
 		for(var key in me.Event){
 			if(JOBAD.util.contains(SpecialEvents, key)){
 				continue;
@@ -4102,6 +4145,8 @@ JOBAD.ifaces.push(function(me, args){
 			return false;
 		}		
 		var root = me.element;
+
+		me.Event.trigger("instance.beforeDisable", []);
 
 		for(var key in JOBAD.events){
 			if(JOBAD.util.contains(SpecialEvents, key)){
@@ -6467,7 +6512,7 @@ JOBAD.modules.ifaces.push([
 
 		//Hide / Show the Toolbar
 
-		var visible = false; 
+		var visible = JOBADInstance.Config.get("auto_show_toolbar"); //get the default
 
 		this.Toolbar.setVisible = function(){
 			visible = true; 
@@ -6513,17 +6558,6 @@ JOBAD.modules.ifaces.push([
 				me.Toolbar.disable(); 
 			}
 		});
-
-		if(JOBADInstance.Config.get("auto_show_toolbar")){
-			var evtHandler; 
-
-			evtHandler = JOBADInstance.Event.on("module.activate", function(m){
-				if(m.info().identifier == id){
-					me.Toolbar.setVisible(); //set it visible
-					JOBADInstance.Event.off(evtHandler); 
-				}
-			});
-		}
 	}]); /* end   <events/JOBAD.toolbar.js> */
 /* start <events/JOBAD.events.js> */
 /*
@@ -6547,15 +6581,6 @@ JOBAD.modules.ifaces.push([
 	You should have received a copy of the GNU General Public License
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-var preEvent = function(me, event, params){
-	me.Event.trigger("event.before."+event, [event, params]);
-};
-
-var postEvent = function(me, event, params){
-	me.Event.trigger("event.after."+event, [event, params]);
-	me.Event.handle(event, params); 
-};
 
 /* left click */
 JOBAD.events.leftClick = 
@@ -6658,6 +6683,7 @@ JOBAD.events.onEvent =
 			});
 		},
 		'disable': function(root){
+			var me = this;
 			me.Event.off(me.Event.onEvent.id);
 		}
 	},
@@ -7625,15 +7651,181 @@ JOBAD.ifaces.push(function(JOBADRootElement, params){
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JOBAD.Instances = {}; 
+JOBAD.Instances = function(i){
+	return JOBAD.Instances.get(i); 
+}; 
 
 JOBAD.Instances.all = {}; 
 
-JOBAD.ifaces.push(function(me){
+var focused = undefined; 
+var waiting = undefined; 
 
+JOBAD.ifaces.push(function(me){
 	//store a reference so it is kept
 	JOBAD.Instances.all[me.ID] = this;
-}); /* end   <core/JOBAD.core.instances.js> */
+
+	var i_am_focused = false; 
+	var i_am_waiting = false; 
+
+	var prev_focus = undefined; //previous focus
+
+
+	me.focus = function(){
+		if(i_am_focused){
+			return false; 
+		}
+
+		if(i_am_waiting){
+			return false; 
+		}
+
+		if(typeof focused != "undefined"){
+			//someone else is focused => throw him out. 
+			prev_focus = focused; 
+			focused.unfocus(); 
+
+		}
+
+		if(typeof waiting != "undefined"){
+			//someone else is waiting => throw him out. 
+			waiting.unfocus(); 
+		}
+
+		i_am_waiting = true; 
+		waiting = me; 
+
+		me.Event.trigger("instance.focus_query"); 
+
+		me.Setup.enabled(function(){ //(IF ENABLED)
+			if(i_am_waiting){
+				i_am_waiting = false; 
+				waiting = undefined; 
+				i_am_focused = true; 
+				focused = me; 
+
+				me.Event.trigger("instance.focus", [prev_focus]); 
+
+				me.Event.focus.trigger(prev_focus);
+
+				prev_focus = undefined; 
+			}
+		});
+
+		return true; 
+	};
+
+	me.unfocus = function(){
+		if(i_am_focused){
+			//we are fully focused, we can just unfocus
+
+			focused = undefined; 
+			i_am_focused = false; 
+
+			me.Event.trigger("instance.unfocus"); 
+
+			me.Event.unfocus.trigger(); 
+
+			return true; 
+		} else {
+			if(i_am_waiting){
+				i_am_waiting = false; //I am no longer waiting
+				waiting = undefined; 
+
+				me.Event.trigger("instance.focus_query_lost"); 
+
+				return true; 
+			} else {
+				JOBAD.console.warn("Can't unfocus JOBADInstance: Instance neither focused nor queried. ");
+				return false; 
+			}
+		}
+	};
+
+	me.isFocused = function(){
+		return i_am_focused; 
+	}
+
+	me.Event.on("instance.beforeDisable", function(){
+		if(i_am_focused){ //we are focused and are not waiting
+			me.unfocus(); //unfocus me
+
+			me.Event.once("instance.disable", function(){
+				prev_focus = me; //I was the last one as well
+				me.focus(); //requery me for enabling once I am disabled
+			})
+		}
+	})
+}); 
+
+JOBAD.Instances.get = function(i){
+	return (i instanceof JOBAD)?i:JOBAD.Instances.all[i]; 
+}
+
+JOBAD.Instances.focus = function(Instance){
+	return JOBAD.Instances.get(Instance).focus(); 
+}
+
+JOBAD.Instances.unfocus = function(Instance){
+	return JOBAD.Instances.get(Instance).unfocus();
+}
+
+JOBAD.Instances.focused = function(){
+	return focused; 
+}
+
+/* focus Event */
+JOBAD.events.focus = 
+{
+	'default': function(JOBADInstance, prevFocus){},
+	'Setup': {
+		'enable': function(root){
+			return; //nothing to do
+		},
+		'disable': function(root){
+			return; //nothing to do
+		}
+	},
+	'namespace': 
+	{
+		
+		'getResult': function(prevFocus){
+			return this.modules.iterateAnd(function(module){
+				module.focus.call(module, module.getJOBAD(), prevFocus);
+				return true;
+			});
+		},
+		'trigger': function(prevFocus){
+			return this.Event.focus.getResult(prevFocus); 
+		}
+	}
+};
+
+/* focus Event */
+JOBAD.events.unfocus = 
+{
+	'default': function(JOBADInstance){},
+	'Setup': {
+		'enable': function(root){
+			return; //nothing to do
+		},
+		'disable': function(root){
+			return; //nothing to do
+		}
+	},
+	'namespace': 
+	{
+		
+		'getResult': function(){
+			return this.modules.iterateAnd(function(module){
+				module.unfocus.call(module, module.getJOBAD());
+				return true;
+			});
+		},
+		'trigger': function(){
+			return this.Event.unfocus.getResult(); 
+		}
+	}
+};/* end   <core/JOBAD.core.instances.js> */
 /* start <JOBAD.wrap.js> */
 /*
 	JOBAD.wrap.js

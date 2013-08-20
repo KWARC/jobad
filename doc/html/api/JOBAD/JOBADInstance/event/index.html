@@ -530,7 +530,11 @@
 <li><code>module.activate($module)</code> The module $module was activated. </li>
 <li><p><code>module.deactivate($module)</code> The module $module was deactivated. </p></li>
 <li><p><code>instance.enable</code> This JOBADInstance was enabled. </p></li>
-<li><p><code>instance.disable</code> This JOBADInstance was disabled. </p></li>
+<li><code>instance.beforeEnable</code> Before this JOBADInstance is enabled.  (It is still disabled)</li>
+<li><code>instance.disable</code> This JOBADInstance was disabled. </li>
+<li><code>instance.beforeDisable</code> Before this JOBADInstance is disabled.  (It is still enabled)</li>
+<li><code>instance.focus</code> This JOBADInstance is focused. </li>
+<li><p><code>instance.unfocus</code> This JOBADInstance is unfocused. </p></li>
 <li><p><code>module.load($module, $options)</code> The module $module was loaded successfully. </p></li>
 <li><p><code>module.fail($module, $reason)</code> The module $module has failed to load. </p></li>
 <li><p><code>contextmenu.open</code> After the context menu has been opened</p></li>

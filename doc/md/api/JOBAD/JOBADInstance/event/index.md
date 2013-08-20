@@ -35,7 +35,11 @@ The following event names are available:
 * `module.deactivate($module)` The module $module was deactivated. 
 
 * `instance.enable` This JOBADInstance was enabled. 
+* `instance.beforeEnable` Before this JOBADInstance is enabled.  (It is still disabled)
 * `instance.disable` This JOBADInstance was disabled. 
+* `instance.beforeDisable` Before this JOBADInstance is disabled.  (It is still enabled)
+* `instance.focus` This JOBADInstance is focused. 
+* `instance.unfocus` This JOBADInstance is unfocused. 
 
 * `module.load($module, $options)` The module $module was loaded successfully. 
 * `module.fail($module, $reason)` The module $module has failed to load. 

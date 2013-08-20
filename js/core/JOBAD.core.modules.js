@@ -463,14 +463,14 @@ JOBAD.ifaces.push(function(me, args){
 		});
 		
 		//reactivate all once setup is called again
-		this.Event.once("instance.enable", function(){
+		me.Event.once("instance.enable", function(){
 			for(var i=0;i<cache.length;i++){
 				var name = cache[i];
 				if(!me.modules.isActive(name)){
 					me.modules.activate(name);
 				}
 			}
-			this.Event.once("instance.disable", onDisable); //reregister me
+			me.Event.once("instance.disable", onDisable); //reregister me
 		});
 	};
 	

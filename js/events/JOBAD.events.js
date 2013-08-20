@@ -20,15 +20,6 @@
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var preEvent = function(me, event, params){
-	me.Event.trigger("event.before."+event, [event, params]);
-};
-
-var postEvent = function(me, event, params){
-	me.Event.trigger("event.after."+event, [event, params]);
-	me.Event.handle(event, params); 
-};
-
 /* left click */
 JOBAD.events.leftClick = 
 {
@@ -130,6 +121,7 @@ JOBAD.events.onEvent =
 			});
 		},
 		'disable': function(root){
+			var me = this;
 			me.Event.off(me.Event.onEvent.id);
 		}
 	},
