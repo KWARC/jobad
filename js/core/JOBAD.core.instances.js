@@ -37,8 +37,9 @@ JOBAD.ifaces.push(function(me){
 
 	var prev_focus = undefined; //previous focus
 
+	me.Instance = {}; 
 
-	me.focus = function(){
+	me.Instance.focus = function(){
 		if(i_am_focused){
 			return false; 
 		}
@@ -50,13 +51,13 @@ JOBAD.ifaces.push(function(me){
 		if(typeof focused != "undefined"){
 			//someone else is focused => throw him out. 
 			prev_focus = focused; 
-			focused.unfocus(); 
+			focused.Instance.unfocus(); 
 
 		}
 
 		if(typeof waiting != "undefined"){
 			//someone else is waiting => throw him out. 
-			waiting.unfocus(); 
+			waiting.Instance.unfocus(); 
 		}
 
 		i_am_waiting = true; 
@@ -82,7 +83,7 @@ JOBAD.ifaces.push(function(me){
 		return true; 
 	};
 
-	me.unfocus = function(){
+	me.Instance.unfocus = function(){
 		if(i_am_focused){
 			//we are fully focused, we can just unfocus
 
@@ -109,17 +110,17 @@ JOBAD.ifaces.push(function(me){
 		}
 	};
 
-	me.isFocused = function(){
+	me.Instance.isFocused = function(){
 		return i_am_focused; 
 	}
 
 	me.Event.on("instance.beforeDisable", function(){
 		if(i_am_focused){ //we are focused and are not waiting
-			me.unfocus(); //unfocus me
+			me.Instance.unfocus(); //unfocus me
 
 			me.Event.once("instance.disable", function(){
 				prev_focus = me; //I was the last one as well
-				me.focus(); //requery me for enabling once I am disabled
+				me.Instance.focus(); //requery me for enabling once I am disabled
 			})
 		}
 	})
@@ -130,11 +131,11 @@ JOBAD.Instances.get = function(i){
 }
 
 JOBAD.Instances.focus = function(Instance){
-	return JOBAD.Instances.get(Instance).focus(); 
+	return JOBAD.Instances.get(Instance).Instance.focus(); 
 }
 
 JOBAD.Instances.unfocus = function(Instance){
-	return JOBAD.Instances.get(Instance).unfocus();
+	return JOBAD.Instances.get(Instance).Instance.unfocus();
 }
 
 JOBAD.Instances.focused = function(){

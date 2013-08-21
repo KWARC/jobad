@@ -156,7 +156,7 @@ JOBAD.modules.ifaces.push([
 		}
 
 		this.Toolbar.show = function(){
-			if(me.Toolbar.isVisible() && me.isActive()){
+			if(me.Toolbar.isVisible() && me.isActive() && JOBADInstance.Instance.isFocused()){
 				return me.Toolbar.enable(); 
 			} else {
 				return false; 
@@ -172,7 +172,7 @@ JOBAD.modules.ifaces.push([
 		}
 
 
-		//Register Event Handlers for activate
+		//Register Event Handlers for activation + focus
 
 		JOBADInstance.Event.on("module.activate", function(m){
 			if(m.info().identifier == id){
@@ -180,9 +180,11 @@ JOBAD.modules.ifaces.push([
 			}
 		});
 
-		JOBADInstance.Event.on("module.deactivate", function(m){
-			if(m.info().identifier == id){
-				me.Toolbar.disable(); 
-			}
+		JOBADInstance.Event.on("instance.focus", function(m){
+			me.Toolbar.show(); 
+		});
+
+		JOBADInstance.Event.on("instance.unfocus", function(m){
+			me.Toolbar.disable(); 
 		});
 	}]); 
