@@ -9,19 +9,17 @@ To get the code use
 To include JOBAD in your website, you will have to include several files in your HTML document. 
 JOBAD itself depends on: 
 
-* [jQuery](http://jquery.com) - tested with version 2.0.2
-* [jQuery UI](http://jqueryui.com/) - tested with version 1.10.3
-* [Bootstrap](http://twitter.github.io/bootstrap/) - tested with version v2.3.2
-* [jQuery UI Bootstrap](http://addyosmani.github.io/jquery-ui-bootstrap/)
+* [jQuery](http://jquery.com) - works with version >= 1.8
+* [Bootstrap](http://getbootstrap.com/2.3.2/) - tested with version v2.3.2, **not** compatible with version 3.x
 	
 
-All dependencies are bundled with JOBAD. 
+All dependencies are bundled with JOBAD, but can also be included from different sources. 
 
 The javascript side of the JOBAD code exists in three different versions: 
 
 * an unbuilt version, which consists of several files. 
 * a development version version which consists of one file with comments and readable version: (`JOBAD.js`)
-* a release version which consists of one file with compressed code. It is created by running the development version through the [Google Closure Compiler](https://developers.google.com/closure/compiler/). 
+* a release version which consists of one file with compressed code. 
 
 The CSS code version of the code exists in three different versions: 
 
@@ -39,9 +37,7 @@ Your html `<head>` should look like this:
 	<!-- Include dependencies -->
 	<script src='js/deps/jquery/jquery-2.0.2.min.js'></script>
 	<script src='js/deps/bootstrap.js'></script>
-	<script src='js/deps/jquery/jquery-ui-1.10.3.js'></script>
-	<link rel="stylesheet" type="text/css" href="css/libs/jquery-ui-bs.css">
-	<link rel="stylesheet" type="text/css" href="css/libs/jquery-ui-less.css">
+	<link rel="stylesheet" type="text/css" href="css/libs/bootstrap/css/bootstrap.css">
 ```
 
 The Libraries are also compiled into one JS and CSS file, which both can be included via the following code snippet. This is the recommended method for including the depencies: 

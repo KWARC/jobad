@@ -49,6 +49,7 @@
 * [Undocumented API](api/undocumented.md) (api/undocumented.md)
 * [CSS](css.md) (css.md)
 * [Demos](demos.md) (demos.md)
+* [Dependencies](deps.md) (deps.md)
 * [Start](index.md) (index.md)
 * [Building JOBAD](intro/build.md) (intro/build.md)
 * [How to configure JOBAD Modules](intro/config.md) (intro/config.md)

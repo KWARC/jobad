@@ -253,7 +253,7 @@
 					tab.empty()
 					.append(
 						JOBAD.util.createTabs(
-							["About JOBAD", "Config", "GPL License", "jQuery", "jQuery UI", "Underscore"], 
+							["About JOBAD", "Config", "GPL License", "jQuery", "Bootstrap", "Underscore"], 
 							[
 								JOBAD.refs.$("<div>").append(
 									JOBAD.refs.$("<span>").text("JOBAD Core Version "+JOBAD.version),
@@ -266,8 +266,8 @@
 									JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("jquery_license"))
 								),
 								JOBAD.refs.$("<div>").append(
-									JOBAD.refs.$("<span>").text("jQuery UI Version "+JOBAD.refs.$.ui.version),
-									JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("jqueryui_license"))
+									JOBAD.refs.$("<span>").text("Bootstrap Version 2.3.2"),
+									JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("bootstrap_license"))
 								),
 								JOBAD.refs.$("<div>").append(
 									JOBAD.refs.$("<span>").text("Underscore Version "+JOBAD.util.VERSION),
@@ -333,11 +333,11 @@
 
 					var TBButton = JOBAD.util.createRadio(["Hide", "Show"], mod.Toolbar.isVisible()?1:0);
 
-					var UpButton = JOBAD.refs.$("<a>").button().text("Up").click(function(){
+					var UpButton = JOBAD.refs.$("<button>").button().text("Up").click(function(){
 						mod.Toolbar.moveUp(); 
 					});
 
-					var DownButton = JOBAD.refs.$("<a>").button().text("Down").click(function(){
+					var DownButton = JOBAD.refs.$("<button>").text("Down").click(function(){
 						mod.Toolbar.moveDown(); 
 					});
 

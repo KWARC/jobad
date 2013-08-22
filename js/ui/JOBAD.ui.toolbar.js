@@ -67,12 +67,16 @@ JOBAD.UI.Toolbar.update = function(){
 
 JOBAD.UI.Toolbar.moveUp = function(TB){
 	var x = Toolbars.index(TB); 
-	Toolbars = JOBAD.refs.$(JOBAD.util.permuteArray(Toolbars, x, x+1));
+	if(x >= 0){
+		Toolbars = JOBAD.refs.$(JOBAD.util.permuteArray(Toolbars, x, x+1));
+	}
 	JOBAD.UI.Toolbar.update(); 
 }
 
 JOBAD.UI.Toolbar.moveDown = function(TB){
 	var x = Toolbars.index(TB); 
-	Toolbars = JOBAD.refs.$(JOBAD.util.permuteArray(Toolbars, x, x-1));
+	if(x >= 0){
+		Toolbars = JOBAD.refs.$(JOBAD.util.permuteArray(Toolbars, x, x-1));
+	}
 	JOBAD.UI.Toolbar.update(); 
 }

@@ -138,13 +138,15 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 					JOBAD.util.ifType(config.callBackTarget, JOBAD.refs.$, targetElement), 
 					JOBAD.util.ifType(config.callBackOrg, JOBAD.refs.$, orgElement), 
 				onCallBack)
-				.menu()
+				.show()
+				.dropdown()
 			).on('contextmenu', function(e){
 				return (e.ctrlKey);
 			}).css({
 				"left": Math.min(mouseCoords[0], window.innerWidth-menuBuild.outerWidth(true)-JOBAD.UI.ContextMenu.config.margin), 
 				"top":  Math.min(mouseCoords[1], window.innerHeight-menuBuild.outerHeight(true)-JOBAD.UI.ContextMenu.config.margin)
 			});
+
 		} else if(menuType == 1 || JOBAD.util.equalsIgnoreCase(menuType, 'radial')){
 
 			//build the radial menu
@@ -271,7 +273,10 @@ JOBAD.UI.ContextMenu.buildContextMenuList = function(items, element, orgElement,
 	var cb = JOBAD.util.forceFunction(callback, function(){});
 
 	//create ul
-	var $ul = JOBAD.refs.$("<ul class='JOBAD JOBAD_Contextmenu'>");
+	var $ul = JOBAD.refs.$("<ul class='JOBAD JOBAD_Contextmenu'>").addClass("dropdown-menu");
+	$ul
+	.attr("role", "menu")
+	.attr("aria-labelledby", "dropdownMenu"); 
 	
 	for(var i=0;i<items.length;i++){
 		var item = items[i];
@@ -280,7 +285,7 @@ JOBAD.UI.ContextMenu.buildContextMenuList = function(items, element, orgElement,
 		var $li = JOBAD.refs.$("<li>").appendTo($ul);
 		
 		//create link
-		var $a = JOBAD.refs.$("<a href='#'>")
+		var $a = JOBAD.refs.$("<a href='#' tabindex='-1'>")
 		.appendTo($li)
 		.text(item[0])
 		.click(function(e){
@@ -312,9 +317,11 @@ JOBAD.UI.ContextMenu.buildContextMenuList = function(items, element, orgElement,
 					JOBAD.refs.$(document).trigger('JOBAD.UI.ContextMenu.unbind');
 				});	
 			} else if(item[1] === false){
-				$a.parent().addClass("ui-state-disabled"); 
+				$a.parent().addClass("disabled"); 
 			} else {
-				$li.append(JOBAD.UI.ContextMenu.buildContextMenuList(item[1], element, orgElement, cb));
+				$li.append(
+					JOBAD.UI.ContextMenu.buildContextMenuList(item[1], element, orgElement, cb)
+				).addClass("dropdown-submenu"); 
 			}
 		})()
 	}

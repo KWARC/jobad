@@ -10,6 +10,7 @@ This is JOBAD Version 3.1.9 (development branch).
 * [Demos](demos.md) - Demos
 * [API Documentation](api/index.md) - Documentation of the JavaScript API
 * [CSS Documentation](css.md) - Description of JOBAD CSS
+* [Dependencies](deps.md) - Detailed description of Dependencies needed
 
 * [(Known) Issues](issues.md) - Known Issues
 
