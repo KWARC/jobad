@@ -117,7 +117,8 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 		}
 
 		//create the context menu element
-		var menuBuild = JOBAD.refs.$("<div>").addClass("ui-front"); //we want to be in front. 
+		var menuBuild = JOBAD.refs.$("<div>")
+		.appendTo(JOBAD.refs.$("body"));
 
 
 		//a handler for closing
@@ -142,10 +143,7 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 				.dropdown()
 			).on('contextmenu', function(e){
 				return (e.ctrlKey);
-			}).css({
-				"left": Math.min(mouseCoords[0], window.innerWidth-menuBuild.outerWidth(true)-JOBAD.UI.ContextMenu.config.margin), 
-				"top":  Math.min(mouseCoords[1], window.innerHeight-menuBuild.outerHeight(true)-JOBAD.UI.ContextMenu.config.margin)
-			});
+			}); 
 
 		} else if(menuType == 1 || JOBAD.util.equalsIgnoreCase(menuType, 'radial')){
 
@@ -202,11 +200,13 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 		.css({
 			'width': JOBAD.UI.ContextMenu.config.width,
 			'position': 'fixed'
+		}).css({
+			"left": Math.min(mouseCoords[0], window.innerWidth-menuBuild.outerWidth(true)-JOBAD.UI.ContextMenu.config.margin), 
+			"top":  Math.min(mouseCoords[1], window.innerHeight-menuBuild.outerHeight(true)-JOBAD.UI.ContextMenu.config.margin)
 		})
 		.on('mousedown', function(e){
 			e.stopPropagation();//prevent closemenu from triggering
-		})
-		.appendTo(JOBAD.refs.$("body"))
+		}); 
 
 		onShow(menuBuild, result); 
 

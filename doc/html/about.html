@@ -486,7 +486,7 @@
 <p>JOBAD should work in all modern browsers. JOBAD has been tested successfully in: </p>
 
 <ul>
-<li>Google Chrome 26</li>
+<li>Google Chrome 28</li>
 <li>Firefox 20</li>
 <li>Internet Explorer 10</li>
 </ul>
@@ -504,14 +504,25 @@
 <h3>Version 3.1.9 (In Development)</h3>
 
 <ul>
+<li>Change in dependencies
+<ul>
 <li>removed jQuery UI dependency, we now only need Bootstrap 2.x</li>
-<li>added JOBAD.Instances</li>
+<li>support for jQuery 1.8+</li>
+<li>added bundled jQuery Color for color animations</li>
+</ul></li>
+<li>added JOBAD.Instances
+<ul>
+<li>added the focus and the unfocus Events</li>
+<li>only one JOBAD Instance focused at the same time</li>
+<li>no auto focusing for now</li>
+</ul></li>
 <li>added Toolbars
 <ul>
 <li>per-module</li>
 <li>UI left to module</li>
 <li>can be shifted up and down</li>
 <li>have to be enable via config UI or via code</li>
+<li>only visible on the currently focused JOBADInstance</li>
 </ul></li>
 <li>improved the Event System
 <ul>
@@ -519,9 +530,13 @@
 <li>added <code>.Event.bind</code> and <code>loadedModule.setHandler</code> to create custom events for modules</li>
 <li>added folding.enable and folding.disable events</li>
 </ul></li>
-<li>removed "bound to element" Sidebar Style 
+<li>changes to the Sidebar
 <ul>
-<li>never seen a use case</li>
+<li>removed "bound to element" Sidebar Style </li>
+<li>added a "hidden" Sidebar Style, which hides the Sidebar
+<ul>
+<li>should be used for clients where the sidebar takes away space</li>
+</ul></li>
 </ul></li>
 <li>improved JOBAD.util.getOrigin()
 <ul>
@@ -529,9 +544,9 @@
 </ul></li>
 <li>more rotation for the radial context menu</li>
 <li>updated Makefile</li>
-<li>not yet implemented: 
+<li>To be done before 3.1.9 release:
 <ul>
-<li>focusable JOBAD Instances</li>
+<li>doc updates</li>
 </ul></li>
 </ul>
 

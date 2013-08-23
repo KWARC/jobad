@@ -69,6 +69,12 @@ JOBAD.Sidebar.registerSidebarStyle("left", "Left",
 	}
 );
 
+JOBAD.Sidebar.registerSidebarStyle("none", "Hidden", 
+	function(){return JOBAD.refs.$("<div>"); },
+	function(){},
+	function(){}
+);
+
 
 /* sidebar: SideBarUpdate Event */
 JOBAD.events.SideBarUpdate = 

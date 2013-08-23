@@ -4,7 +4,7 @@ JOBAD (JavaScript API for OMDoc-based Active Documents) is a javascript framewor
 
 JOBAD should work in all modern browsers. JOBAD has been tested successfully in: 
 
-* Google Chrome 26
+* Google Chrome 28
 * Firefox 20
 * Internet Explorer 10
 
@@ -16,25 +16,34 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 
 ## Changelog
 ### Version 3.1.9 (In Development)
-* removed jQuery UI dependency, we now only need Bootstrap 2.x
+* Change in dependencies
+	* removed jQuery UI dependency, we now only need Bootstrap 2.x
+	* support for jQuery 1.8+
+	* added bundled jQuery Color for color animations
 * added JOBAD.Instances
+	* added the focus and the unfocus Events
+	* only one JOBAD Instance focused at the same time
+	* no auto focusing for now
 * added Toolbars
 	* per-module
 	* UI left to module
 	* can be shifted up and down
 	* have to be enable via config UI or via code
+	* only visible on the currently focused JOBADInstance
 * improved the Event System
 	* Dynamic listening to event via `.Event.on(evt, handler)` and `.Event.once(evt, handler)`
 	* added `.Event.bind` and `loadedModule.setHandler` to create custom events for modules
 	* added folding.enable and folding.disable events
-* removed "bound to element" Sidebar Style 
-	* never seen a use case
+* changes to the Sidebar
+	* removed "bound to element" Sidebar Style 
+	* added a "hidden" Sidebar Style, which hides the Sidebar
+		* should be used for clients where the sidebar takes away space
 * improved JOBAD.util.getOrigin()
 	* better compatibility when using inline-scripts
 * more rotation for the radial context menu
 * updated Makefile
-* not yet implemented: 
-	* focusable JOBAD Instances
+* To be done before 3.1.9 release:
+	* doc updates
 
 ### Version 3.1.8 (Stable)
 * improved contextMenu

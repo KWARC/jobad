@@ -51,7 +51,8 @@ If you want to include the unbuilt js files use this code:
 
 ```html
 	<script src='js/core/JOBAD.core.js'></script>
-	<script src='js/util/underscore.js'></script>
+	<script src='js/bundled/jquery-color/jquery.color.plus-names-2.1.2.js'></script>
+	<script src='js/bundled/underscore/underscore.js'></script>
 	<script src='js/util/JOBAD.util.js'></script>
 	<script src='js/JOBAD.resources.js'></script>
 	<script src='js/JOBAD.repo.js'></script>
