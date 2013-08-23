@@ -34,6 +34,8 @@ var JOBAD = function(element){
 	}
 
 	var me = this; 
+
+	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
 	
 	//Add init arguments
 	this.args = [];
@@ -73,8 +75,6 @@ var JOBAD = function(element){
 			mod.call(this, this, this.args); 
 		}
 	}
-
-	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
 };
 
 

@@ -19,9 +19,7 @@
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JOBAD.Instances = function(i){
-	return JOBAD.Instances.get(i); 
-}; 
+JOBAD.Instances = {}; 
 
 JOBAD.Instances.all = {}; 
 
@@ -30,6 +28,7 @@ var waiting = undefined;
 
 JOBAD.ifaces.push(function(me){
 	//store a reference so it is kept
+
 	JOBAD.Instances.all[me.ID] = this;
 
 	var i_am_focused = false; 
@@ -37,8 +36,13 @@ JOBAD.ifaces.push(function(me){
 
 	var prev_focus = undefined; //previous focus
 
+	//Instance Namespace
 	me.Instance = {}; 
 
+	/*
+		Focuses this JOBADInstance
+		@returns false if the Instance can not be focused for some reason, true otherwise. 
+	*/
 	me.Instance.focus = function(){
 		if(i_am_focused){
 			return false; 
@@ -83,6 +87,10 @@ JOBAD.ifaces.push(function(me){
 		return true; 
 	};
 
+	/*
+		Unfocuses this JOBADInstance
+		@returns false if the Instance can not be unfocused for some reason, true otherwise. 
+	*/
 	me.Instance.unfocus = function(){
 		if(i_am_focused){
 			//we are fully focused, we can just unfocus
@@ -110,6 +118,9 @@ JOBAD.ifaces.push(function(me){
 		}
 	};
 
+	/*
+		Checks if this JOBADInstance is focused. 
+	*/
 	me.Instance.isFocused = function(){
 		return i_am_focused; 
 	}
@@ -126,18 +137,9 @@ JOBAD.ifaces.push(function(me){
 	})
 }); 
 
-JOBAD.Instances.get = function(i){
-	return (i instanceof JOBAD)?i:JOBAD.Instances.all[i]; 
-}
-
-JOBAD.Instances.focus = function(Instance){
-	return JOBAD.Instances.get(Instance).Instance.focus(); 
-}
-
-JOBAD.Instances.unfocus = function(Instance){
-	return JOBAD.Instances.get(Instance).Instance.unfocus();
-}
-
+/*
+	Gets the currently focused JOBADInstance. 
+*/
 JOBAD.Instances.focused = function(){
 	return focused; 
 }

@@ -112,3 +112,14 @@ In addition to these functions, JOBAD.util also contains all underscore (version
 	* **returns** `Array of results`
 
 * **Function** `JOBAD.util.EventHandler()` - Creates a new Event Handler which has the functions ".on", ".once", ".off", ".trigger" as above (without the first parameter)
+
+
+* **Function** `JOBAD.util.limit(x, a, b)` - Limit x to be between a and b. 
+	* **Number** `x`
+	* **Number** `a`
+	* **Number** `b`
+
+* **Function** `JOBAD.util.permuteArray(arr, a, b)` - Return a premuted copy of the array arr. 
+	* **Array** `arr` Array to permute
+	* **Number** `a` Index of the first element to exchange. 
+	* **Number** `b` Index of the second element to exchange. 

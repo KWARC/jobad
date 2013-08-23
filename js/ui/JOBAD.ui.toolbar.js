@@ -45,7 +45,7 @@ JOBAD.UI.Toolbar.add = function(){
 /*
 	Updates all toolbars at the bottom of the page. 
 */
-JOBAD.UI.Toolbar.update = function(){
+JOBAD.UI.Toolbar.update = JOBAD.util.throttle(function(){
 	var pos = 0; 
 	Toolbars = Toolbars.filter(function(){
 		var me = JOBAD.refs.$(this); 
@@ -63,7 +63,7 @@ JOBAD.UI.Toolbar.update = function(){
 			return false; 
 		}
 	})
-}
+}, 300); 
 
 JOBAD.UI.Toolbar.moveUp = function(TB){
 	var x = Toolbars.index(TB); 

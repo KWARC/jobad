@@ -44,6 +44,18 @@ var template = {
 		"an_int": ["integer", [-10, 10], 0, ["Integer", "An awesome integer between -10 and 10. "]],
 		"a_list": ["list", [1, 2, 3, 4], 1, ["Select an option", "A", "B", "C", "D"]]
 	},
+	Toolbar: function(JOBADInstance, Toolbar){
+		/* 
+			Called whenever a new toolbar is supposed to be shown. 
+			@this An instance of JOBAD.modules.loadedModule
+			@param JOBADInstance The instance of JOBAD the module is currently on. 
+			@param Toolbar A jQuery element representing the toolbar. 
+			@returns true if there is a Toolbar otherwise false. 
+		*/
+
+		return false; 
+	},
+
 	/* Init handlers */
     globalinit: function(next){
 		/* 
@@ -75,6 +87,21 @@ var template = {
 			Called every time this module is deactivated. 
 			@this An instance of JOBAD.modules.loadedModule
 			@param JOBADInstance The instance of JOBAD the module is deactivated on. 
+		*/
+	},
+	focus: function(JOBADInstance, previous){
+		/*
+			Called every time this JOBADInstance is focused. 
+			@this An instance of JOBAD.modules.loadedModule
+			@param JOBADInstance The instance of JOBAD that is focused. 
+			@param previous The instance of JOBAD that was focused previously or undefined.  
+		*/
+	},
+	unfocus: function(JOBADInstance){
+		/*
+			Called every time this JOBADInstance is unfocused. 
+			@this An instance of JOBAD.modules.loadedModule
+			@param JOBADInstance The instance of JOBAD that is unfocused. 
 		*/
 	},
 	/* Event Handlers */

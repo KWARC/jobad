@@ -50,9 +50,8 @@ The following event names are available:
 * `folding.enable` Before folding is enabled
 * `folding.disable` After folding is disabled
 
-* **unimplemented**: 
-    * `instance.focus` This JOBADInstance was focused. 
-    * `instance.unfocus` This JOBADInstance was unfocused. 
+* `instance.focus` This JOBADInstance was focused. 
+* `instance.unfocus` This JOBADInstance was unfocused. 
 
 * `event.before.$name($name, params)`: Triggered before an event occurs. 
 * `event.after.$name($name, params)`: Triggered after an event occurs. 
@@ -78,7 +77,8 @@ The following event names are available:
 * **Object** [`.Event.configUpdate`](configUpdate.md) Namespace for onConfigUpdate Events. 
 * **Object** [`.Event.SideBarUpdate`](SideBarUpdate.md) Namespace for SideBarUpdate Events. 
 * **Object** [`.Event.onEvent`](onEvent.md) Namespace for onEvent Events. 
-
+* **Object** [`.Event.focus`](focus.md) Namespace for focus Events. 
+* **Object** [`.Event.unfocus`](unfocus.md) Namespace for unfocus Events. 
 
 ## See also
 

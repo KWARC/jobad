@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Fri, 23 Aug 2013 11:57:11 +0200
+	built: Fri, 23 Aug 2013 12:55:55 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -60,6 +60,8 @@ var JOBAD = function(element){
 	}
 
 	var me = this; 
+
+	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
 	
 	//Add init arguments
 	this.args = [];
@@ -99,8 +101,6 @@ var JOBAD = function(element){
 			mod.call(this, this, this.args); 
 		}
 	}
-
-	this.ID = JOBAD.util.UID(); //assign an id to this JOBAD
 };
 
 
@@ -3093,7 +3093,7 @@ JOBAD.util.permuteArray = function(arr, a, b){
 
 */
 JOBAD.util.limit = function(x, a, b){
-	if(a > b){
+	if(a >= b){
 		return (x<b)?b:((x>a)?a:x); 
 	} else {
 		// b > a
@@ -6736,7 +6736,7 @@ JOBAD.UI.Toolbar.add = function(){
 /*
 	Updates all toolbars at the bottom of the page. 
 */
-JOBAD.UI.Toolbar.update = function(){
+JOBAD.UI.Toolbar.update = JOBAD.util.throttle(function(){
 	var pos = 0; 
 	Toolbars = Toolbars.filter(function(){
 		var me = JOBAD.refs.$(this); 
@@ -6754,7 +6754,7 @@ JOBAD.UI.Toolbar.update = function(){
 			return false; 
 		}
 	})
-}
+}, 300); 
 
 JOBAD.UI.Toolbar.moveUp = function(TB){
 	var x = Toolbars.index(TB); 
@@ -7777,14 +7777,7 @@ JOBAD.events.hoverText =
 			}
 		}
 	}
-}
-
-for(var key in JOBAD.events){
-	if(!JOBAD.util.contains(SpecialEvents, key)){
-		JOBAD.modules.cleanProperties.push(key);
-	}
-}
-/* end   <events/JOBAD.events.js> */
+}/* end   <events/JOBAD.events.js> */
 /* start <JOBAD.config.js> */
 /*
 	JOBAD Configuration
@@ -8484,9 +8477,7 @@ JOBAD.ifaces.push(function(JOBADRootElement, params){
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JOBAD.Instances = function(i){
-	return JOBAD.Instances.get(i); 
-}; 
+JOBAD.Instances = {}; 
 
 JOBAD.Instances.all = {}; 
 
@@ -8495,6 +8486,7 @@ var waiting = undefined;
 
 JOBAD.ifaces.push(function(me){
 	//store a reference so it is kept
+
 	JOBAD.Instances.all[me.ID] = this;
 
 	var i_am_focused = false; 
@@ -8502,8 +8494,13 @@ JOBAD.ifaces.push(function(me){
 
 	var prev_focus = undefined; //previous focus
 
+	//Instance Namespace
 	me.Instance = {}; 
 
+	/*
+		Focuses this JOBADInstance
+		@returns false if the Instance can not be focused for some reason, true otherwise. 
+	*/
 	me.Instance.focus = function(){
 		if(i_am_focused){
 			return false; 
@@ -8548,6 +8545,10 @@ JOBAD.ifaces.push(function(me){
 		return true; 
 	};
 
+	/*
+		Unfocuses this JOBADInstance
+		@returns false if the Instance can not be unfocused for some reason, true otherwise. 
+	*/
 	me.Instance.unfocus = function(){
 		if(i_am_focused){
 			//we are fully focused, we can just unfocus
@@ -8575,6 +8576,9 @@ JOBAD.ifaces.push(function(me){
 		}
 	};
 
+	/*
+		Checks if this JOBADInstance is focused. 
+	*/
 	me.Instance.isFocused = function(){
 		return i_am_focused; 
 	}
@@ -8591,18 +8595,9 @@ JOBAD.ifaces.push(function(me){
 	})
 }); 
 
-JOBAD.Instances.get = function(i){
-	return (i instanceof JOBAD)?i:JOBAD.Instances.all[i]; 
-}
-
-JOBAD.Instances.focus = function(Instance){
-	return JOBAD.Instances.get(Instance).Instance.focus(); 
-}
-
-JOBAD.Instances.unfocus = function(Instance){
-	return JOBAD.Instances.get(Instance).Instance.unfocus();
-}
-
+/*
+	Gets the currently focused JOBADInstance. 
+*/
 JOBAD.Instances.focused = function(){
 	return focused; 
 }
@@ -8685,6 +8680,12 @@ JOBAD.events.unfocus =
 */
 for(var key in JOBAD.modules.extensions){
 	JOBAD.modules.cleanProperties.push(key);
+}
+
+for(var key in JOBAD.events){
+	if(!JOBAD.util.contains(SpecialEvents, key)){
+		JOBAD.modules.cleanProperties.push(key);
+	}
 }/* end   <JOBAD.wrap.js> */
 return JOBAD;
 })();

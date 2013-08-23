@@ -9,6 +9,8 @@ This namespace represents Events.
 * **Object** [`JOBAD.events.onEvent`](onEvent.md) Namespace for onEvent Events. 
 * **Object** [`JOBAD.events.configUpdate`](configUpdate.md) Namespace for onConfigUpdate Events. 
 * **Object** [`JOBAD.events.SideBarUpdate`](SideBarUpdate.md) Namespace for SideBarUpdate Events. 
+* **Object** [`JOBAD.events.focus`](focus.md) Namespace for focus Events. 
+* **Object** [`JOBAD.events.unfocus`](unfocus.md) Namespace for unfocus Events. 
 
 
 ## See also

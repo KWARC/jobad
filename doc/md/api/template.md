@@ -29,6 +29,13 @@ This object can be used as a termplate for module objects. **Note:** The code fo
 		and the name of each option.  
 		There is also the special option type 'none', which represents a hidden setting which can not be changed by the user. It has a default but no validator and no meta. 
 
+
+* **Function** `template.Toolbar(JOBADInstance, Toolbar)` Called whenever a new toolbar is supposed to be shown. 
+	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 
+	* **Instance[ [JOBAD](JOBAD/JOBADInstance/index.md) ]** `JOBADInstance` The instance of JOBAD the module is on. 
+	* **jQuery** `Toolbar` A jQuery element representing the toolbar. 
+	* **returns** `true` if there is a toolbar, otherwise false. 
+
 * **Function** `template.configUpdate(key, JOBADInstance)` Called every time a user configuration is updated.  
 	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 
 	* **Instance[ [JOBAD](JOBAD/JOBADInstance/index.md) ]** `JOBADInstance` The instance of JOBAD the module is initiated on. 
@@ -53,6 +60,11 @@ This object can be used as a termplate for module objects. **Note:** The code fo
 * **Function** `template.deactivate(JOBADInstance)` Called whenever the module is deactivated. 
 	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 
 	* **Instance[ [JOBAD](JOBAD/JOBADInstance/index.md) ]** `JOBADInstance` The instance of JOBAD the module is initiated on. 
+
+* **Function** `template.focus(JOBADInstance, previous)` Called whenever the JOBADInstance is focused. 
+	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 
+	* **Instance[ [JOBAD](JOBAD/JOBADInstance/index.md) ]** `JOBADInstance` The instance of JOBAD that is being focused.  
+	* **Instance[ [JOBAD](JOBAD/JOBADInstance/index.md) ]** `previous` The previously focused JOBADInstance or undefined. 
 
 * **Function** `template.SideBarUpdate(target, JOBADInstance)` Called every time the sidebar is updated. May be ommitted. 
 	* **Instance[ [JOBAD.modules.loadedModule](JOBAD/JOBAD.modules/loadedModule.md) ]** `this` The current module instance. 

@@ -855,7 +855,7 @@ JOBAD.util.permuteArray = function(arr, a, b){
 
 */
 JOBAD.util.limit = function(x, a, b){
-	if(a > b){
+	if(a >= b){
 		return (x<b)?b:((x>a)?a:x); 
 	} else {
 		// b > a
