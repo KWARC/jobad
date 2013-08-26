@@ -1,8 +1,8 @@
 # JOBAD
 
-Current Version: 3.1.9
+Current Version: 3.2.0
 
-Current Stable Version: 3.1.8
+Current Stable Version: 3.1.9
 
 Development Branch. 
 
@@ -39,8 +39,9 @@ To get the code use
 ## Bundled Libraries
 
 The following libraries are bundled with JOBAD. 
-	* [Underscore](http://underscorejs.org/) 1.5.1, which is licensed under [MIT License](https://github.com/documentcloud/underscore/blob/master/LICENSE)
-	* [jQuery Color Animations](https://github.com/jquery/jquery-color) 2.1.2, which is licensed under [MIT License](http://jquery.org/license)
+
+* [Underscore](http://underscorejs.org/) 1.5.1, which is licensed under [MIT License](https://github.com/documentcloud/underscore/blob/master/LICENSE)
+* [jQuery Color Animations](https://github.com/jquery/jquery-color) 2.1.2, which is licensed under [MIT License](http://jquery.org/license)
 
 
 ## Documentation

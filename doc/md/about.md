@@ -15,7 +15,8 @@ It is known not to be compatible with:
 The official JOBAD repository is located at [https://github.com/KWARC/jobad](https://github.com/KWARC/jobad). 
 
 ## Changelog
-### Version 3.1.9 (In Development)
+### Version 3.2.0 (In Development)
+### Version 3.1.9 (Stable)
 * Change in dependencies
 	* removed jQuery UI dependency, we now only need Bootstrap 2.x
 	* support for jQuery 1.8+
@@ -44,7 +45,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 * updated the config module
 * updated Makefile
 
-### Version 3.1.8 (Stable)
+### Version 3.1.8
 * improved contextMenu
 	* added Ids for menus
 	* added the contextMenuOpen Event to onEvent. 
