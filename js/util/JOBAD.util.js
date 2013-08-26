@@ -786,11 +786,83 @@ JOBAD.util.trigger = function(query, event, params){
 
 }
 
-JOBAD.util.getCurrentOrigin = function(){
-	var scripts = document.getElementsByTagName('script');
-	var thisScript = scripts[scripts.length-1];
-	return thisScript.src; 
+/*
+	Creates a new Event Handler
+*/
+JOBAD.util.EventHandler = function(){
+	var handler = {}; 
+	var EventHandler = JOBAD.refs.$("<div>"); 
+
+	handler.on = function(event, handler){
+		return JOBAD.util.on(EventHandler, event, handler);
+	};
+
+	handler.once = function(event, handler){
+		return JOBAD.util.once(EventHandler, event, handler);
+	};
+
+	handler.off = function(handler){
+		return JOBAD.util.off(EventHandler, handler);
+	};
+
+	handler.trigger = function(event, params){
+		return JOBAD.util.trigger(EventHandler, event, params);
+	}
+
+	return handler;
 }
+
+/*
+	Gets the current script origin. 
+*/
+JOBAD.util.getCurrentOrigin = function(){
+
+	var scripts = JOBAD.refs.$('script'); 
+	var src = scripts[scripts.length-1].src;
+
+	//if we have an empty src or jQuery is ready, return the location.href
+	return (src == "" || jQuery.isReady || !src)?location.href:src; 
+}
+
+/*
+	Permute to members of an array. 
+	@param arr	Array to permute. 
+	@param a	Index of first element. 
+	@param b	Index of second element. 
+*/
+JOBAD.util.permuteArray = function(arr, a, b){
+
+	var arr = JOBAD.refs.$.makeArray(arr); 
+	
+	if(!JOBAD.util.isArray(arr)){
+		return arr; 
+	}
+
+	var a = JOBAD.util.limit(a, 0, arr.length); 
+	var b = JOBAD.util.limit(b, 0, arr.length); 
+
+	var arr = arr.slice(0); 
+
+	var old = arr[a];
+	arr[a] = arr[b]; 
+	arr[b] = old; 
+
+	return arr; 
+}
+
+/*
+	Limit the number x to be between a and b. 
+
+*/
+JOBAD.util.limit = function(x, a, b){
+	if(a >= b){
+		return (x<b)?b:((x>a)?a:x); 
+	} else {
+		// b > a
+		return JOBAD.util.limit(x, b, a); 
+	}
+}
+
 
 
 //Merge underscore and JOBAD.util namespace
