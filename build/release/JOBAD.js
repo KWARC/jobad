@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Fri, 23 Aug 2013 12:55:55 +0200
+	built: Mon, 26 Aug 2013 10:38:38 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -6730,6 +6730,10 @@ JOBAD.UI.Toolbar.add = function(){
 
 	Toolbars = Toolbars.add(TB); 
 	JOBAD.UI.Toolbar.update(); 
+	JOBAD.util.markHidden(TB); 
+	TB.on("contextmenu", function(e){
+		return e.ctrlKey; 
+	}); 
 	return TB; 
 }
 
@@ -6742,6 +6746,7 @@ JOBAD.UI.Toolbar.update = JOBAD.util.throttle(function(){
 		var me = JOBAD.refs.$(this); 
 
 		if(me.parent().length != 0){
+
 			me.css({
 				"position": "fixed",
 				"right": 0, 
@@ -7231,16 +7236,13 @@ JOBAD.events.Toolbar =
 		return false; 
 	},
 	'Setup': {
-		'init': function(){
-			//nothing to do here
-		},
-		'enable': function(root){
+		'enable': function(){
 			this.modules.iterateAnd(function(module){
 				module.Toolbar.enable(); 
 				return true;
 			});
 		},
-		'disable': function(root){
+		'disable': function(){
 			//Remove all toolbars
 			this.modules.iterateAnd(function(module){
 				module.Toolbar.disable(); 
@@ -7279,7 +7281,7 @@ JOBAD.modules.ifaces.push([
 
 
 		this.Toolbar.get = function(){
-			//gets the tollbar if available, otherwise undefined
+			//gets the toolbar if available, otherwise undefined
 			return TBElement;
 		};
 
@@ -7352,7 +7354,7 @@ JOBAD.modules.ifaces.push([
 
 		this.Toolbar.setHidden = function(){
 			visible = false; 
-			me.Toolbar.disable(); 
+			me.Toolbar.show(); 
 		}
 
 		this.Toolbar.isVisible = function(){
@@ -7361,8 +7363,10 @@ JOBAD.modules.ifaces.push([
 
 		this.Toolbar.show = function(){
 			if(me.Toolbar.isVisible() && me.isActive() && JOBADInstance.Instance.isFocused()){
-				return me.Toolbar.enable(); 
+				me.Toolbar.enable(); 
+				return true; 
 			} else {
+				me.Toolbar.disable(); 
 				return false; 
 			}
 		}
@@ -8581,7 +8585,21 @@ JOBAD.ifaces.push(function(me){
 	*/
 	me.Instance.isFocused = function(){
 		return i_am_focused; 
-	}
+	};
+
+	/*
+		Call a function if this JOBADInstance is focused, otherwise call it
+		once that is true. 
+	*/
+	me.Instance.focused = function(cb){
+		if(me.Instance.isFocused()){
+			cb.call(me); 
+		} else {
+			me.Event.once("instance.focus", function(){
+				cb.call(me); 
+			})
+		}
+	};
 
 	me.Event.on("instance.beforeDisable", function(){
 		if(i_am_focused){ //we are focused and are not waiting

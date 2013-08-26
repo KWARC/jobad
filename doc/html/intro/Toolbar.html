@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>[JOBADInstance.Instance] - JOBAD Documentation</title>
+		<title>[The Toolbar] - JOBAD Documentation</title>
 		<style type="text/css">
 /* Basic styles https://gist.github.com/cpatuzzo/3331384 */
 		body {
@@ -478,27 +478,37 @@
 -->
 	</head>
 	<body>
-<p><a href="../../../index.html">Start</a> &gt; <a href="../../index.html">API Documentation</a> &gt; <a href="../index.html">JOBAD</a> &gt; <a href="index.html">JOBADInstance</a> &gt; <strong>JOBADInstance.Instance</strong></p>
-<h1>JOBADInstance.Instance</h1>
+<p><a href="../index.html">Start</a> &gt; <a href="index.html">Introduction to JOBAD</a> &gt; <strong>The Toolbar</strong></p>
+<h1>The Toolbar</h1>
+
+<p>The Toolbar is a Bar at the bottom of the page which is visible whenever a JOBADInstance is focused. 
+Each module can have a Toolbar. A toolbar can be specified via the Toolbar function of a module like so: </p>
+
+<div class="codehilite"><pre><code><span class="kd">var</span> <span class="nx">myModule</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1">//other module things here</span>
+    <span class="s2">&quot;Toolbar&quot;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">JOBADInstance</span><span class="p">,</span> <span class="nx">Toolbar</span><span class="p">){</span>
+        <span class="c1">//Toolbar is a jQuery Toolbar element. </span>
+        <span class="c1">//Fill it with anything you want. </span>
+        <span class="nx">Toolbar</span><span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;I&#39;m a Toolbar! &quot;</span><span class="p">);</span> <span class="c1">//Lets give it a simple text. </span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">//if there is no Toolbar, you should return false. </span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Toolbars are only shown if </p>
 
 <ul>
-<li><strong>Function</strong> <code>.Instance.focus()</code> Focuses this JOBADInstance. 
-<ul>
-<li><strong>returns</strong> false if the Instance can not be focused for some reason, true otherwise. </li>
-</ul></li>
-<li><strong>Function</strong> <code>.Instance.unfocus()</code> Unfocuses this JOBADInstance. 
-<ul>
-<li><strong>returns</strong> false if the Instance can not be unfocused for some reason, true otherwise. </li>
-</ul></li>
-<li><strong>Function</strong> <code>.Instance.isFocused()</code> Checks if this JOBADInstance is focused. 
-<ul>
-<li><strong>returns</strong> true if this JOBADInstance is focused, false otherwise. </li>
-</ul></li>
-<li><strong>Function</strong> <code>.Instance.focused(callback)</code> Call a function if this JOBADInstance is focused, otherwise call it once that is true. 
-<ul>
-<li><strong>Function</strong> <code>callback()</code> Callback to use. </li>
-</ul></li>
+<li>the module the Toolbar belongs to is active and</li>
+<li>the JOBADInstance the module belongs to is focused and</li>
+<li>the Toolbar state is visible. </li>
 </ul>
+
+<p>By default, the Toolbar state is hidden. To change it to visible, load the module and then do: </p>
+
+<div class="codehilite"><pre><code><span class="nx">myLoadedModule</span><span class="p">.</span><span class="nx">Toolbar</span><span class="p">.</span><span class="nx">setVisible</span><span class="p">();</span> 
+</code></pre></div>
+
+<p>This can be done in the init handler, but that is not recommended. </p>
 
 	</body>
 </html>

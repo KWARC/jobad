@@ -123,7 +123,21 @@ JOBAD.ifaces.push(function(me){
 	*/
 	me.Instance.isFocused = function(){
 		return i_am_focused; 
-	}
+	};
+
+	/*
+		Call a function if this JOBADInstance is focused, otherwise call it
+		once that is true. 
+	*/
+	me.Instance.focused = function(cb){
+		if(me.Instance.isFocused()){
+			cb.call(me); 
+		} else {
+			me.Event.once("instance.focus", function(){
+				cb.call(me); 
+			})
+		}
+	};
 
 	me.Event.on("instance.beforeDisable", function(){
 		if(i_am_focused){ //we are focused and are not waiting

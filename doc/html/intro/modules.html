@@ -516,15 +516,11 @@
 <span class="cm">            @param Toolbar A jQuery element representing the toolbar. </span>
 <span class="cm">            @returns true if there is a Toolbar otherwise false. </span>
 <span class="cm">        */</span>
-
-<pre><code>    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; 
-&lt;span class="p"&gt;},&lt;/span&gt;
-
-&lt;span class="cm"&gt;/* Init handlers */&lt;/span&gt;
-&lt;span class="nx"&gt;globalinit&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
-    &lt;span class="cm"&gt;/* &lt;/span&gt;
-</code></pre>
-
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> 
+    <span class="p">},</span>
+    <span class="cm">/* Init handlers */</span>
+    <span class="nx">globalinit</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
+        <span class="cm">/* </span>
 <span class="cm">            Called exactly once GLOBALLY. Can be used to initialise global module ids, etc. May be ommitted. Will be called once a module is loaded. </span>
 <span class="cm">            @param next Callback if info.async is true. Should be called as a callback. </span>
 <span class="cm">            @this special object which has access to this.info, this.globalStore, this.UserConfig and non-clean functions</span>

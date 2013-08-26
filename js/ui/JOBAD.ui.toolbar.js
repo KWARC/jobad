@@ -39,6 +39,10 @@ JOBAD.UI.Toolbar.add = function(){
 
 	Toolbars = Toolbars.add(TB); 
 	JOBAD.UI.Toolbar.update(); 
+	JOBAD.util.markHidden(TB); 
+	TB.on("contextmenu", function(e){
+		return e.ctrlKey; 
+	}); 
 	return TB; 
 }
 
@@ -51,6 +55,7 @@ JOBAD.UI.Toolbar.update = JOBAD.util.throttle(function(){
 		var me = JOBAD.refs.$(this); 
 
 		if(me.parent().length != 0){
+
 			me.css({
 				"position": "fixed",
 				"right": 0, 

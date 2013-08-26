@@ -52,10 +52,8 @@ var template = {
 			@param Toolbar A jQuery element representing the toolbar. 
 			@returns true if there is a Toolbar otherwise false. 
 		*/
-
 		return false; 
 	},
-
 	/* Init handlers */
     globalinit: function(next){
 		/* 

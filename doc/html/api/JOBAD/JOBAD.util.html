@@ -521,9 +521,11 @@
 <li><strong>Array</strong> <code>names</code> Texts to use as names for tab titles</li>
 <li><strong>Array</strong> <code>tabs</code> Elements to use as tabs</li>
 <li><strong>Object</strong> <code>config</code> Configuration. Optional. 
-    * <strong>String</strong> <code>config.type</code> Type of tabs to use. CSS Class. 
-    * <strong>Function</strong> <code>config.select(tabName, tab)</code> Select Hook. To be called on selection of a tab. 
-    * <strong>Function</strong> <code>config.unselect(tabName, tab)</code> Deselect Hook. To be called on the deselection of a tab. </li>
+<ul>
+<li><strong>String</strong> <code>config.type</code> Type of tabs to use. CSS Class. </li>
+<li><strong>Function</strong> <code>config.select(tabName, tab)</code> Select Hook. To be called on selection of a tab. </li>
+<li><strong>Function</strong> <code>config.unselect(tabName, tab)</code> Deselect Hook. To be called on the deselection of a tab. </li>
+</ul></li>
 <li><strong>returns</strong> jQuery object</li>
 </ul></li>
 <li><strong>Function</strong> <code>JOBAD.util.closest(element, check)</code> - Similar to jQuery's closest. Travels up the DOM tree and finds the first element which matches check. This includes element itself

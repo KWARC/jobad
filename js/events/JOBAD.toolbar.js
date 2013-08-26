@@ -27,16 +27,13 @@ JOBAD.events.Toolbar =
 		return false; 
 	},
 	'Setup': {
-		'init': function(){
-			//nothing to do here
-		},
-		'enable': function(root){
+		'enable': function(){
 			this.modules.iterateAnd(function(module){
 				module.Toolbar.enable(); 
 				return true;
 			});
 		},
-		'disable': function(root){
+		'disable': function(){
 			//Remove all toolbars
 			this.modules.iterateAnd(function(module){
 				module.Toolbar.disable(); 
@@ -75,7 +72,7 @@ JOBAD.modules.ifaces.push([
 
 
 		this.Toolbar.get = function(){
-			//gets the tollbar if available, otherwise undefined
+			//gets the toolbar if available, otherwise undefined
 			return TBElement;
 		};
 
@@ -148,7 +145,7 @@ JOBAD.modules.ifaces.push([
 
 		this.Toolbar.setHidden = function(){
 			visible = false; 
-			me.Toolbar.disable(); 
+			me.Toolbar.show(); 
 		}
 
 		this.Toolbar.isVisible = function(){
@@ -157,8 +154,10 @@ JOBAD.modules.ifaces.push([
 
 		this.Toolbar.show = function(){
 			if(me.Toolbar.isVisible() && me.isActive() && JOBADInstance.Instance.isFocused()){
-				return me.Toolbar.enable(); 
+				me.Toolbar.enable(); 
+				return true; 
 			} else {
+				me.Toolbar.disable(); 
 				return false; 
 			}
 		}

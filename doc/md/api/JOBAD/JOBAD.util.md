@@ -28,9 +28,9 @@ In addition to these functions, JOBAD.util also contains all underscore (version
 	* **Array** `names` Texts to use as names for tab titles
 	* **Array** `tabs` Elements to use as tabs
 	* **Object** `config` Configuration. Optional. 
-			* **String** `config.type` Type of tabs to use. CSS Class. 
-			* **Function** `config.select(tabName, tab)` Select Hook. To be called on selection of a tab. 
-			* **Function** `config.unselect(tabName, tab)` Deselect Hook. To be called on the deselection of a tab. 
+		* **String** `config.type` Type of tabs to use. CSS Class. 
+		* **Function** `config.select(tabName, tab)` Select Hook. To be called on selection of a tab. 
+		* **Function** `config.unselect(tabName, tab)` Deselect Hook. To be called on the deselection of a tab. 
 	* **returns** jQuery object
 * **Function** `JOBAD.util.closest(element, check)` - Similar to jQuery's closest. Travels up the DOM tree and finds the first element which matches check. This includes element itself
 	* **jQuery** `element` Element to start with

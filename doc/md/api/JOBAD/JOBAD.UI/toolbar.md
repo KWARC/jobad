@@ -7,3 +7,9 @@
     * **returns** jQuery reference to the new sidebar
 
 * **Function** `JOBAD.UI.Toolbar.update()` - Updates the toolbar display for all current toolbars. Should be called after a toolbar is removed. 
+
+* **Function** `JOBAD.UI.Toolbar.moveUp(TB)` - Moves a Toolbar up. 
+	* **jQuery** `TB` the jQuery element representing the Toolbar. 
+
+* **Function** `JOBAD.UI.Toolbar.moveDown(TB)` - Moves a Toolbar down. 
+	* **jQuery** `TB` the jQuery element representing the Toolbar. 

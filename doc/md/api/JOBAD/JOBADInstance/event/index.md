@@ -79,6 +79,8 @@ The following event names are available:
 * **Object** [`.Event.onEvent`](onEvent.md) Namespace for onEvent Events. 
 * **Object** [`.Event.focus`](focus.md) Namespace for focus Events. 
 * **Object** [`.Event.unfocus`](unfocus.md) Namespace for unfocus Events. 
+* **Object** [`.Event.Toolbar`](Toolbar.md) Namespace for Toolbar Events. 
+
 
 ## See also
 

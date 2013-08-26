@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>[JOBADInstance.Instance] - JOBAD Documentation</title>
+		<title>[JOBAD.events.Toolbar] - JOBAD Documentation</title>
 		<style type="text/css">
 /* Basic styles https://gist.github.com/cpatuzzo/3331384 */
 		body {
@@ -478,25 +478,27 @@
 -->
 	</head>
 	<body>
-<p><a href="../../../index.html">Start</a> &gt; <a href="../../index.html">API Documentation</a> &gt; <a href="../index.html">JOBAD</a> &gt; <a href="index.html">JOBADInstance</a> &gt; <strong>JOBADInstance.Instance</strong></p>
-<h1>JOBADInstance.Instance</h1>
+<p><a href="../../../index.html">Start</a> &gt; <a href="../../index.html">API Documentation</a> &gt; <a href="../index.html">JOBAD</a> &gt; <a href="index.html">JOBAD.events</a> &gt; <strong>JOBAD.events.Toolbar</strong></p>
+<h1>JOBAD.events.Toolbar</h1>
+
+<p>The Toolbar is an Event. </p>
 
 <ul>
-<li><strong>Function</strong> <code>.Instance.focus()</code> Focuses this JOBADInstance. 
+<li><p><strong>Function</strong> <code>JOBAD.events.Toolbar.default()</code> The default Event Handler for Toolbar Events. Just returns false. </p></li>
+<li><p><strong>Function</strong> <code>JOBAD.events.Toolbar.Setup.init()</code> Enables the Toolbar event. </p></li>
+<li><strong>Function</strong> <code>JOBAD.events.Toolbar.Setup.enable()</code> Enables the Toolbar event. </li>
+<li><strong>Function</strong> <code>JOBAD.events.Toolbar.Setup.disable()</code> Disables the Toolbar event. </li>
+<li><p><strong>Function</strong> <code>JOBAD.events.Toolbar.namespace.getResult()</code> Get the Result of the Toolbar event handlers. </p>
+
 <ul>
-<li><strong>returns</strong> false if the Instance can not be focused for some reason, true otherwise. </li>
+<li><strong>Instance[ <a href="../JOBADInstance/index.html">JOBAD</a> ]</strong> <code>this</code> The JOBAD Instance to work on. </li>
+<li><strong>returns</strong> a boolean indicating if some action was taken. </li>
 </ul></li>
-<li><strong>Function</strong> <code>.Instance.unfocus()</code> Unfocuses this JOBADInstance. 
+<li><p><strong>Function</strong> <code>JOBAD.events.Toolbar.namespace.trigger()</code> Trigger the Toolbar event. (Shows the toolbar)</p>
+
 <ul>
-<li><strong>returns</strong> false if the Instance can not be unfocused for some reason, true otherwise. </li>
-</ul></li>
-<li><strong>Function</strong> <code>.Instance.isFocused()</code> Checks if this JOBADInstance is focused. 
-<ul>
-<li><strong>returns</strong> true if this JOBADInstance is focused, false otherwise. </li>
-</ul></li>
-<li><strong>Function</strong> <code>.Instance.focused(callback)</code> Call a function if this JOBADInstance is focused, otherwise call it once that is true. 
-<ul>
-<li><strong>Function</strong> <code>callback()</code> Callback to use. </li>
+<li><strong>Instance[ <a href="../JOBADInstance/index.html">JOBAD</a> ]</strong> <code>this</code> The JOBAD Instance to work on. </li>
+<li><strong>returns</strong> a boolean indicating if some action was taken. </li>
 </ul></li>
 </ul>
 
