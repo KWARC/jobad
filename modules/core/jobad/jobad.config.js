@@ -249,17 +249,39 @@
 								e.remove();
 							}
 					});
+
+					var $button = JOBAD.refs.$('<button type="button" class="btn">').text("Focus");
+
+					$button.click(function(e){
+						if(me.Instance.isFocused()){
+							me.Instance.unfocus(); 
+							$button.removeClass("active"); 
+						} else {
+							me.Instance.focus(); 
+							$button.addClass("active"); 
+						}
+					});
+
+					if(me.Instance.isFocused()){
+						$button.addClass("active"); 
+					}
 				
 					tab.empty()
 					.append(
 						JOBAD.util.createTabs(
-							["About JOBAD", "Config", "GPL License", "jQuery", "Bootstrap", "Underscore"], 
+							["Instance", "About JOBAD", "GPL License", "jQuery", "Bootstrap", "Underscore"], 
 							[
+								JOBAD.refs.$("<div>").append(
+									JOBAD.refs.$("<span>").text("Instance ID: "+me.ID),
+									"<br />",
+									$button,
+									"<h4>Configuration</h4>",
+									$config
+								), 
 								JOBAD.refs.$("<div>").append(
 									JOBAD.refs.$("<span>").text("JOBAD Core Version "+JOBAD.version),
 									JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("jobad_license"))
 								),
-								$config,
 								JOBAD.refs.$("<pre>").text(JOBAD.resources.getTextResource("gpl_v3_text")),
 								JOBAD.refs.$("<div>").append(
 									JOBAD.refs.$("<span>").text("jQuery Version "+JOBAD.refs.$.fn.jquery),
@@ -333,11 +355,11 @@
 
 					var TBButton = JOBAD.util.createRadio(["Hide", "Show"], mod.Toolbar.isVisible()?1:0);
 
-					var UpButton = JOBAD.refs.$("<button>").button().text("Up").click(function(){
+					var UpButton = JOBAD.refs.$('<button type="button" class="btn">').button().text("Up").click(function(){
 						mod.Toolbar.moveUp(); 
 					});
 
-					var DownButton = JOBAD.refs.$("<button>").text("Down").click(function(){
+					var DownButton = JOBAD.refs.$('<button type="button" class="btn">').text("Down").click(function(){
 						mod.Toolbar.moveDown(); 
 					});
 
@@ -364,8 +386,10 @@
 						"<br />",
 						"Toolbar: ",
 						TBButton,
-						DownButton, 
-						UpButton,
+						JOBAD.refs.$("<div class='btn-group'>").append(
+							DownButton, 
+							UpButton
+						),
 						"<br />"
 					);
 

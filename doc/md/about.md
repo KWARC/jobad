@@ -41,9 +41,8 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 * improved JOBAD.util.getOrigin()
 	* better compatibility when using inline-scripts
 * more rotation for the radial context menu
+* updated the config module
 * updated Makefile
-* To be done before 3.1.9 release:
-	* update the config module
 
 ### Version 3.1.8 (Stable)
 * improved contextMenu
