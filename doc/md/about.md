@@ -16,6 +16,8 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 
 ## Changelog
 ### Version 3.2.0 (In Development)
+* added auto focus for JOBADInstances
+
 ### Version 3.1.9 (Stable)
 * Change in dependencies
 	* removed jQuery UI dependency, we now only need Bootstrap 2.x

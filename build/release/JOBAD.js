@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Mon, 26 Aug 2013 11:26:45 +0200
+	built: Sun, 01 Sep 2013 11:11:02 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -8606,6 +8606,45 @@ JOBAD.ifaces.push(function(me){
 		}
 	};
 
+
+	var isAutoFocusEnabled = false; 
+	var autoFocusHandlers = []; 
+	var handlerNames = ["contextmenu.open", "contextMenuEntries", "dblClick", "leftClick", "hoverText"];
+
+	me.Instance.enableAutoFocus = function(){
+		if(isAutoFocusEnabled){
+			return false; 
+		}
+
+		for(var i=0;i<handlerNames.length;i++){
+			autoFocusHandlers.push(
+				me.Event.on(handlerNames[i], function(){
+					me.Instance.focus(); 
+				})
+			);
+		}
+
+		isAutoFocusEnabled = true; 
+		return true; 
+	};
+
+	me.Instance.disableAutoFocus = function(){
+		if(!isAutoFocusEnabled){
+			return false; 
+		}
+
+		while(autoFocusHandlers.length > 0){
+			me.Event.off(autoFocusHandlers.pop()); 
+		}
+
+		isAutoFocusEnabled = false; 
+		return true; 
+	};
+
+	me.Instance.isAutoFocusEnabled = function(){
+		return isAutoFocusEnabled; 
+	}
+
 	me.Event.on("instance.beforeDisable", function(){
 		if(i_am_focused){ //we are focused and are not waiting
 			me.Instance.unfocus(); //unfocus me
@@ -8615,7 +8654,7 @@ JOBAD.ifaces.push(function(me){
 				me.Instance.focus(); //requery me for enabling once I am disabled
 			})
 		}
-	})
+	});
 }); 
 
 /*

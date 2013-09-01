@@ -39,7 +39,8 @@ JOBAD.repo.config({
 			"test.sidebar",
 			"test.config",
 			"test.tb1", 
-			"test.tb2"
+			"test.tb2", 
+			"jobad.showfocus"
 	],
 	"at": {
 			/*
@@ -50,6 +51,7 @@ JOBAD.repo.config({
 			"jobad.debug": "core/jobad/jobad.debug.js",
 			"jobad.config": "core/jobad/jobad.config.js",
 			"jobad.folding": "core/jobad/jobad.folding.js",
+			"jobad.showfocus": "core/jobad/jobad.showfocus.js",
 			"mathjax.mathjax": "core/mathjax.mathjax.js",
 			"test.click": "core/test/test.click.js",
 			"test.hover": "core/test/test.hover.js",
