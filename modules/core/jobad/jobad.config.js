@@ -250,20 +250,37 @@
 							}
 					});
 
-					var $button = JOBAD.refs.$('<button type="button" class="btn">').text("Focus");
-
-					$button.click(function(e){
+					var $focusButton = 
+					JOBAD.refs.$('<button type="button" class="btn">')
+					.text("Focus")
+					.click(function(e){
 						if(me.Instance.isFocused()){
 							me.Instance.unfocus(); 
-							$button.removeClass("active"); 
+							$focusButton.removeClass("active"); 
 						} else {
 							me.Instance.focus(); 
-							$button.addClass("active"); 
+							$focusButton.addClass("active"); 
 						}
 					});
 
 					if(me.Instance.isFocused()){
-						$button.addClass("active"); 
+						$focusButton.addClass("active"); 
+					}
+
+					var $autoButton = 
+					JOBAD.refs.$('<button type="button" class="btn">')
+					.text("Auto").click(function(e){
+						if(me.Instance.isAutoFocusEnabled()){
+							me.Instance.disableAutoFocus(); 
+							$autoButton.removeClass("active"); 
+						} else {
+							me.Instance.enableAutoFocus(); 
+							$autoButton.addClass("active"); 
+						}
+					});
+
+					if(me.Instance.isAutoFocusEnabled()){
+						$autoButton.addClass("active"); 
 					}
 				
 					tab.empty()
@@ -274,7 +291,8 @@
 								JOBAD.refs.$("<div>").append(
 									JOBAD.refs.$("<span>").text("Instance ID: "+me.ID),
 									"<br />",
-									$button,
+									$focusButton,
+									$autoButton, 
 									"<h4>Configuration</h4>",
 									$config
 								), 

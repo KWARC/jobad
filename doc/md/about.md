@@ -17,6 +17,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 ## Changelog
 ### Version 3.2.0 (In Development)
 * added auto focus for JOBADInstances
+* bug Fix: EventHandler .off was not working
 
 ### Version 3.1.9 (Stable)
 * Change in dependencies

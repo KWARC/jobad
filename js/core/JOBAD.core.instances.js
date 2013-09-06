@@ -139,7 +139,6 @@ JOBAD.ifaces.push(function(me){
 		}
 	};
 
-
 	var isAutoFocusEnabled = false; 
 	var autoFocusHandlers = []; 
 	var handlerNames = ["contextmenu.open", "contextMenuEntries", "dblClick", "leftClick", "hoverText"];
@@ -149,12 +148,19 @@ JOBAD.ifaces.push(function(me){
 			return false; 
 		}
 
+		me.Event.trigger("instance.autofocus.enable"); 
+
 		for(var i=0;i<handlerNames.length;i++){
-			autoFocusHandlers.push(
-				me.Event.on(handlerNames[i], function(){
-					me.Instance.focus(); 
-				})
-			);
+			(function(){
+				var handlerName = handlerNames[i];
+				autoFocusHandlers.push(
+					me.Event.on(handlerName, function(){
+						me.Event.trigger("instance.autofocus.trigger", [handlerName]);
+						me.Instance.focus(); 
+					})
+				);
+			})(); 
+			
 		}
 
 		isAutoFocusEnabled = true; 
@@ -166,8 +172,11 @@ JOBAD.ifaces.push(function(me){
 			return false; 
 		}
 
+		me.Event.trigger("instance.autofocus.disable"); 
+
 		while(autoFocusHandlers.length > 0){
-			me.Event.off(autoFocusHandlers.pop()); 
+			var handler = autoFocusHandlers.pop(); 
+			me.Event.off(handler); 
 		}
 
 		isAutoFocusEnabled = false; 
@@ -177,7 +186,7 @@ JOBAD.ifaces.push(function(me){
 	me.Instance.isAutoFocusEnabled = function(){
 		return isAutoFocusEnabled; 
 	}
-
+	
 	me.Event.on("instance.beforeDisable", function(){
 		if(i_am_focused){ //we are focused and are not waiting
 			me.Instance.unfocus(); //unfocus me
@@ -187,7 +196,7 @@ JOBAD.ifaces.push(function(me){
 				me.Instance.focus(); //requery me for enabling once I am disabled
 			})
 		}
-	});
+	})
 }); 
 
 /*
