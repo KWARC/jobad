@@ -750,7 +750,7 @@ JOBAD.util.once = function(query, event, handler){
 	@param	query A jQuery element to use as as query. 
 	@param	id	Id of handler to remove. 
 */
-JOBAD.util.off = function(event, id){
+JOBAD.util.off = function(query, id){
 	var query = JOBAD.refs.$(query);
 	query.off(id); 
 }

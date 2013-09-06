@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Mon, 26 Aug 2013 11:25:46 +0200
+	built: Fri, 06 Sep 2013 12:59:12 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -2989,7 +2989,7 @@ JOBAD.util.once = function(query, event, handler){
 	@param	query A jQuery element to use as as query. 
 	@param	id	Id of handler to remove. 
 */
-JOBAD.util.off = function(event, id){
+JOBAD.util.off = function(query, id){
 	var query = JOBAD.refs.$(query);
 	query.off(id); 
 }
