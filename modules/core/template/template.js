@@ -121,6 +121,15 @@ var template = {
 			@returns Returns true iff it performed some action. 
 		*/
 	},
+	keyPress: function(key, JOBADInstance){
+		/*
+			called when a key press occurs and this JOBADInstance is focused. Until some handler returns true, every action is performed. 
+			@this An instance of JOBAD.modules.loadedModule
+			@param key The key combination that was pressed. See JOBAD.util.keyPress
+			@param JOBADInstance The instance of JOBAD the module is initiated on.  
+			@returns Returns true iff it performed some action. 
+		*/
+	},
 	contextMenuEntries: function(target, JOBADInstance){
 		/*
 			called when a context menu is requested. Context Menu entries will be merged. May be ommitted.  

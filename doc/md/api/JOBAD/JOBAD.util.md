@@ -123,3 +123,11 @@ In addition to these functions, JOBAD.util also contains all underscore (version
 	* **Array** `arr` Array to permute
 	* **Number** `a` Index of the first element to exchange. 
 	* **Number** `b` Index of the second element to exchange. 
+
+* **Function** `JOBAD.util.toKeyString(evt)` - Turns the keydown or keypress event evt into a string for a key. 
+	* **Event** `evt` The keydown or keypress event to translate. 
+	* **returns** `string` of the form '[ctrl+][alt+][shift+]$key_name'. Note that only a special key shows up as 'ctrl+'. 
+
+* **Function** `JOBAD.util.onKey(callback)` - Registers a listener for a keypress event. 
+	* **Function** `callback(key, orgEvent)` The callback
+	* **returns** a string. Use `$(document).off(returned_value)` to deregister the listener. 

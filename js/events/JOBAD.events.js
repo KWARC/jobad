@@ -67,6 +67,47 @@ JOBAD.events.leftClick =
 	}
 };
 
+/* keypress */
+JOBAD.events.keyPress = 
+{
+	'default': function(key, JOBADInstance){
+		return false;
+	},
+	'Setup': {
+		'enable': function(root){
+			var me = this;
+			me.Event.keyPress.__handlerName = JOBAD.util.onKey(function(k){
+				if(me.Instance.isFocused()){
+					preEvent(me, "keyPress", [k]); 
+					var res = me.Event.keyPress.trigger(k); 
+					postEvent(me, "keyPress", [k]); 
+					return res; 
+				} else {
+					return true; 
+				}
+			}); 
+		},
+		'disable': function(root){
+			JOBAD.refs.$(document).off(this.Event.keyPress.__handlerName); 
+		}
+	},
+	'namespace': 
+	{
+		
+		'getResult': function(key){
+			var res = this.modules.iterateAnd(function(module){
+				return !module.keyPress.call(module, key, module.getJOBAD());
+			});
+ 
+			return res; 
+		},
+		'trigger': function(key){
+			var evt = this.Event.keyPress.getResult(key);
+			return evt;
+		}
+	}
+};
+
 /* double Click */
 JOBAD.events.dblClick = 
 {

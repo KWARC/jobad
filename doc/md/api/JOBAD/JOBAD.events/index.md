@@ -4,6 +4,7 @@ This namespace represents Events.
 
 * **Object** [`JOBAD.events.dblClick`](dblClick.md) Namespace for dblClick Events. 
 * **Object** [`JOBAD.events.leftClick`](leftClick.md) Namespace for leftClick Events. 
+* **Object** [`JOBAD.events.keyPress`](keyPress.md) Namespace for keyPress Events. 
 * **Object** [`JOBAD.events.contextMenuEntries`](contextMenuEntries.md) Namespace for contextMenuEntries Events. 
 * **Object** [`JOBAD.events.hoverText`](hoverText.md) Namespace for hoverText Events. 
 * **Object** [`JOBAD.events.onEvent`](onEvent.md) Namespace for onEvent Events. 
