@@ -7,7 +7,7 @@
 		
 <script src='./../../../js/deps/jquery/jquery-2.0.2.min.js'></script>
 <script src='./../../../js/deps/bootstrap.js'></script>
-<link rel='stylesheet' type='text/css' href='./../../../css/libs/bootstrap/css/bootstrap.css'>
+<link rel='stylesheet' type='text/css' href='./../../../css/libs/bootstrap/css/bootstrap.less.css'>
 
 		<!-- Include JOBAD -->
 <script src='./../../../js/core/JOBAD.core.js'></script>
@@ -36,10 +36,12 @@
 <link rel='stylesheet' type='text/css' href='./../../../css/JOBAD.theme.css'>
 
 		<script type="text/javascript">
+			JOBAD.config.BootstrapScope = "bootstrap"; //Bootstrap CSS scope
+
 			var JOBAD1, JOBAD2;
 			
 			JOBAD.repo.loadAllFrom("./../../../modules", function(){ //Load all from the repo
-				jQuery(function(){	
+				jQuery(function(){
 					JOBAD1 = new JOBAD(jQuery("#1"));
 					JOBAD2 = new JOBAD(jQuery("#2"), {
 						"auto_show_toolbar": true

@@ -11,7 +11,11 @@ JOBAD itself depends on:
 
 * [jQuery](http://jquery.com) - works with version >= 1.8
 * [Bootstrap](http://getbootstrap.com/2.3.2/) - tested with version v2.3.2, **not** compatible with version 3.x
-	
+
+For Bootstrap you can also use a scoped version (all the CSS is restricted to a certain class) , in which case you should configure this is with: 
+```
+	JOBAD.config.BootstrapScope = "bootstrap"; //set this to the bootstrap class name
+````
 
 All dependencies are bundled with JOBAD, but can also be included from different sources. 
 

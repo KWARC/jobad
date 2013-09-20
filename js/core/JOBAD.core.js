@@ -96,7 +96,8 @@ JOBAD.toString.toString = JOBAD.toString; //self-reference!
 /* JOBAD Global config */
 JOBAD.config = 
 {
-	    'debug': true //Debugging enabled? (Logs etc)
+	    'debug': true, //Debugging enabled? (Logs etc)
+	    'BootstrapScope': undefined //Scope for Bootstrap CSS
 };
 
 /*

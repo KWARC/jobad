@@ -13,10 +13,12 @@ ${JS_INCLUDE}
 ${CSS_INCLUDE}
 
 		<script type="text/javascript">
+			JOBAD.config.BootstrapScope = "bootstrap"; //Bootstrap CSS scope
+
 			var JOBAD1, JOBAD2;
 			
 			JOBAD.repo.loadAllFrom("${JOBAD_BASE}/modules", function(){ //Load all from the repo
-				jQuery(function(){	
+				jQuery(function(){
 					JOBAD1 = new JOBAD(jQuery("#1"));
 					JOBAD2 = new JOBAD(jQuery("#2"), {
 						"auto_show_toolbar": true

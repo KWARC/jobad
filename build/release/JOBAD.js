@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Fri, 13 Sep 2013 16:32:24 +0200
+	built: Fri, 20 Sep 2013 09:57:28 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -122,7 +122,8 @@ JOBAD.toString.toString = JOBAD.toString; //self-reference!
 /* JOBAD Global config */
 JOBAD.config = 
 {
-	    'debug': true //Debugging enabled? (Logs etc)
+	    'debug': true, //Debugging enabled? (Logs etc)
+	    'BootstrapScope': undefined //Scope for Bootstrap CSS
 };
 
 /*
@@ -5225,7 +5226,7 @@ JOBAD.UI.sortTableBy = function(el, sortFunction, callback){
 				var row = JOBAD.refs.$(this); 
 				row.detach().appendTo(table); 
 			});
-			return el;  
+			return el;
 		}
 	}
 
@@ -5239,6 +5240,43 @@ JOBAD.UI.sortTableBy = function(el, sortFunction, callback){
 	})
 
 	return el; 
+}
+
+/*
+	Making Bootstrap scoped. 
+*/
+
+/*
+	Enables Bootstrap on some element
+*/
+JOBAD.refs.$.fn.BS = function(){
+	JOBAD.refs.$(this).addClass(JOBAD.config.BootstrapScope); 
+	return this; 
+}
+
+JOBAD.UI.BS = function(element){
+	return JOBAD.refs.$(element).BS(); 
+}
+
+var Bootstrap_hacks = JOBAD.refs.$([]); 
+
+JOBAD.UI.BSStyle = function(element){
+	//Remove all the old hacks
+	Bootstrap_hacks = Bootstrap_hacks.filter(function(){
+		var me = JOBAD.refs.$(this); 
+
+		if(me.children().length == 0){
+			me.remove(); 
+			return false; 
+		}
+
+		return true; 
+	});
+
+
+	var el = JOBAD.refs.$(".modal-backdrop").wrap(JOBAD.refs.$("<div>").BS().addClass("hacked")); 
+
+	Bootstrap_hacks = Bootstrap_hacks.add(el.parent()); 
 }/* end   <ui/JOBAD.ui.js> */
 /* start <ui/JOBAD.ui.hover.js> */
 /*
@@ -5428,7 +5466,6 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 			return !block; 
 		}
 
-
 		//trigger the open callback
 		onOpen(element);
 
@@ -5490,7 +5527,7 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 					JOBAD.refs.$(this).trigger("contextmenu.JOBAD.UI.ContextMenu"); //trigger my context menu. 
 					return false;
 				}).end()
-			)
+			);
 
 			JOBAD.UI.ContextMenu.enable(menuBuild, function(e){
 				return JOBAD.refs.$(e).closest("div").data("JOBAD.UI.ContextMenu.subMenuData");
@@ -5519,6 +5556,7 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 		//set its css and append it to the body
 
 		menuBuild
+		.BS() //enable Bootstrap on the menu
 		.css({
 			'width': JOBAD.UI.ContextMenu.config.width,
 			'position': 'fixed'

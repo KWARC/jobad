@@ -106,7 +106,6 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 			return !block; 
 		}
 
-
 		//trigger the open callback
 		onOpen(element);
 
@@ -168,7 +167,7 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 					JOBAD.refs.$(this).trigger("contextmenu.JOBAD.UI.ContextMenu"); //trigger my context menu. 
 					return false;
 				}).end()
-			)
+			);
 
 			JOBAD.UI.ContextMenu.enable(menuBuild, function(e){
 				return JOBAD.refs.$(e).closest("div").data("JOBAD.UI.ContextMenu.subMenuData");
@@ -197,6 +196,7 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 		//set its css and append it to the body
 
 		menuBuild
+		.BS() //enable Bootstrap on the menu
 		.css({
 			'width': JOBAD.UI.ContextMenu.config.width,
 			'position': 'fixed'
