@@ -15,7 +15,10 @@ It is known not to be compatible with:
 The official JOBAD repository is located at [https://github.com/KWARC/jobad](https://github.com/KWARC/jobad). 
 
 ## Changelog
-### Version 3.2.0 (In Development)
+### Version 3.2.1 (In Development)
+* nothing yet
+
+### Version 3.2.0 (Stable)
 * added auto focus for JOBADInstances
 * added the keypress event (finally)
 * bug Fix: EventHandler .off was not working
@@ -25,7 +28,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 	* this currently breaks BS fade animations
 
 
-### Version 3.1.9 (Stable)
+### Version 3.1.9 
 * Change in dependencies
 	* removed jQuery UI dependency, we now only need Bootstrap 2.x
 	* support for jQuery 1.8+

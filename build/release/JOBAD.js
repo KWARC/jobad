@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Thu, 26 Sep 2013 03:40:39 +0200
+	built: Thu, 26 Sep 2013 03:47:52 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -108,7 +108,7 @@ var JOBAD = function(element){
 JOBAD.ifaces = []; //JOBAD interfaces
 
 /* JOBAD Version */
-JOBAD.version = "3.2.0"; 
+JOBAD.version = "3.2.1"; 
 
 /*
 	JOBAD.toString
