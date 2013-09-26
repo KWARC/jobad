@@ -82,7 +82,7 @@ var JOBAD = function(element){
 JOBAD.ifaces = []; //JOBAD interfaces
 
 /* JOBAD Version */
-JOBAD.version = "3.1.9"; 
+JOBAD.version = "3.2.0"; 
 
 /*
 	JOBAD.toString
@@ -96,7 +96,8 @@ JOBAD.toString.toString = JOBAD.toString; //self-reference!
 /* JOBAD Global config */
 JOBAD.config = 
 {
-	    'debug': true //Debugging enabled? (Logs etc)
+	    'debug': true, //Debugging enabled? (Logs etc)
+	    'BootstrapScope': undefined //Scope for Bootstrap CSS
 };
 
 /*

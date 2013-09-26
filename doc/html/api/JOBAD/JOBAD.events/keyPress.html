@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>[Demos] - JOBAD Documentation</title>
+		<title>[JOBAD.events.keyPress] - JOBAD Documentation</title>
 		<style type="text/css">
 /* Basic styles https://gist.github.com/cpatuzzo/3331384 */
 		body {
@@ -478,29 +478,37 @@
 -->
 	</head>
 	<body>
-<p><a href="index.html">Start</a> &gt; <strong>Demos</strong></p>
-<h1>Demos</h1>
+<p><a href="../../../index.html">Start</a> &gt; <a href="../../index.html">API Documentation</a> &gt; <a href="../index.html">JOBAD</a> &gt; <a href="index.html">JOBAD.events</a> &gt; <strong>JOBAD.events.keyPress</strong></p>
+<h1>JOBAD.events.keyPress</h1>
 
-<p>Here you can find examples of JOBAD. </p>
+<p>The keyPress event is triggered every time a key (combination) is pressed. (Note: If, for example, just the ctrl key is pressed it shows up as "ctrl+" as it belongs to some combination. )</p>
 
 <ul>
-<li>simple - A very simple JOBAD example. 
+<li><p><strong>Function</strong> <code>JOBAD.events.keyPress.default()</code> The default Event Handler for keyPress Events. Just returns false. </p></li>
+<li><p><strong>Function</strong> <code>JOBAD.events.keyPress.Setup.enable(root)</code> Enables the keyPress event. </p>
+
 <ul>
-<li><a href="./../../examples/build/simple/release.html">Release version</a></li>
-<li><a href="./../../examples/build/simple/dev.html">Development version</a></li>
-<li><a href="./../../examples/build/simple/unbuilt.html">Unbuilt version</a></li>
+<li><strong>Instance[ <a href="../JOBADInstance/index.html">JOBAD</a> ]</strong> <code>this</code> The JOBAD Instance to work on. </li>
+<li><strong>jQuery</strong> <code>root</code> The root element to enable leftClick on. </li>
 </ul></li>
-<li>math - A math example. Supposed to demo Folding. 
+<li><strong>Function</strong> <code>JOBAD.events.keyPress.Setup.disable(root)</code> Disables the keyPress event. 
 <ul>
-<li><a href="./../../examples/build/math/release.html">Release version</a></li>
-<li><a href="./../../examples/build/math/dev.html">Development version</a></li>
-<li><a href="./../../examples/build/math/unbuilt.html">Unbuilt version</a></li>
+<li><strong>Instance[ <a href="../JOBADInstance/index.html">JOBAD</a> ]</strong> <code>this</code> The JOBAD Instance to work on. </li>
+<li><strong>jQuery</strong> <code>root</code> The root element to disable leftClick on. </li>
 </ul></li>
-<li>withjqueryui - Testing compatibility with jQuery UI. 
+<li><p><strong>Function</strong> <code>JOBAD.events.keyPress.namespace.getResult(key)</code> Get the Result of the keyPress event handlers. </p>
+
 <ul>
-<li><a href="./../../examples/build/withjqueryui/release.html">Release version</a></li>
-<li><a href="./../../examples/build/withjqueryui/dev.html">Development version</a></li>
-<li><a href="./../../examples/build/withjqueryui/unbuilt.html">Unbuilt version</a></li>
+<li><strong>Instance[ <a href="../JOBADInstance/index.html">JOBAD</a> ]</strong> <code>this</code> The JOBAD Instance to work on. </li>
+<li><strong>String</strong> <code>key</code> The key combination that is being pressed. </li>
+<li><strong>returns</strong> a boolean indicating if some action was taken. </li>
+</ul></li>
+<li><p><strong>Function</strong> <code>JOBAD.events.keyPress.namespace.trigger(key)</code> Trigger the keyPress event. </p>
+
+<ul>
+<li><strong>Instance[ <a href="../JOBADInstance/index.html">JOBAD</a> ]</strong> <code>this</code> The JOBAD Instance to work on. </li>
+<li><strong>String</strong> <code>key</code> The key combination that is being pressed. </li>
+<li><strong>returns</strong> a boolean indicating if some action was taken. </li>
 </ul></li>
 </ul>
 

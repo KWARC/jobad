@@ -756,6 +756,62 @@ JOBAD.util.off = function(query, id){
 }
 
 /*
+	Turns a keyup event into a string. 
+*/
+JOBAD.util.toKeyString = function(e){
+	var res = ((e.ctrlKey || e.keyCode == 17 )? 'ctrl+' : '') +
+        ((e.altKey || e.keyCode == 18 ) ? 'alt+' : '') +
+        ((e.shiftKey || e.keyCode == 16 ) ? 'shift+' : ''); 
+
+      var specialKeys = {
+			8: "backspace", 9: "tab", 10: "return", 13: "return", 19: "pause",
+			20: "capslock", 27: "esc", 32: "space", 33: "pageup", 34: "pagedown", 35: "end", 36: "home",
+			37: "left", 38: "up", 39: "right", 40: "down", 45: "insert", 46: "del", 
+			96: "0", 97: "1", 98: "2", 99: "3", 100: "4", 101: "5", 102: "6", 103: "7",
+			104: "8", 105: "9", 106: "*", 107: "+", 109: "-", 110: ".", 111 : "/", 
+			112: "f1", 113: "f2", 114: "f3", 115: "f4", 116: "f5", 117: "f6", 118: "f7", 119: "f8", 
+			120: "f9", 121: "f10", 122: "f11", 123: "f12", 144: "numlock", 145: "scroll", 186: ";", 191: "/",
+			220: "\\", 222: "'", 224: "meta"
+		}
+
+    if(!e.charCode && specialKeys[e.keyCode]){
+    	res += specialKeys[e.keyCode]; 
+    } else {
+    	if(res == "" && event.type == "keypress"){
+    		return false; 
+    	} else {
+    		res +=String.fromCharCode(e.charCode || e.keyCode).toLowerCase();
+    	}
+    }
+
+    if(res[res.length-1] == "+"){
+    	return res.substring(0, res.length - 1); 
+    } else {
+    	return res; 
+    }
+};
+
+JOBAD.util.onKey = function(cb){
+	var uuid = JOBAD.util.UID(); 
+	JOBAD.refs.$(document).on("keydown."+uuid+" keypress."+uuid, function(evt){
+		var key = JOBAD.util.toKeyString(evt); 
+		if(!key){
+			return; 
+		}
+		var res = cb.call(undefined, key, evt);
+
+		if(res === false){
+			//stop propagnation etc
+			evt.preventDefault();
+			evt.stopPropagation(); 
+			return false; 
+		}
+	}); 
+
+	return "keydown."+uuid+" keypress."+uuid; 
+}
+
+/*
 	Triggers an event on a query. 
 	@param	query A jQuery element to use as as query. 
 	@param	event Event to trigger. 
@@ -769,8 +825,6 @@ JOBAD.util.trigger = function(query, event, params){
 
 	var params = JOBAD.util.forceArray(params).slice(0);
 	params.unshift(event); 
-
-	
 
 	var id = JOBAD.util.UID(); 
 

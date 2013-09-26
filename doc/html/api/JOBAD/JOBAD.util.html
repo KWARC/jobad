@@ -669,6 +669,18 @@
 <li><strong>Number</strong> <code>a</code> Index of the first element to exchange. </li>
 <li><strong>Number</strong> <code>b</code> Index of the second element to exchange. </li>
 </ul></li>
+<li><p><strong>Function</strong> <code>JOBAD.util.toKeyString(evt)</code> - Turns the keydown or keypress event evt into a string for a key. </p>
+
+<ul>
+<li><strong>Event</strong> <code>evt</code> The keydown or keypress event to translate. </li>
+<li><strong>returns</strong> <code>string</code> of the form '[ctrl+][alt+][shift+]$key_name'. Note that only a special key shows up as 'ctrl+'. </li>
+</ul></li>
+<li><p><strong>Function</strong> <code>JOBAD.util.onKey(callback)</code> - Registers a listener for a keypress event. </p>
+
+<ul>
+<li><strong>Function</strong> <code>callback(key, orgEvent)</code> The callback</li>
+<li><strong>returns</strong> a string. Use <code>$(document).off(returned_value)</code> to deregister the listener. </li>
+</ul></li>
 </ul>
 
 	</body>

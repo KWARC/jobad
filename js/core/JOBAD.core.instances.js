@@ -139,6 +139,54 @@ JOBAD.ifaces.push(function(me){
 		}
 	};
 
+	var isAutoFocusEnabled = false; 
+	var autoFocusHandlers = []; 
+	var handlerNames = ["contextmenu.open", "contextMenuEntries", "dblClick", "leftClick", "hoverText"];
+
+	me.Instance.enableAutoFocus = function(){
+		if(isAutoFocusEnabled){
+			return false; 
+		}
+
+		me.Event.trigger("instance.autofocus.enable"); 
+
+		for(var i=0;i<handlerNames.length;i++){
+			(function(){
+				var handlerName = handlerNames[i];
+				autoFocusHandlers.push(
+					me.Event.on(handlerName, function(){
+						me.Event.trigger("instance.autofocus.trigger", [handlerName]);
+						me.Instance.focus(); 
+					})
+				);
+			})(); 
+			
+		}
+
+		isAutoFocusEnabled = true; 
+		return true; 
+	};
+
+	me.Instance.disableAutoFocus = function(){
+		if(!isAutoFocusEnabled){
+			return false; 
+		}
+
+		me.Event.trigger("instance.autofocus.disable"); 
+
+		while(autoFocusHandlers.length > 0){
+			var handler = autoFocusHandlers.pop(); 
+			me.Event.off(handler); 
+		}
+
+		isAutoFocusEnabled = false; 
+		return true; 
+	};
+
+	me.Instance.isAutoFocusEnabled = function(){
+		return isAutoFocusEnabled; 
+	}
+	
 	me.Event.on("instance.beforeDisable", function(){
 		if(i_am_focused){ //we are focused and are not waiting
 			me.Instance.unfocus(); //unfocus me

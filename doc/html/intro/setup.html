@@ -497,6 +497,11 @@ JOBAD itself depends on: </p>
 <li><a href="http://getbootstrap.com/2.3.2/">Bootstrap</a> - tested with version v2.3.2, <strong>not</strong> compatible with version 3.x</li>
 </ul>
 
+<p>For Bootstrap you can also use a scoped version (all the CSS is restricted to a certain class) , in which case you should configure this is with: 
+```
+    JOBAD.config.BootstrapScope = "bootstrap"; //set this to the bootstrap class name
+````</p>
+
 <p>All dependencies are bundled with JOBAD, but can also be included from different sources. </p>
 
 <p>The javascript side of the JOBAD code exists in three different versions: </p>
@@ -524,7 +529,7 @@ JOBAD itself depends on: </p>
     <span class="c">&lt;!-- Include dependencies --&gt;</span>
     <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&#39;js/deps/jquery/jquery-2.0.2.min.js&#39;</span><span class="nt">&gt;&lt;/script&gt;</span>
     <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&#39;js/deps/bootstrap.js&#39;</span><span class="nt">&gt;&lt;/script&gt;</span>
-    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href=</span><span class="s">&quot;css/libs/bootstrap/css/bootstrap.css&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href=</span><span class="s">&quot;css/libs/bootstrap/css/bootstrap.less.css&quot;</span><span class="nt">&gt;</span>
 </code></pre></div>
 
 <p>The Libraries are also compiled into one JS and CSS file, which both can be included via the following code snippet. This is the recommended method for including the depencies: </p>

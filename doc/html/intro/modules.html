@@ -585,6 +585,15 @@
 <span class="cm">            @returns Returns true iff it performed some action. </span>
 <span class="cm">        */</span>
     <span class="p">},</span>
+    <span class="nx">keyPress</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">JOBADInstance</span><span class="p">){</span>
+        <span class="cm">/*</span>
+<span class="cm">            called when a key press occurs and this JOBADInstance is focused. Until some handler returns true, every action is performed. </span>
+<span class="cm">            @this An instance of JOBAD.modules.loadedModule</span>
+<span class="cm">            @param key The key combination that was pressed. See JOBAD.util.keyPress</span>
+<span class="cm">            @param JOBADInstance The instance of JOBAD the module is initiated on.  </span>
+<span class="cm">            @returns Returns true iff it performed some action. </span>
+<span class="cm">        */</span>
+    <span class="p">},</span>
     <span class="nx">contextMenuEntries</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">JOBADInstance</span><span class="p">){</span>
         <span class="cm">/*</span>
 <span class="cm">            called when a context menu is requested. Context Menu entries will be merged. May be ommitted.  </span>

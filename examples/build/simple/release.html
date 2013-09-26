@@ -15,10 +15,12 @@
 <link rel='stylesheet' type='text/css' href='./../../../build/release/JOBAD.min.css'>
 
 		<script type="text/javascript">
+			JOBAD.config.BootstrapScope = "bootstrap"; //Bootstrap CSS scope
+
 			var JOBAD1, JOBAD2;
 			
 			JOBAD.repo.loadAllFrom("./../../../modules", function(){ //Load all from the repo
-				jQuery(function(){	
+				jQuery(function(){
 					JOBAD1 = new JOBAD(jQuery("#1"));
 					JOBAD2 = new JOBAD(jQuery("#2"), {
 						"auto_show_toolbar": true
@@ -29,7 +31,8 @@
 						"test.menu1",
 						"test.menu2",
 						"test.hover",
-						"jobad.debug"
+						"jobad.debug",
+						"jobad.showfocus"
 					], function(mod, state){
 						this.Setup();
 					});
@@ -44,7 +47,8 @@
 						"jobad.debug",
 						"mathjax.mathjax",
 						"test.tb1", 
-						"test.tb2"
+						"test.tb2",
+						"jobad.showfocus"
 					], function(mod, state){
 						this.Setup();
 					});
