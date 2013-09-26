@@ -20,7 +20,10 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 * added the keypress event (finally)
 * bug Fix: EventHandler .off was not working
 * added support for CSS scoped bootstrap
+	* compatibility with jQuery UI, no CSS is broken
+		* added a new jQuery UI Testing page for this
 	* this currently breaks BS fade animations
+
 
 ### Version 3.1.9 (Stable)
 * Change in dependencies
