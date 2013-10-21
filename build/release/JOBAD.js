@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Fri, 27 Sep 2013 11:29:20 +0200
+	built: Mon, 21 Oct 2013 12:56:01 +0200
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -2538,6 +2538,8 @@ JOBAD.util.isHidden = function(element){
 		return false;
 	} else if(JOBAD.util.isMarkedHidden(element)){
 		return true;
+	} else if(element.is("map") || element.is("area")){//in response to issue #14 
+		return false; 
 	} else {
 		return element.is(":hidden");
 	}

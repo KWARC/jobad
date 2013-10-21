@@ -299,6 +299,8 @@ JOBAD.util.isHidden = function(element){
 		return false;
 	} else if(JOBAD.util.isMarkedHidden(element)){
 		return true;
+	} else if(element.is("map") || element.is("area")){//in response to issue #14 
+		return false; 
 	} else {
 		return element.is(":hidden");
 	}
