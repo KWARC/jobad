@@ -1,7 +1,7 @@
 /*
 	JOBAD v3
 	Development version
-	built: Mon, 21 Oct 2013 12:56:01 +0200
+	built: Fri, 01 Nov 2013 11:30:45 +0100
 
 	
 	Copyright (C) 2013 KWARC Group <kwarc.info>
@@ -3084,16 +3084,16 @@ JOBAD.util.trigger = function(query, event, params){
 /*
 	Creates a new Event Handler
 */
-JOBAD.util.EventHandler = function(){
+JOBAD.util.EventHandler = function(me){
 	var handler = {}; 
 	var EventHandler = JOBAD.refs.$("<div>"); 
 
 	handler.on = function(event, handler){
-		return JOBAD.util.on(EventHandler, event, handler);
+		return JOBAD.util.on(EventHandler, event, handler.bind(me));
 	};
 
 	handler.once = function(event, handler){
-		return JOBAD.util.once(EventHandler, event, handler);
+		return JOBAD.util.once(EventHandler, event, handler.bind(me));
 	};
 
 	handler.off = function(handler){
@@ -3844,7 +3844,7 @@ JOBAD.ifaces.push(function(me, args){
 	this.modules = {};
 
 	//Event namespace
-	this.Event = JOBAD.util.EventHandler(); 
+	this.Event = JOBAD.util.EventHandler(this); 
 
 	/*
 		Triggers a handable event. 
@@ -5477,10 +5477,22 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 			menuType = 0;
 		}
 
+		//
+		var cbTarget = JOBAD.util.ifType(config.callBackTarget, JOBAD.refs.$, targetElement); 
+		var oTarget = JOBAD.util.ifType(config.callBackOrg, JOBAD.refs.$, orgElement); 
+
 		//create the context menu element
 		var menuBuild = JOBAD.refs.$("<div>")
-		.appendTo(JOBAD.refs.$("body"));
-
+		.addClass("JOBAD JOBAD_Contextmenu")
+		.appendTo(JOBAD.refs.$("body"))
+		.data("JOBAD.UI.ContextMenu.renderData", {
+			"items": result, 
+			"targetElement": cbTarget,
+			"orgElement": oTarget,  
+			"coords": mouseCoords.slice(0), 
+			"callback": onCallBack
+		}); 
+		
 
 		//a handler for closing
 		var closeHandler = function(e){
@@ -5494,11 +5506,12 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 		if(menuType == 0 || JOBAD.util.equalsIgnoreCase(menuType, 'standard')){
 			//build the standard menu
 			menuBuild
+			.data("JOBAD.UI.ContextMenu.menuType", "standard")
 			.append(
 				JOBAD.UI.ContextMenu.buildContextMenuList(
 					result, 
-					JOBAD.util.ifType(config.callBackTarget, JOBAD.refs.$, targetElement), 
-					JOBAD.util.ifType(config.callBackOrg, JOBAD.refs.$, orgElement), 
+					cbTarget, 
+					oTarget, 
 				onCallBack)
 				.show()
 				.dropdown()
@@ -5508,6 +5521,8 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 
 		} else if(menuType == 1 || JOBAD.util.equalsIgnoreCase(menuType, 'radial')){
 
+
+
 			//build the radial menu
 
 			var eventDispatcher = JOBAD.refs.$("<span>");
@@ -5515,10 +5530,11 @@ JOBAD.UI.ContextMenu.enable = function(element, demandFunction, config){
 			JOBAD.refs.$(document).trigger('JOBAD.UI.ContextMenu.unbind'); //close all other menus
 
 			menuBuild
+			.data("JOBAD.UI.ContextMenu.menuType", "radial")
 			.append(
 				JOBAD.UI.ContextMenu.buildPieMenuList(result, 
-					JOBAD.util.ifType(config.callBackTarget, JOBAD.refs.$, targetElement), 
-					JOBAD.util.ifType(config.callBackOrg, JOBAD.refs.$, orgElement), 
+					cbTarget, 
+					oTarget, 
 					onCallBack,
 					mouseCoords[0],
 					mouseCoords[1]
@@ -5931,7 +5947,45 @@ JOBAD.UI.ContextMenu.fullWrap = function(menu, wrapper){
 		
 	}
 	return menu2;
-};/* end   <ui/JOBAD.ui.contextmenu.js> */
+};
+
+
+JOBAD.UI.ContextMenu.updateMenu = function(callback){
+	var callback = (typeof callback == "function")?callback:function(e){return e; }; 
+
+
+	var menu = $("div.JOBAD_Contextmenu").eq(0); 
+	var renderData = menu.data("JOBAD.UI.ContextMenu.renderData"); 
+
+	if(typeof renderData == "undefined"){
+		return false; //no data found
+	}
+
+	if(menu.data("JOBAD.UI.ContextMenu.menuType") == "standard"){	
+		renderData["items"] = JOBAD.UI.ContextMenu.generateMenuList(callback(renderData["items"])); 
+
+		menu.data("JOBAD.UI.ContextMenu.renderData", renderData); 
+
+		var build = JOBAD.UI.ContextMenu.buildContextMenuList(
+			renderData["items"],
+			renderData["targetElement"], 
+			renderData["orgElement"], 
+			renderData["callback"]
+		);
+
+		//standard
+		menu.empty().append(
+			build
+			.show()
+			.dropdown()
+		); 
+
+	} else {
+			return false; //unsupported for now
+	}
+
+	return menu; 
+}/* end   <ui/JOBAD.ui.contextmenu.js> */
 /* start <ui/JOBAD.ui.sidebar.js> */
 /*
 	JOBAD 3 UI Functions
