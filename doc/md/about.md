@@ -15,11 +15,14 @@ It is known not to be compatible with:
 The official JOBAD repository is located at [https://github.com/KWARC/jobad](https://github.com/KWARC/jobad).
 
 ## Changelog
-### Version 3.2.2 (In Development)
+### Version 3.2.3 (In Development)
+* nothing yet
+
+### Version 3.2.2 (Stable)
 * Build fixes on Mac
 * Use Cmd Key to override context menu on mac
 
-### Version 3.2.1 (Stable)
+### Version 3.2.1
 * fix for issue 14
 	* changed example page and modules
 * another bug fix

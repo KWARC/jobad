@@ -1,21 +1,21 @@
 /*
 	jobad_repo.js
 	Official JOBAD Repository
-	
+
 	Copyright (C) 2013-14 KWARC Group <kwarc.info>
-	
+
 	This file is part of JOBAD.
-	
+
 	JOBAD is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	JOBAD is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-	
+
 	You should have received a copy of the GNU General Public License
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -31,15 +31,15 @@ JOBAD.repo.config({
 			"jobad.config",
 			"jobad.folding",
 			"mathjax.mathjax",
-			"test.click", 
-			"test.hover", 
-			"test.menu1", 
-			"test.menu2", 
+			"test.click",
+			"test.hover",
+			"test.menu1",
+			"test.menu2",
 			"test.menu3",
 			"test.sidebar",
 			"test.config",
-			"test.tb1", 
-			"test.tb2", 
+			"test.tb1",
+			"test.tb2",
 			"jobad.showfocus"
 	],
 	"at": {
@@ -47,7 +47,7 @@ JOBAD.repo.config({
 				Core Modules
 				loaded from local copy
 			*/
-			"template": "core/template/template.js", //make a manual override of location of files. 
+			"template": "core/template/template.js", //make a manual override of location of files.
 			"jobad.debug": "core/jobad/jobad.debug.js",
 			"jobad.config": "core/jobad/jobad.config.js",
 			"jobad.folding": "core/jobad/jobad.folding.js",
@@ -63,7 +63,7 @@ JOBAD.repo.config({
 			"test.tb1": "core/test/TB1.js",
 			"test.tb2": "core/test/TB2.js"
 	},
-	"versions": ["3.2.2"], //compatible JOBAD versions
+	"versions": ["3.2.3"], //compatible JOBAD versions
 	"name": "Core JOBAD Modules Repository", //name
 	"description": "JOBAD Modules repository from the Core" //description
 });
