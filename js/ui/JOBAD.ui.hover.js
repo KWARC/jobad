@@ -2,7 +2,7 @@
 	JOBAD 3 UI Functions - Hover Text
 	JOBAD.ui.hover.js
 		
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

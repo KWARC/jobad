@@ -1,10 +1,10 @@
 /*
 	JOBAD CSS File
-	built: Fri, 22 Nov 2013 11:51:43 +0100
+	built: Wed Dec 17 15:15:56 CET 2014
 
 	Contains all JOBAD related CSS data
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -27,7 +27,7 @@
 	JOBAD.css
 	Contains JOBAD Core CSS Data
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -57,7 +57,6 @@
 */
 .JOBAD.JOBAD_Contextmenu {
   /* nothing here */
-
 }
 .JOBAD.JOBAD_Contextmenu.JOBAD_ContextMenu_Radial.JOBAD_ContextMenu_RadialItem {
   position: fixed;
@@ -87,38 +86,31 @@
 }
 .JOBAD.JOBAD_Sidebar_right.JOBAD_Sidebar_Wrapper {
   /* wraps the element that has a sidebar */
-
   width: 100%;
   float: left;
 }
 .JOBAD.JOBAD_Sidebar_left.JOBAD_Sidebar_Wrapper {
   /* wraps the element that has a sidebar */
-
   width: 100%;
   float: right;
 }
 .JOBAD.JOBAD_Sidebar_right.JOBAD_Sidebar_Container {
   /* Contains all sidebar elements */
-
   height: 1px;
   /* something positive */
-
   position: relative;
   float: right;
 }
 .JOBAD.JOBAD_Sidebar_left.JOBAD_Sidebar_Container {
   /* Contains all sidebar elements */
-
   height: 1px;
   /* something positive */
-
   position: relative;
   float: left;
 }
 .JOBAD.JOBAD_Sidebar_left.JOBAD_Sidebar_Notification,
 .JOBAD.JOBAD_Sidebar_right.JOBAD_Sidebar_Notification {
   /* Sidebar Notifications */
-
   -webkit-border-radius: 5;
   -moz-border-radius: 5;
   border-radius: 5;
@@ -136,18 +128,15 @@
 .JOBAD.JOBAD_Folding_left,
 .JOBAD.JOBAD_Folding_right {
   /* applied to all sidebar elements (including parent) */
-
 }
 .JOBAD.JOBAD_Folding_right.JOBAD_Folding_Wrapper {
   /* wraps the element that has a sidebar */
-
   width: 100%;
   float: left;
   margin-top: 2px;
 }
 .JOBAD.JOBAD_Folding_left.JOBAD_Folding_Wrapper {
   /* wraps the element that has a sidebar */
-
   width: 100%;
   float: right;
   margin-bottom: 2px;
@@ -155,14 +144,12 @@
 }
 .JOBAD.JOBAD_Folding_right.JOBAD_Folding_Container {
   /* Folding bracket Right */
-
   position: relative;
   float: right;
   margin-left: 5px;
 }
 .JOBAD.JOBAD_Folding_left.JOBAD_Folding_Container {
   /* Folding bracket Left */
-
   position: relative;
   float: left;
   margin-right: 5px;
@@ -170,7 +157,6 @@
 .JOBAD.JOBAD_Folding_left.JOBAD_Folding_Spacing,
 .JOBAD.JOBAD_Folding_right.JOBAD_Folding_Spacing {
   /* add some spacing after me */
-
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -179,10 +165,8 @@
 .modal.large {
   width: 80%;
   /* respsonsive width */
-
   margin-left: -40%;
   /* width/2) */
-
 }
 .wide {
   width: 150px !important;
@@ -193,7 +177,7 @@
 	JOBAD.theme.css
 	Contains JOBAD CSS Theme
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -213,7 +197,6 @@
 */
 .JOBAD {
   /* applied to all JOBAD related elements */
-
 }
 /* inline icon */
 .JOBAD.JOBAD_InlineIcon {
@@ -226,7 +209,6 @@
 */
 .JOBAD.JOBAD_Hover {
   /* Style for JOBAD Hover Texts */
-
   background-color: #ffffca;
   -webkit-border-radius: 5;
   -moz-border-radius: 5;
@@ -238,15 +220,12 @@
 */
 .JOBAD.JOBAD_Contextmenu {
   /* applied to the context menu */
-
 }
 .JOBAD.JOBAD_Contextmenu.JOBAD_ContextMenu_Radial.JOBAD_ContextMenu_RadialItem {
   /* a radial context menu item */
-
 }
 .JOBAD.JOBAD_Contextmenu.JOBAD_ContextMenu_Radial.JOBAD_ContextMenu_RadialItem:hover {
   /* a radial context menu item */
-
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   border-radius: 20px;
@@ -255,7 +234,6 @@
 .JOBAD.JOBAD_Contextmenu.JOBAD_ContextMenu_Radial.JOBAD_ContextMenu_RadialItem.JOBAD_ContextMenu_Radial_Disabled {
   -webkit-filter: grayscale(100%);
   /* we are disabled */
-
 }
 .JOBAD.JOBAD_Contextmenu.JOBAD_ContextMenu_Radial.JOBAD_ContextMenu_RadialItem.JOBAD_ContextMenu_Radial_Disabled:hover {
   border: 0px;
@@ -266,22 +244,18 @@
 .JOBAD.JOBAD_Sidebar_left,
 .JOBAD.JOBAD_Sidebar_right {
   /* applied to all sidebar elements */
-
 }
 .JOBAD.JOBAD_Sidebar.JOBAD_Sidebar_Hover {
   /* applied to JOBAD Sidebar Hover Tooltips. */
-
 }
 /* The following are sidebar notification type tooltips */
 .JOBAD.JOBAD_Sidebar.JOBAD_Notification_info {
   /* Information */
-
   background-color: #0033FF;
   border: 1px solid #0000FF;
 }
 .JOBAD.JOBAD_Sidebar.JOBAD_Notification_warning {
   /* Warning */
-
   background-color: #FFFF00;
   border: 1px solid #FFAA00;
 }
@@ -317,24 +291,20 @@
 }
 .JOBAD.JOBAD_Folding_right.JOBAD_Folding_Container.JOBAD_Folding_folded {
   /* Right Folding Bracket */
-
   border-right: 1px solid black;
 }
 .JOBAD.JOBAD_Folding_left.JOBAD_Folding_Container.JOBAD_Folding_folded {
   /* Left Folding Bracket */
-
   border-left: 1px solid black;
 }
 .JOBAD.JOBAD_Folding_right.JOBAD_Folding_Container.JOBAD_Folding_unfolded {
   /* Right Folding Bracket */
-
   border-right: 1px solid gray;
   border-top: 1px solid gray;
   border-bottom: 1px solid gray;
 }
 .JOBAD.JOBAD_Folding_left.JOBAD_Folding_Container.JOBAD_Folding_unfolded {
   /* Left Folding Bracket */
-
   border-left: 1px solid gray;
   border-top: 1px solid gray;
   border-bottom: 1px solid gray;
@@ -344,22 +314,18 @@
 */
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_tablemain {
   /* Main Table of the confg UI */
-
   font-size: 150%;
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_infobox {
   /* Config UI Infobox */
-
   vertical-align: top;
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_subtabs {
   /* Tabs in the boxes */
-
   font-size: 70%;
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_ModEntry {
   /* Module entries */
-
   vertical-align: top;
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_ModEntry td {
@@ -367,23 +333,19 @@
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_MetaConfigTitle {
   /* Title of module in about box */
-
   font-weight: bold;
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_MetaConfigDesc {
   /* Description of module in about box */
-
   font-style: italic;
   margin-left: 20px;
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_validateFail {
   /* Validation FAIL */
-
   background-color: red;
 }
 .JOBAD.JOBAD_ConfigUI.JOBAD_ConfigUI_validateOK {
   /* Validatvion OK */
-
   background-color: #FFFFD0;
 }
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Body {
@@ -394,7 +356,6 @@
 */
 .JOBAD.JOBAD_Repo.JOBAD_Repo_MsgBox {
   /* The message box */
-
   position: fixed;
   top: 20px;
   left: 50%;
@@ -404,12 +365,10 @@
 }
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Title {
   /* Repository title */
-
   text-align: center;
 }
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Desc {
   /* Respoitory description */
-
   text-align: center;
 }
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Table {
@@ -419,12 +378,10 @@
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Table th,
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Table td {
   /* Module Table Borders */
-
   border: 1px solid gray;
 }
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Table th {
   /* Table Head */
-
   font-weight: bold;
   border-bottom: 3px solid black;
 }
@@ -441,12 +398,10 @@
 }
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Dependency.JOBAD_Repo_Dependency_Found:hover {
   /* Found */
-
   color: green;
 }
 .JOBAD.JOBAD_Repo.JOBAD_Repo_Dependency.JOBAD_Repo_Dependency_NotFound:hover {
   /* Not Found */
-
   color: red;
 }
 /*

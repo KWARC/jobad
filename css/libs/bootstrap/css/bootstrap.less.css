@@ -9,11 +9,8 @@
  */
 .bootstrap {
   /* Allow for input prepend/append in search forms */
-
   /* White icons with optional class, or on hover/focus/active states of certain elements */
-
   /* move down carets for tabs */
-
 }
 .bootstrap .clearfix {
   *zoom: 1;
@@ -189,7 +186,7 @@
   .bootstrap img {
     max-width: 100% !important;
   }
-  @page  {
+  @page {
     margin: 0.5cm;
   }
   .bootstrap p,
@@ -979,7 +976,6 @@
   outline: 0;
   outline: thin dotted \9;
   /* IE6-9 */
-
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
@@ -1004,10 +1000,8 @@
 .bootstrap input[type="file"] {
   height: 30px;
   /* In IE7, the height of the select element cannot be changed by height, only font-size */
-
   *margin-top: 4px;
   /* For IE7, add top margin to align select with labels */
-
   line-height: 30px;
 }
 .bootstrap select {
@@ -1554,7 +1548,6 @@
   padding-left: 14px;
   padding-left: 4px \9;
   /* IE7-8 doesn't have border-radius, so don't indent the padding */
-
   margin-bottom: 0;
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
@@ -3225,7 +3218,6 @@
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
-
   *zoom: 1;
 }
 .bootstrap .btn-group-vertical > .btn {

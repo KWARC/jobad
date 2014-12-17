@@ -2,7 +2,7 @@
 	jobad_repo.js
 	Official JOBAD Repository
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -63,7 +63,7 @@ JOBAD.repo.config({
 			"test.tb1": "core/test/TB1.js",
 			"test.tb2": "core/test/TB2.js"
 	},
-	"versions": ["3.2.1"], //compatible JOBAD versions
+	"versions": ["3.2.2"], //compatible JOBAD versions
 	"name": "Core JOBAD Modules Repository", //name
 	"description": "JOBAD Modules repository from the Core" //description
 });

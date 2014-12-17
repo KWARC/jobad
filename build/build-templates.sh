@@ -115,13 +115,13 @@ do
 	> "$template_build_dir/$template/dev.html"
 	echo "Wrote $template/dev.html"
 
-	jobad_templates="$jobad_templates\t\* \[Release version\]\(.\/..\/..\/examples\/build\/$template\/release.html\)\n"	
+	jobad_templates="$jobad_templates\t\* \[Release version\]\(.\/..\/..\/examples\/build\/$template\/release.html\)\n"
 	jobad_templates="$jobad_templates\t\* \[Development version\]\(.\/..\/..\/examples\/build\/$template\/dev.html\)\n"
 	jobad_templates="$jobad_templates\t\* \[Unbuilt version\]\(.\/..\/..\/examples\/build\/$template\/unbuilt.html\)\n"
 
 done < "$BASE_PATH/config/templates.txt"
 echo "Writing dynamic templates..."
-for fname in $(cd $doc_md_source; find -type f); do
+for fname in $(cd $doc_md_source; find . -type f); do
 	echo "$fname"
  	cat "$doc_md_source/$fname" | sed \
 		-e "s/\${JOBAD_TEMPLATES}/$jobad_templates/" \

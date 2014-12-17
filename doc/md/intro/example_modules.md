@@ -7,7 +7,7 @@
 	example1.js - An example module for JOBAD. 
 	A Testing module, colors <p>s in the color given as first parameter. Also has a surprise. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -61,7 +61,7 @@
 	example2.js - An example module for JOBAD. 
 	Provides a context menu entry which checks if the clicked element is a <p>. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -115,7 +115,7 @@
 	example3.js - An example module for JOBAD. 
 	Test the menu and adds several items. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -174,7 +174,7 @@
 	test.menu3.js - An example module for JOBAD. 
 	Test the menu and adds several items. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -234,7 +234,7 @@
 	example4.js - An example module for JOBAD. 
 	Counts the words in a paragraph and shows a tooltip. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -278,7 +278,7 @@
 	Counts the words in a paragraph and shows a tooltip in the sidebar. 
 	Currently also serves as an example for UserConfig. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -344,7 +344,7 @@
 	example6.js - An example module for JOBAD. 
 	Tests folding an created some menu icons. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -408,7 +408,7 @@
 	example7.js - An example module for JOBAD. 
 	Shows several menu items for testing some of the features of JOBAD. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

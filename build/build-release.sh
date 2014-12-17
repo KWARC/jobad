@@ -34,7 +34,7 @@ fi
 printf "Compiling development version ... "
 
 
-cat $BASE_PATH/config/dev_header.js | sed -e "s/\${BUILD_TIME}/$(date -R)/" > $build
+cat $BASE_PATH/config/dev_header.js | sed -e "s/\${BUILD_TIME}/$(date)/" > $build
 
 while read filename
 do
@@ -43,7 +43,7 @@ do
 	echo "/* end   <$filename> */" >> $build
 done < "$BASE_PATH/config/js.txt"
 
-cat $BASE_PATH/config/dev_footer.js | sed -e "s/\${BUILD_TIME}/$(date -R)/" >> $build
+cat $BASE_PATH/config/dev_footer.js | sed -e "s/\${BUILD_TIME}/$(date)/" >> $build
 
 echo "OK"
 
@@ -57,8 +57,8 @@ echo "OK"
 
 printf "Compiling minimized version ... "
 
-cat $BASE_PATH/config/min_header.js | sed -e "s/\${BUILD_TIME}/$(date -R)/" > $buildmin
+cat $BASE_PATH/config/min_header.js | sed -e "s/\${BUILD_TIME}/$(date)/" > $buildmin
 
 python $BASE_PATH/deps/closurecompilerpy/closureCompiler.py -s $buildmin.tmp >> $buildmin
 
-cat $BASE_PATH/config/min_footer.js | sed -e "s/\${BUILD_TIME}/$(date -R)/" >> $buildmin
+cat $BASE_PATH/config/min_footer.js | sed -e "s/\${BUILD_TIME}/$(date)/" >> $buildmin

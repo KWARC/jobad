@@ -1,7 +1,7 @@
 /*
 	JOBAD 3 Core
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
@@ -82,7 +82,7 @@ var JOBAD = function(element){
 JOBAD.ifaces = []; //JOBAD interfaces
 
 /* JOBAD Version */
-JOBAD.version = "3.2.1"; 
+JOBAD.version = "3.2.2"; 
 
 /*
 	JOBAD.toString
