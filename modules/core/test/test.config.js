@@ -2,7 +2,7 @@
 	example1.js - An example module for JOBAD. 
 	A Testing module, colors <p>s in the color given as first parameter. 
 	
-	Copyright (C) 2013 KWARC Group <kwarc.info>
+	Copyright (C) 2013-14 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

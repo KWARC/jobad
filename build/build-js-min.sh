@@ -19,11 +19,11 @@ node $BASE_PATH/build-js-min.js
 RETVAL=$?
 [ $RETVAL -ne 0 ] && echo "FAIL" && exit 1
 
-cat $BASE_PATH/config/min_header.js | sed -e "s/\${BUILD_TIME}/$(date -R)/" > $buildmin
+cat $BASE_PATH/config/min_header.js | sed -e "s/\${BUILD_TIME}/$(date)/" > $buildmin
 
 cat $buildtmp >> $buildmin
 
-cat $BASE_PATH/config/min_footer.js | sed -e "s/\${BUILD_TIME}/$(date -R)/" >> $buildmin
+cat $BASE_PATH/config/min_footer.js | sed -e "s/\${BUILD_TIME}/$(date)/" >> $buildmin
 
 rm $buildtmp
 
