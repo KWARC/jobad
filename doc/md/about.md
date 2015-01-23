@@ -91,7 +91,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 * updated underscore to version 1.5.1
 
 
-### Version 3.1.6 (Stable)
+### Version 3.1.6
 * improved repository override urls
 * removed build submodules, made them static
 * fixed 'failed to load module: undefined' error messages
@@ -120,6 +120,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 	* default width reduced to 50px.
 * improved UserConfig
 	* added cookie storageBackend
+	* improved the config UI
 * removed Underscore as a dependency
 	* it is now included in the `JOBAD.util` namespace, `JOBAD.refs._` has been removed.
 * added marking elements as hidden or visible so they can be ignored by events & UI.
@@ -147,7 +148,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 
 ## License
 
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 
 	JOBAD is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by

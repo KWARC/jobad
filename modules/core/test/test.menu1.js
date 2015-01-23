@@ -2,7 +2,7 @@
 	example2.js - An example module for JOBAD. 
 	Provides a context menu entry which checks if the clicked element is a <p>. 
 	
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

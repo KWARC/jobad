@@ -1,5 +1,5 @@
 var child_process = require('child_process');
-var modules = ["gear", "gear-lib"]; //Modules to install
+var modules = ["gear", "gear-lib", "less"]; //Modules to install
 
 process.stdout.write("Checking for NPM dependencies ... ");
 
@@ -64,9 +64,8 @@ var NPMHasDep = function(obj, dep){
 
 var NPMInstallDeps = function(){
 	console.log("Installing NPM Dependencies ... ")
-	var mods = modules.slice(0); 
-	mods.unshift("install"); 
-	var installer = child_process.spawn("npm", mods, { stdio: 'inherit' });
+	var mods = modules.slice(0);
+	var installer = child_process.spawn("npm", "install", mods, { stdio: 'inherit' });
 	installer.on("exit", function(code){
 		if(code != 0){
 			console.log("FAIL");

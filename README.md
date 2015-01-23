@@ -6,8 +6,6 @@ Current Stable Version: 3.2.2
 
 Development Branch.
 
-For the stable version, please see the 'stable' branch or the online documentation at [http://kwarc.github.io/jobad/stable/doc/html/index.html](http://kwarc.github.io/jobad/stable/doc/html/index.html)
-
 JOBAD (JavaScript API for OMDoc-based Active Documents) is a javascript framework which makes it easy to create interactive web pages.
 
 [Simplistic Demo](http://kwarc.github.io/jobad/dev/examples/build/simple/release.html)
@@ -21,7 +19,7 @@ To get the code use
 
 ## License
 
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 
 	JOBAD is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by

@@ -2,7 +2,7 @@
 	jobad_repo.js
 	Official JOBAD Repository
 
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 
 	This file is part of JOBAD.
 
@@ -45,7 +45,7 @@ JOBAD.repo.config({
 	"at": {
 			/*
 				Core Modules
-				loaded from local copy
+				loaded fromodules/jobad_repo.jsm local copy
 			*/
 			"template": "core/template/template.js", //make a manual override of location of files.
 			"jobad.debug": "core/jobad/jobad.debug.js",

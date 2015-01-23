@@ -1,7 +1,7 @@
 /*
 	JOBAD utility functions
 	
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

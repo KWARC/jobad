@@ -3,7 +3,7 @@
 	
 	Included at the end of the build to register all ifaces.
 	
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

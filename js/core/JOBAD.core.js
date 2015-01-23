@@ -1,8 +1,8 @@
 /*
 	JOBAD 3 Core
-
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
-
+	
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	
 	This file is part of JOBAD.
 
 	JOBAD is free software: you can redistribute it and/or modify
