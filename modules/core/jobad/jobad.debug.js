@@ -1,7 +1,7 @@
 /*
 	jobad.debug.js - An example module for JOBAD. 
 	A module to load all modules useful for debugging. 
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

@@ -4,7 +4,7 @@
 	Counts the words in a paragraph and shows a tooltip in the sidebar. 
 	Currently also serves as an example for UserConfig. 
 	
-	Copyright (C) 2013-14 KWARC Group <kwarc.info>
+	Copyright (C) 2013-15 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
