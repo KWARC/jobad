@@ -3,8 +3,8 @@
 Welcome to the JOBAD v3 Documentation. 
 Please select which documentation to use: 
 
-* [Stable Version](stable/index.html), currently 3.2.1
-* [Development Version](dev/index.html), currently 3.2.2
+* [Stable Version](stable/index.html), currently 3.2.2
+* [Development Version](dev/index.html), currently 3.2.3
 
 For current demos, please see : 
 
