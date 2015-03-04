@@ -16,7 +16,9 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 
 ## Changelog
 ### Version 3.2.3 (In Development)
-* nothing yet
+* yet to do:
+	* move the make script over to Grunt
+	* generating documentation with JSDoc instead of with a written script
 
 ### Version 3.2.2 (Stable)
 * Build fixes on Mac
