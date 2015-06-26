@@ -1,0 +1,32 @@
+{
+  "name": "jobad",
+  "version": "3.2.3",
+  "description": "A javascript framework which makes it easy to create interactive web pages",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "example": "examples"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-contrib-less": "^1.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KWARC/jobad.git"
+  },
+  "author": "The KWARC group <kwarc.info>",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/KWARC/jobad/issues"
+  },
+  "homepage": "https://github.com/KWARC/jobad",
+  "dependencies": {
+    "grunt-contrib-copy": "^0.8.0"
+  }
+}
