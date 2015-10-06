@@ -39,8 +39,8 @@ Your html `<head>` should look like this:
 <head>
 	<!-- other header tags here -->
 	<!-- Include dependencies -->
-
-
+	<script src='js/deps/jquery/jquery-2.0.2.min.js'></script>n	<script src='js/deps/bootstrap.js'></script>
+	<link rel="stylesheet" type="text/css" href="css/libs/bootstrap/css/bootstrap.less.css">
 ```
 
 The Libraries are also compiled into one JS and CSS file, which both can be included via the following code snippet. This is the recommended method for including the depencies: 
@@ -53,7 +53,7 @@ The Libraries are also compiled into one JS and CSS file, which both can be incl
 If you want to include the unbuilt js files use this code: 
 
 ```html
-
+	<script src='js/core/JOBAD.core.js'></script>n	<script src='js/bundled/jquery-color/jquery.color.plus-names-2.1.2.js'></script>n	<script src='js/bundled/underscore/underscore.js'></script>n	<script src='js/util/JOBAD.util.js'></script>n	<script src='js/util/JOBAD.util.events.js'></script>n	<script src='js/util/JOBAD.util.types.js'></script>n	<script src='js/util/JOBAD.util.ui.js'></script>n	<script src='js/JOBAD.resources.js'></script>n	<script src='js/JOBAD.repo.js'></script>n	<script src='js/core/JOBAD.core.modules.js'></script>n	<script src='js/core/JOBAD.core.setup.js'></script>n	<script src='js/ui/JOBAD.ui.js'></script>n	<script src='js/ui/JOBAD.ui.hover.js'></script>n	<script src='js/ui/JOBAD.ui.contextmenu.js'></script>n	<script src='js/ui/JOBAD.ui.sidebar.js'></script>n	<script src='js/ui/JOBAD.ui.overlay.js'></script>n	<script src='js/ui/JOBAD.ui.folding.js'></script>n	<script src='js/ui/JOBAD.ui.toolbar.js'></script>n	<script src='js/events/JOBAD.sidebar.js'></script>n	<script src='js/events/JOBAD.folding.js'></script>n	<script src='js/events/JOBAD.toolbar.js'></script>n	<script src='js/events/JOBAD.events.js'></script>n	<script src='js/JOBAD.config.js'></script>n	<script src='js/core/JOBAD.core.instances.js'></script>n	<script src='js/JOBAD.wrap.js'></script>
 ```
 
 If you want to use the development version use the following code: 
@@ -71,7 +71,7 @@ To use the minimized code, use this:
 To use the unbuilt CSS version, use this version: 
 
 ```html
-
+	<link rel="stylesheet" type="text/css" href="css/JOBAD.css">n	<link rel="stylesheet" type="text/css" href="css/JOBAD.theme.css">
 ```
 
 To use the built CSS version, use this code: 

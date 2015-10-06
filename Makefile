@@ -6,9 +6,11 @@ clean: clean-templates clean-doc clean-release
 libs: js-libs css-libs
 
 # Get the dependencies
-deps: pipdeps
+deps: npmdeps pipdeps
 clean-deps:
 	rm -rf node_modules
+npmdeps:
+	node build/npm-install-deps.js
 pipdeps:
 	pip install markdown2 pygments beautifulsoup4 # To build the doc
 
@@ -23,29 +25,29 @@ clean-templates:
 doc: pipdeps
 	bash build/build-doc.sh
 clean-doc:
-	rm -rf doc/html
+	rm -rf doc/html 
 
 # Just Build the release version
 release: js css
 clean-release:
-	rm -rf build/release
+	rm -rf build/release 
 
 # JavaScript
 js: js-dev js-min js-libs
 
-js-dev:
-	grunt jsdev
-js-min:
-	grunt jsmin
+js-dev: 
+	bash build/build-js.sh
+js-min: npmdeps js-dev
+	bash build/build-js-min.sh
 js-libs:
-	grunt jslibs
+	node build/build-js-libs.js
 
 # CSS
 css: css-dev css-min css-libs
 
-css-dev:
-	grunt cssdev
-css-min:
-	grunt cssmin
+css-dev: 
+	bash build/build-css.sh
+css-min: npmdeps css-dev
+	bash build/build-css-min.sh
 css-libs:
-	grunt csslibs
+	bash build/build-css-libs.sh
