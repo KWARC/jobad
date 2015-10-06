@@ -1,21 +1,21 @@
 /*
 	JOBAD 3 UI Functions - Hover Text
 	JOBAD.ui.hover.js
-		
+
 	Copyright (C) 2013-15 KWARC Group <kwarc.info>
-	
+
 	This file is part of JOBAD.
-	
+
 	JOBAD is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
-	
+
 	JOBAD is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-	
+
 	You should have received a copy of the GNU General Public License
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -25,19 +25,25 @@ JOBAD.UI.hover = {}
 JOBAD.UI.hover.config = {
 	"offsetX": 10, //offset from the mouse in X and Y
 	"offsetY": 10,
-	"hoverDelay": 1000 //Delay for showing tooltip after hovering. (in milliseconds)	
+	"hoverDelay": 1000 //Delay for showing tooltip after hovering. (in milliseconds)
 }
 
 var hoverActive = false;
 var hoverElement = undefined;
 
 /*
-	Activates the hover ui which follows the mouse. 
+	Activates the hover ui which follows the mouse.
 	@param html HTML to use as content
-	@param CssClass The CSS class to apply to the hover. 
-	@return true. 
+	@param CssClass The CSS class to apply to the hover.
+	@return true.
 */
 JOBAD.UI.hover.enable = function(html, CssClass){
+
+	// if we are already active, remove the old tooltip. 
+	if(hoverActive){
+		JOBAD.UI.hover.disable();
+	}
+
 	hoverActive = true;
 	hoverElement = JOBAD.refs.$("<div class='JOBAD'>").addClass(CssClass).html(html);
 	hoverElement.appendTo(JOBAD.refs.$("body"));
@@ -47,18 +53,18 @@ JOBAD.UI.hover.enable = function(html, CssClass){
 	});
 
 	JOBAD.UI.hover.refresh();
-	
-	return true; 
+
+	return true;
 }
 
 /*
-	Deactivates the hover UI if active. 
+	Deactivates the hover UI if active.
 	@param element jQuery element to use as hover
-	@return booelan boolean indicating of the UI has been deactived. 
+	@return booelan boolean indicating of the UI has been deactived.
 */
 JOBAD.UI.hover.disable = function(){
 	if(!hoverActive){
-		return false;		
+		return false;
 	}
 
 	hoverActive = false;
@@ -66,8 +72,8 @@ JOBAD.UI.hover.disable = function(){
 	hoverElement.remove();
 }
 /*
-	Refreshes the position of the hover element if active. 
-	@return nothing. 
+	Refreshes the position of the hover element if active.
+	@return nothing.
 */
 JOBAD.UI.hover.refresh = function(){
 	if(hoverActive){

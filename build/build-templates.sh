@@ -22,12 +22,12 @@ jobad_jslibs_full=""
 
 while read filename
 do
-	jobad_jslibs="$jobad_jslibs<script src='$jobad_base\/js\/deps\/$filename'><\/script>\n"
-	jobad_jslibs_full="$jobad_jslibs_full	<script src='js\/deps\/$filename'><\/script>\n"
+	jobad_jslibs="$jobad_jslibs<script src='$jobad_base\/js\/deps\/$filename'><\/script>"
+	jobad_jslibs_full="$jobad_jslibs_full	<script src='js\/deps\/$filename'><\/script>"
 done < "$BASE_PATH/config/js-libs.txt"
 jobad_jslibs="${jobad_jslibs%??}"
 jobad_jslibs_full="${jobad_jslibs_full%??}"
-jobad_release_jslibs="<script src='$jobad_base\/build\/release\/libs\/js/libs.js'><\/script>\n"
+jobad_release_jslibs="<script src='$jobad_base\/build\/release\/libs\/js/libs.js'><\/script>"
 
 jobad_csslibs=""
 jobad_csslibs_full=""
@@ -35,13 +35,13 @@ jobad_csslibs_full=""
 while read filename
 do
 	if [ ${filename: -4} == ".css" ] ; then
-		jobad_csslibs="$jobad_csslibs<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename'>\n"
-		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename\">\n"
+		jobad_csslibs="$jobad_csslibs<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename'>"
+		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename\">"
 	else
 		# Compile the less CSS
 		lessc "$css_libs_path$filename" "$css_libs_path$filename.css"
-		jobad_csslibs="$jobad_csslibs<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename.css'>\n"
-		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename.css\">\n"
+		jobad_csslibs="$jobad_csslibs<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename.css'>"
+		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename.css\">"
 	fi;
 done < "$BASE_PATH/config/css-libs.txt"
 jobad_csslibs="${jobad_csslibs%??}"
@@ -53,8 +53,8 @@ joabd_script_dev_full=""
 
 while read filename
 do
-	jobad_script_full="$jobad_script_full<script src='$jobad_base\/js\/$filename'><\/script>\n"
-	jobad_script_dev_full="$jobad_script_dev_full	<script src='js\/$filename'><\/script>\n"
+	jobad_script_full="$jobad_script_full<script src='$jobad_base\/js\/$filename'><\/script>"
+	jobad_script_dev_full="$jobad_script_dev_full	<script src='js\/$filename'><\/script>"
 done < "$BASE_PATH/config/js.txt"
 jobad_script_full="${jobad_script_full%??}"
 jobad_script_dev_full="${jobad_script_dev_full%??}"
@@ -63,14 +63,14 @@ jobad_css_full=""
 jobad_css_dev_full=""
 while read filename
 do
-	jobad_css_full="$jobad_css_full<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/$filename'>\n"
-	jobad_cssdev_full="$jobad_cssdev_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/$filename\">\n"
+	jobad_css_full="$jobad_css_full<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/$filename'>"
+	jobad_cssdev_full="$jobad_cssdev_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/$filename\">"
 done < "$BASE_PATH/config/css.txt"
 jobad_css_full="${jobad_css_full%??}"
 jobad_cssdev_full="${jobad_cssdev_full%??}"
 
-jobad_release="<script src='$jobad_base\/build\/release\/JOBAD.min.js'><\/script>\n"
-jobad_dev="<script src='$jobad_base\/build\/release\/JOBAD.js'><\/script>\n"
+jobad_release="<script src='$jobad_base\/build\/release\/JOBAD.min.js'><\/script>"
+jobad_dev="<script src='$jobad_base\/build\/release\/JOBAD.js'><\/script>"
 jobad_css="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/JOBAD.css'>"
 jobad_css_release="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/JOBAD.min.css'>"
 jobad_templates=""
@@ -83,7 +83,7 @@ do
 	desc=${readData[1]}
 	echo "Building Template: $template"
 	mkdir "$template_build_dir/$template"
-	jobad_templates="$jobad_templates\* $template - $desc\n"
+	jobad_templates="$jobad_templates\* $template - $desc"
 
 	cat "$template_dir/$template.html" | sed \
 		-e "s%\${JOBAD_BASE}%$jobad_base%" \
@@ -111,13 +111,13 @@ do
 		-e "s%\${JS_LIBS}%$jobad_release_jslibs%" \
 		-e "s%\${CSS_INCLUDE}%$jobad_css%" \
 		-e "s%\${CSS_LIBS}%$jobad_release_csslibs%" \
-		-e "s%\${BUILD_COMMENTS}%<!-- This file has been generated automatically. Any changes will be overwritten. -->\n%" \
+		-e "s%\${BUILD_COMMENTS}%<!-- This file has been generated automatically. Any changes will be overwritten. -->%" \
 	> "$template_build_dir/$template/dev.html"
 	echo "Wrote $template/dev.html"
 
-	jobad_templates="$jobad_templates\t\* \[Release version\]\(.\/..\/..\/examples\/build\/$template\/release.html\)\n"
-	jobad_templates="$jobad_templates\t\* \[Development version\]\(.\/..\/..\/examples\/build\/$template\/dev.html\)\n"
-	jobad_templates="$jobad_templates\t\* \[Unbuilt version\]\(.\/..\/..\/examples\/build\/$template\/unbuilt.html\)\n"
+	jobad_templates="$jobad_templates	\* \[Release version\]\(.\/..\/..\/examples\/build\/$template\/release.html\)"
+	jobad_templates="$jobad_templates	\* \[Development version\]\(.\/..\/..\/examples\/build\/$template\/dev.html\)"
+	jobad_templates="$jobad_templates \* \[Unbuilt version\]\(.\/..\/..\/examples\/build\/$template\/unbuilt.html\)"
 
 done < "$BASE_PATH/config/templates.txt"
 echo "Writing dynamic templates..."

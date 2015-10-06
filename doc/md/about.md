@@ -16,7 +16,7 @@ The official JOBAD repository is located at [https://github.com/KWARC/jobad](htt
 
 ## Changelog
 ### Version 3.2.3 (In Development)
-* nothing yet
+* fixed a bug that made the 'hover' event trigger multiple times
 
 ### Version 3.2.2 (Stable)
 * Build fixes on Mac
