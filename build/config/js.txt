@@ -2,9 +2,6 @@ core/JOBAD.core.js
 bundled/jquery-color/jquery.color.plus-names-2.1.2.js
 bundled/underscore/underscore.js
 util/JOBAD.util.js
-util/JOBAD.util.events.js
-util/JOBAD.util.types.js
-util/JOBAD.util.ui.js
 JOBAD.resources.js
 JOBAD.repo.js
 core/JOBAD.core.modules.js
