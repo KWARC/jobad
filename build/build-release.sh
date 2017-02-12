@@ -20,13 +20,13 @@ echo "JOBAD build script "
 
 echo "Checking build requirements ..."
 
-printf "Python ... "
+printf "Python2 ... "
 
-if which python >/dev/null; then
+if which python2 >/dev/null; then
 	echo "OK"
 else
 	echo "FAIL"
-	echo "Abort: Python not found. "
+	echo "Abort: Python2 not found. "
 	echo "You might want to apt-get install python"
 	exit 1
 fi
@@ -59,6 +59,6 @@ printf "Compiling minimized version ... "
 
 cat $BASE_PATH/config/min_header.js | sed -e "s/\${BUILD_TIME}/$(date)/" > $buildmin
 
-python $BASE_PATH/deps/closurecompilerpy/closureCompiler.py -s $buildmin.tmp >> $buildmin
+python2 $BASE_PATH/deps/closurecompilerpy/closureCompiler.py -s $buildmin.tmp >> $buildmin
 
 cat $BASE_PATH/config/min_footer.js | sed -e "s/\${BUILD_TIME}/$(date)/" >> $buildmin

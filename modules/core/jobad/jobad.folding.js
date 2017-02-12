@@ -2,7 +2,7 @@
 	folding.js - An example module for JOBAD. 
 	Allows to trigger folding via the context menu. 
 	
-	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	Copyright (C) 2013-17 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

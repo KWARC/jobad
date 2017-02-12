@@ -2,7 +2,7 @@
 	JOBAD 3 UI Functions - Context Menu
 	JOBAD.ui.contextmenu.js
 
-	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	Copyright (C) 2013-17 KWARC Group <kwarc.info>
 
 	This file is part of JOBAD.
 

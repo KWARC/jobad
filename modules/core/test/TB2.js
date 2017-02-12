@@ -2,7 +2,7 @@
 	TB2.js - An example module for JOBAD. 
 	A Testing module, colors <p>s in the color given as first parameter. 
 	
-	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	Copyright (C) 2013-17 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

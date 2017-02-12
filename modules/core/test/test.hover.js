@@ -2,7 +2,7 @@
 	example4.js - An example module for JOBAD. 
 	Counts the words in a paragraph and shows a tooltip. 
 	
-	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	Copyright (C) 2013-17 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

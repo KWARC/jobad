@@ -1,7 +1,7 @@
 /*
 	JOBAD.repo.js - Contains the JOBAD repo implementation
 	
-	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	Copyright (C) 2013-17 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	
