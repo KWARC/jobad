@@ -2,7 +2,7 @@
 	jobad_repo.js
 	Official JOBAD Repository
 
-	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	Copyright (C) 2013-17 KWARC Group <kwarc.info>
 
 	This file is part of JOBAD.
 

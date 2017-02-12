@@ -1,7 +1,7 @@
 /*
 	mathjax.js - A mathJax Module. Needs JOBAD 3.2
 	
-	Copyright (C) 2013-15 KWARC Group <kwarc.info>
+	Copyright (C) 2013-17 KWARC Group <kwarc.info>
 	
 	This file is part of JOBAD.
 	

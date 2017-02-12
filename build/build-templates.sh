@@ -2,6 +2,8 @@
 
 #This Script will build the templates
 
+function npm-do { (PATH=$(npm bin):$PATH; eval $@;) }
+
 BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
@@ -39,7 +41,7 @@ do
 		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename\">"
 	else
 		# Compile the less CSS
-		lessc "$css_libs_path$filename" "$css_libs_path$filename.css"
+		npm-do lessc "$css_libs_path$filename" "$css_libs_path$filename.css"
 		jobad_csslibs="$jobad_csslibs<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename.css'>"
 		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename.css\">"
 	fi;

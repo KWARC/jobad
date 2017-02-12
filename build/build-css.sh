@@ -1,7 +1,8 @@
 #!/bin/bash
 
-BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+function npm-do { (PATH=$(npm bin):$PATH; eval $@;) }
 
+BASE_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 basedir=$BASE_PATH/../
 destdir=$BASE_PATH/release/
@@ -17,7 +18,7 @@ cat $BASE_PATH/config/dev_header.css | sed -e "s/\${BUILD_TIME}/$(date)/" > $bui
 while read filename
 do
 	echo "/* start <$filename> */" >> $buildc
-	lessc $sourcedirc/$filename >> $buildc
+	npm-do lessc $sourcedirc/$filename >> $buildc
 	echo "/* end   <$filename> */" >> $buildc
 done < "$BASE_PATH/config/css.txt"
 cat $BASE_PATH/config/dev_footer.css | sed -e "s/\${BUILD_TIME}/$(date)/" >> $buildc
