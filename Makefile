@@ -1,7 +1,7 @@
 # Makefile for JOBAD
 
 # Build everything
-all: deps js css libs templates doc
+all: js css libs templates doc
 clean: clean-templates clean-doc clean-release
 libs: js-libs css-libs
 
@@ -22,7 +22,7 @@ clean-templates:
 	bash build/cleanup.sh
 
 # Documentation
-doc: pipdeps
+doc:
 	bash build/build-doc.sh
 clean-doc:
 	rm -rf doc/html
@@ -37,7 +37,7 @@ js: js-dev js-min js-libs
 
 js-dev:
 	bash build/build-js.sh
-js-min: npmdeps js-dev
+js-min: js-dev
 	bash build/build-js-min.sh
 js-libs:
 	node build/build-js-libs.js
@@ -47,7 +47,7 @@ css: css-dev css-min css-libs
 
 css-dev:
 	bash build/build-css.sh
-css-min: npmdeps css-dev
+css-min: css-dev
 	bash build/build-css-min.sh
 css-libs:
 	bash build/build-css-libs.sh
