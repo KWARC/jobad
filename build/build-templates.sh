@@ -19,62 +19,72 @@ mkdir $template_build_dir
 
 jobad_base=".\/..\/..\/.."
 
+
+#
+# Include Javascript dependencies ($JS_LIBS)
+#
 jobad_jslibs=""
 jobad_jslibs_full=""
 
 while read filename
 do
-	jobad_jslibs="$jobad_jslibs<script src='$jobad_base\/js\/deps\/$filename'><\/script>"
-	jobad_jslibs_full="$jobad_jslibs_full	<script src='js\/deps\/$filename'><\/script>"
+	jobad_jslibs="$jobad_jslibs <script src='$jobad_base\/js\/deps\/$filename'><\/script>"
+	jobad_jslibs_full="$jobad_jslibs_full	<script src='$jobad_base\/js\/deps\/$filename'><\/script>"
 done < "$BASE_PATH/config/js-libs.txt"
-jobad_jslibs="${jobad_jslibs%??}"
-jobad_jslibs_full="${jobad_jslibs_full%??}"
+
 jobad_release_jslibs="<script src='$jobad_base\/build\/release\/libs\/js/libs.js'><\/script>"
 
+
+#
+# Include CSS dependencies (${CSS_LIBS})
+#
 jobad_csslibs=""
 jobad_csslibs_full=""
 
 while read filename
 do
 	if [ ${filename: -4} == ".css" ] ; then
-		jobad_csslibs="$jobad_csslibs<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename'>"
-		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename\">"
+		jobad_csslibs="$jobad_csslibs <link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename'\/>"
+		jobad_csslibs_full="$jobad_csslibs_full	<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename'\/>"
 	else
 		# Compile the less CSS
 		npm-do lessc "$css_libs_path$filename" "$css_libs_path$filename.css"
-		jobad_csslibs="$jobad_csslibs<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename.css'>"
-		jobad_csslibs_full="$jobad_csslibs_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/libs\/$filename.css\">"
+		jobad_csslibs="$jobad_csslibs <link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename.css'\/>"
+		jobad_csslibs_full="$jobad_csslibs_full	<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/libs\/$filename.css'\/>"
 	fi;
 done < "$BASE_PATH/config/css-libs.txt"
-jobad_csslibs="${jobad_csslibs%??}"
-jobad_csslibs_full="${jobad_csslibs_full%??}"
-jobad_release_csslibs="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/libs\/css\/libs.css'>"
 
+jobad_release_csslibs="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/libs\/css\/libs.css'\/>"
+
+#
+# Include Javascript files (${JS_INCLUDE})
+#
 jobad_script_full=""
 joabd_script_dev_full=""
 
 while read filename
 do
-	jobad_script_full="$jobad_script_full<script src='$jobad_base\/js\/$filename'><\/script>"
+	jobad_script_full="$jobad_script_full <script src='$jobad_base\/js\/$filename'><\/script>"
 	jobad_script_dev_full="$jobad_script_dev_full	<script src='js\/$filename'><\/script>"
 done < "$BASE_PATH/config/js.txt"
-jobad_script_full="${jobad_script_full%??}"
-jobad_script_dev_full="${jobad_script_dev_full%??}"
+
+#
+# Include CSS files (${CSS_INCLUDE})
+#
 
 jobad_css_full=""
 jobad_css_dev_full=""
 while read filename
 do
-	jobad_css_full="$jobad_css_full<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/$filename'>"
-	jobad_cssdev_full="$jobad_cssdev_full	<link rel=\"stylesheet\" type=\"text/css\" href=\"css\/$filename\">"
+	jobad_css_full="$jobad_css_full<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/$filename'\/>"
+	jobad_cssdev_full="$jobad_cssdev_full	<link rel='stylesheet' type='text/css' href='$jobad_base\/css\/$filename'\/>"
 done < "$BASE_PATH/config/css.txt"
-jobad_css_full="${jobad_css_full%??}"
-jobad_cssdev_full="${jobad_cssdev_full%??}"
 
 jobad_release="<script src='$jobad_base\/build\/release\/JOBAD.min.js'><\/script>"
 jobad_dev="<script src='$jobad_base\/build\/release\/JOBAD.js'><\/script>"
-jobad_css="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/JOBAD.css'>"
-jobad_css_release="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/JOBAD.min.css'>"
+jobad_css="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/JOBAD.css'\/>"
+jobad_css_release="<link rel='stylesheet' type='text/css' href='$jobad_base\/build\/release\/JOBAD.min.css'\/>"
+
 jobad_templates=""
 
 echo "Building JOBAD templates..."
