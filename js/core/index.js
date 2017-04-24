@@ -26,9 +26,9 @@
 	@param config Configuration for this JOBAD Instance.
 
 */
-var JOBAD = function(element){
+var JOBAD = module.exports = function(element){
 
-	//create new instance of JOBAD
+	//make sure that we are actually creating a new instance. 
 	if(!(this instanceof JOBAD)){
 		return new JOBAD(element);
 	}
@@ -77,11 +77,7 @@ var JOBAD = function(element){
 	}
 };
 
-
-
-JOBAD.ifaces = []; //JOBAD interfaces
-
-/* JOBAD Version */
+/** The current version of JOBAD */
 JOBAD.version = "3.2.3";
 
 /*
@@ -92,45 +88,6 @@ JOBAD.toString = function(){
 };
 
 JOBAD.toString.toString = JOBAD.toString; //self-reference!
-
-/* JOBAD Global config */
-JOBAD.config =
-{
-	    'debug': true, //Debugging enabled? (Logs etc)
-	    'BootstrapScope': undefined //Scope for Bootstrap CSS
-};
-
-/*
-	JOBAD.console: Mimics  or wraps the native console object if available and debugging is enabled.
-*/
-if(typeof console != "undefined"){//Console available
-
-	JOBAD.console =
-	{
-		"log": function(msg){
-			if(JOBAD.config.debug){
-				console.log(msg);
-			}
-		},
-		"warn": function(msg){
-			if(JOBAD.config.debug){
-				console.warn(msg);
-			}
-		},
-		"error": function(msg){
-			if(JOBAD.config.debug){
-				console.error(msg);
-			}
-		}
-	}
-} else {
-	JOBAD.console =
-	{
-		"log": function(){},
-		"warn": function(){},
-		"error": function(){}
-	}
-}
 
 
 /*
@@ -145,7 +102,7 @@ JOBAD.error = function(msg){
 	JOBAD Dependencies namespace.
 */
 JOBAD.refs = {};
-JOBAD.refs.$ = jQuery;
+JOBAD.refs.$ = require('jquery');
 
 JOBAD.noConflict = function(){
 	JOBAD.refs.$ = JOBAD.refs.$.noConflict();

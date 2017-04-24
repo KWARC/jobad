@@ -19,25 +19,26 @@
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* various utility functions */
-JOBAD.util = {};
+var
+	_ = require('underscore'),
+	$ = require('jquery');
 
 /*
 	Binds every function within an object recursively. 
 	@param obj Object to bind. 
 	@param thisObj 'this' inside functions. 
 */
-JOBAD.util.bindEverything = function(obj, thisObj){
-	if(JOBAD.util.isObject(obj) && typeof obj != 'function' ){
+module.exports.bindEverything = function bindEverything(obj, thisObj){
+	if(isObject(obj) && typeof obj != 'function' ){
 		var ret = {};
 		for(var key in obj){
-			ret[key] = JOBAD.util.bindEverything(obj[key], thisObj);
+			ret[key] = bindEverything(obj[key], thisObj);
 		}
 		return ret;
 	} else if(typeof obj == 'function'){
-		return JOBAD.util.bind(obj, thisObj);
+		return bind(obj, thisObj);
 	} else {
-		return JOBAD.util.clone(obj);
+		return clone(obj);
 	}
 };
 
@@ -45,7 +46,7 @@ JOBAD.util.bindEverything = function(obj, thisObj){
 	Creates a unique ID
 	@param	prefix	Optional. A prefix to use for the UID. 
 */
-JOBAD.util.UID = function(prefix){
+module.exports.UID = function UID(prefix){
 	var prefix = (typeof prefix == "string")?prefix+"_":"";
 	var time = (new Date()).getTime();
 	var id1 = Math.floor(Math.random()*1000);
@@ -59,12 +60,12 @@ JOBAD.util.UID = function(prefix){
 	@param texts	Texts to use. 
 	@param start	Initially selected id. 
 */
-JOBAD.util.createDropDown = function(values, texts, start){
-	var select = JOBAD.refs.$("<select>"); 
+module.exports.createDropDown = function createDropDown(values, texts, start){
+	var select = $("<select>"); 
 
 	for(var i=0;i<texts.length;i++){
 		select.append(
-			JOBAD.refs.$("<option>")
+			$("<option>")
 			.attr("value", values[i])
 			.text(texts[i])
 		);
@@ -80,23 +81,23 @@ JOBAD.util.createDropDown = function(values, texts, start){
 	@param texts	Texts to use. 
 	@param start	Initial selection
 */
-JOBAD.util.createRadio = function(texts, start){
-	var id = JOBAD.util.UID(); //Id for the radio buttons
+module.exports.createRadio = function createRadio(texts, start){
+	var id = UID(); //Id for the radio buttons
 	var selfChange = false; 
 
 	if(typeof start !== 'number'){
 		start = 0;
 	}
 
-	var Div = JOBAD.refs.$('<div>').addClass("btn-group");
-	var Div2 = JOBAD.refs.$('<div>').hide(); 
+	var Div = $('<div>').addClass("btn-group");
+	var Div2 = $('<div>').hide(); 
 					
 	for(var i=0;i<texts.length;i++){
 		Div.append(
-			JOBAD.refs.$("<button>").addClass("btn").text(texts[i])
+			$("<button>").addClass("btn").text(texts[i])
 		);
 		Div2.append(
-			JOBAD.refs.$("<input type='radio' name='"+id+"' value='"+JOBAD.util.UID()+"'>")
+			$("<input type='radio' name='"+id+"' value='"+UID()+"'>")
 		);
 	}
 
@@ -115,7 +116,7 @@ JOBAD.util.createRadio = function(texts, start){
 		Buttons.removeClass("active"); 
 
 		Inputs.each(function(i){
-			var me = JOBAD.refs.$(this); 
+			var me = $(this); 
 			if(me.is(":checked")){
 				Buttons.eq(i).addClass("active"); 
 			}
@@ -127,7 +128,7 @@ JOBAD.util.createRadio = function(texts, start){
 	Inputs.change(); 
 
 	
-	return JOBAD.refs.$("<div>").append(Div, Div2); 
+	return $("<div>").append(Div, Div2); 
 };
 
 /*
@@ -140,44 +141,44 @@ JOBAD.util.createRadio = function(texts, start){
 		@param config.select Select Hook. function(tabName, tabDiv) To be called on selection of a div. 
 		@param config.unselect Deselect Hook. function(tabName, tabDiv) Top be called on the deselection of a div. 
 */
-JOBAD.util.createTabs = function(names, divs, config){
-	var config = JOBAD.util.defined(config); 
+module.exports.createTabs = function createTabs(names, divs, config){
+	var config = defined(config); 
 
-	var options = JOBAD.util.defined(config.tabParams); 
+	var options = .defined(config.tabParams); 
 	var tabtype = (typeof config.type == "string")?config.type:"";
 	var enableHook = (typeof config.select == "function")?config.select:function(){}; 
 	var disableHook = (typeof config.unselect == "function")?config.unselect:function(){}; 
 
 	var ids = []; 
 
-	var div = JOBAD.refs.$("<div>").addClass("tabbable "+tabtype);
-	var ul = JOBAD.refs.$("<ul>").appendTo(div).addClass("nav nav-tabs");
-	var cdiv = JOBAD.refs.$("<div>").addClass("tab-content").appendTo(div);
+	var div = $("<div>").addClass("tabbable "+tabtype);
+	var ul = $("<ul>").appendTo(div).addClass("nav nav-tabs");
+	var cdiv = $("<div>").addClass("tab-content").appendTo(div);
 	for(var i=0;i<names.length;i++){
-		var id = JOBAD.util.UID();
+		var id = UID();
 		ids.push("#"+id); 
 		ul.append(
-			JOBAD.refs.$("<li>").append(JOBAD.refs.$("<a>").attr("data-toggle", "tab").attr("href", "#"+id).text(names[i]))
+			$("<li>").append($("<a>").attr("data-toggle", "tab").attr("href", "#"+id).text(names[i]))
 		);
 		
-		JOBAD.refs.$("<div>").append(divs[i]).attr("id", id).addClass("tab-pane").appendTo(cdiv);
+		$("<div>").append(divs[i]).attr("id", id).addClass("tab-pane").appendTo(cdiv);
 	}
 	cdiv.children().eq(0).addClass("active"); 
 
-	JOBAD.refs.$('a[data-toggle="tab"]', ul).on("shown", function(e){
+	$('a[data-toggle="tab"]', ul).on("shown", function(e){
 		if(typeof e.relatedTarget != "undefined"){
-			var relatedTarget = JOBAD.refs.$(e.relatedTarget); 
+			var relatedTarget = $(e.relatedTarget); 
 			var tabId = ids.indexOf(relatedTarget.attr("href")); 
 
-			disableHook(relatedTarget.text(), JOBAD.refs.$(divs[tabId])); 
+			disableHook(relatedTarget.text(), $(divs[tabId])); 
 		}
 
-		var Target = JOBAD.refs.$(e.target); 
+		var Target = $(e.target); 
 		var tabId = ids.indexOf(Target.attr("href")); 
-		enableHook(Target.text(), JOBAD.refs.$(divs[tabId]));
+		enableHook(Target.text(), $(divs[tabId]));
 	}); 
 
-	JOBAD.refs.$('a[data-toggle="tab"]', ul).eq(0).tab("show"); 
+	$('a[data-toggle="tab"]', ul).eq(0).tab("show"); 
 
 	return div; 
 };
@@ -188,7 +189,7 @@ JOBAD.util.createTabs = function(names, divs, config){
 	@param wrap Wrapper function. 
 */
 
-JOBAD.util.argWrap = function(func, wrapper){
+module.exports.argWrap = function argWrap(func, wrapper){
 	return function(){
 		var new_args = [];
 		for(var i=0;i<arguments.length;i++){
@@ -207,8 +208,8 @@ JOBAD.util.argWrap = function(func, wrapper){
 	@param from Second Parameter for slice
 */
 
-JOBAD.util.argSlice = function(func, from, to){
-	return JOBAD.util.argWrap(func, function(args){
+module.exports.argSlice = function argSlice(func, from, to){
+	return argWrap(func, function(args){
 		return args.slice(from, to);
 	});
 };
@@ -219,7 +220,7 @@ JOBAD.util.argSlice = function(func, from, to){
 	@param b Object B
 	@returns boolean
 */
-JOBAD.util.objectEquals = function(a, b){
+module.exports.objectEquals = function objectEquals(a, b){
 	try{
 		return JSON.stringify(a) == JSON.stringify(b);
 	} catch(e){
@@ -230,8 +231,8 @@ JOBAD.util.objectEquals = function(a, b){
 /*
 	Similary to jQuery's .closest() but also accepts functions. 
 */
-JOBAD.util.closest = function(element, selector){
-	var element = JOBAD.refs.$(element);
+module.exports.closest = function closest(element, selector){
+	var element = $(element);
 	if(typeof selector == "function"){
 		while(element.length > 0){
 			if(selector.call(element[0], element)){
@@ -250,32 +251,32 @@ JOBAD.util.closest = function(element, selector){
 	Marks an element as hidden. 
 	@param	element	Element to mark as hidden. 
 */
-JOBAD.util.markHidden = function(element){
-	return JOBAD.util.markDefault(element).addClass("JOBAD_Ignore");
+module.exports.markHidden = function markHidden(element){
+	return markDefault(element).addClass("JOBAD_Ignore");
 };
 
 /*
 	Marks an element as visible.
 	@param	element	Element to mark as visible. 
 */
-JOBAD.util.markVisible = function(element){
-	return JOBAD.util.markDefault(element).addClass("JOBAD_Notice");
+module.exports.markVisible = function markVisible(element){
+	return markDefault(element).addClass("JOBAD_Notice");
 };
 
 /*
 	Removes a marking from an element. Everything is treated as normal. 
 	@param	element	Element to remove Marking from. 
 */
-JOBAD.util.markDefault = function(element){
-	return JOBAD.refs.$(element).removeClass("JOBAD_Ignore").removeClass("JOBAD_Notice");
+module.exports.markDefault = function markDefault(element){
+	return $(element).removeClass("JOBAD_Ignore").removeClass("JOBAD_Notice");
 };
 
 /*
 	Checks if an element is marked as hidden. 
 	@param	element	Element to check. 
 */
-JOBAD.util.isMarkedHidden = function(element){
-	return (JOBAD.util.closest(element, function(e){
+module.exports.isMarkedHidden = function isMarkedHidden(element){
+	return (closest(element, function(e){
 		//find the closest hidden one. 
 		return e.hasClass("JOBAD_Ignore");
 	}).length > 0);
@@ -285,19 +286,19 @@ JOBAD.util.isMarkedHidden = function(element){
 	Checks if an element is marked as visible. 
 	@param	element	Element to check. 
 */
-JOBAD.util.isMarkedVisible = function(element){
-	return JOBAD.refs.$(element).hasClass("JOBAD_Notice");;
+module.exports.isMarkedVisible = function isMarkedVisible(element){
+	return $(element).hasClass("JOBAD_Notice");;
 };
 
 /*
 	Checks if an element is hidden (either in reality or marked) . 
 	@param	element	Element to check. 
 */
-JOBAD.util.isHidden = function(element){
-	var element = JOBAD.refs.$(element);
-	if(JOBAD.util.isMarkedVisible(element)){
+module.exports.isHidden = function isHidden(element){
+	var element = $(element);
+	if(isMarkedVisible(element)){
 		return false;
-	} else if(JOBAD.util.isMarkedHidden(element)){
+	} else if(isMarkedHidden(element)){
 		return true;
 	} else if(element.is("map") || element.is("area")){//in response to issue #14 
 		return false; 
@@ -312,7 +313,7 @@ JOBAD.util.isHidden = function(element){
 	Checks if object is defined and return obj, otherwise an empty Object. 
 	@param	obj	Object to check. 
 */
-JOBAD.util.defined = function(obj){
+module.exports.defined = function defined(obj){
 	return (typeof obj == "undefined")?{}:obj;
 };
 
@@ -321,7 +322,7 @@ JOBAD.util.defined = function(obj){
 	@param obj	Object to check. 
 	@param def	Optional. Default to use instead. 
 */
-JOBAD.util.forceBool = function(obj, def){
+module.exports.forceBool = function forceBool(obj, def){
 	if(typeof def == "undefined"){
 		def = obj; 
 	}
@@ -331,7 +332,7 @@ JOBAD.util.forceBool = function(obj, def){
 /*
 	Forces an object to be an array. 
 */
-JOBAD.util.forceArray = function(obj, def){
+module.exports.forceArray = function forceArray(obj, def){
 	var def = def; 
 	if(typeof def == "undefined"){
 		if(typeof obj == "undefined"){
@@ -340,10 +341,10 @@ JOBAD.util.forceArray = function(obj, def){
 			def = [obj];
 		}
 	}
-	if(!JOBAD.util.isArray(def)){
+	if(!isArray(def)){
 		def = [def]; 
 	}
-	return JOBAD.util.isArray(obj)?obj:def; 
+	return isArray(obj)?obj:def; 
 }
 
 /*
@@ -351,7 +352,7 @@ JOBAD.util.forceArray = function(obj, def){
 	@param func	Function to check. 
 	@param def	Optional. Default to use instead. 
 */
-JOBAD.util.forceFunction = function(func, def){
+module.exports.forceFunction = function forceFunction(func, def){
 	//local References
 	var def = def;
 	var func = func;
@@ -369,14 +370,14 @@ JOBAD.util.forceFunction = function(func, def){
 /*
 	If obj is of type type, return obj else def. 
 */
-JOBAD.util.ifType = function(obj, type, def){
+module.exports.ifType = function ifType(obj, type, def){
 	return (obj instanceof type)?obj:def;
 }
 
 /*
 	Checks if two strings are equal, ignoring upper and lower case. 
 */
-JOBAD.util.equalsIgnoreCase = function(a, b){
+module.exports..equalsIgnoreCase = function equalsIgnoreCase(a, b){
 	var a = String(a);
 	var b = String(b);
 
@@ -387,11 +388,11 @@ JOBAD.util.equalsIgnoreCase = function(a, b){
 	Orders a jQuery collection by their tree depth. 
 	@param element Collection to sort. 
 */
-JOBAD.util.orderTree = function(element){
-	var element = JOBAD.refs.$(element);
-	return JOBAD.refs.$(element.get().sort(function(a, b){
-		var a = JOBAD.refs.$(a).parents().filter(element).length;
-		var b = JOBAD.refs.$(b).parents().filter(element).length;
+module.exports.orderTree = function orderTree(element){
+	var element = $(element);
+	return $(element.get().sort(function(a, b){
+		var a = $(a).parents().filter(element).length;
+		var b = $(b).parents().filter(element).length;
 
 		if(a<b){
 			return -1;
@@ -408,21 +409,21 @@ JOBAD.util.orderTree = function(element){
 	@param str	String to check. 
 	@returns boolean. 
 */
-JOBAD.util.isUrl = function(str){
+module.exports.isUrl = function isUrl(str){
 	var str = String(str);
 	var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 	var matches = str.match(new RegExp(expression));
-	if(JOBAD.util.isArray(matches)){
+	if(isArray(matches)){
 		return matches.length > 0;
 	} else {
-		return JOBAD.util.startsWith(str, "data:"); 
+		return startsWith(str, "data:"); 
 	}
 };
 
 /*
 	Checks if the string str starts with the string start. 
 */
-JOBAD.util.startsWith = function(str, start){
+module.exports.startsWith = function startsWith(str, start){
 	var str = String(str);
 	var start = String(start);
 	return (str.substring(0, start.length) == start); 
@@ -431,26 +432,26 @@ JOBAD.util.startsWith = function(str, start){
 /*
 	logical or
 */
-JOBAD.util.lOr = function(){
+module.exports.lOr = function lOr(){
 	var args = [];
 	for(var i=0;i<arguments.length;i++){
 		args.push(arguments[i]);
 	}
-	args = JOBAD.util.map(JOBAD.util.flatten(args), JOBAD.util.forceBool);
-	return (JOBAD.util.indexOf(args, true)!= -1);
+	args = map(flatten(args), forceBool);
+	return (indexOf(args, true)!= -1);
 
 };
 
 /*
 	logical and
 */
-JOBAD.util.lAnd = function(){
+module.exports.lAnd = function lAnd(){
 	var args = [];
 	for(var i=0;i<arguments.length;i++){
 		args.push(arguments[i]);
 	}
-	args = JOBAD.util.map(JOBAD.util.flatten(args), JOBAD.util.forceBool);
-	return (JOBAD.util.indexOf(args, false)== -1);
+	args = map(flatten(args), forceBool);
+	return (indexOf(args, false)== -1);
 };
 
 /*
@@ -460,11 +461,11 @@ JOBAD.util.lAnd = function(){
 	@param	contained	Contained elements. 
 	@param	includeSelf	Should container itself be included in the search
 */
-JOBAD.util.containsAll = function(container, contained, includeSelf){
-	var container = JOBAD.refs.$(container); 
-	var includeSelf = JOBAD.util.forceBool(includeSelf, false); 
-	return JOBAD.util.lAnd(
-		JOBAD.refs.$(contained).map(function(){
+module.exports.containsAll = function containsAll(container, contained, includeSelf){
+	var container = $(container); 
+	var includeSelf = forceBool(includeSelf, false); 
+	return lAnd(
+		$(contained).map(function(){
 			return container.is(contained) || (includeSelf && container.find(contained).length > 0); 
 		}).get()
 	);
@@ -477,10 +478,10 @@ JOBAD.util.containsAll = function(container, contained, includeSelf){
 	@param	scope	Scope of callback. 
 	@param preLoadHack. Function to call before laoding a specific file. 
 */
-JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
+module.exports.loadExternalJS = function loadExternalJS(url, callback, scope, preLoadHack){
 	var TIMEOUT_CONST = 15000; //timeout for bad links
 	var has_called = false; 
-	var preLoadHack = JOBAD.util.forceFunction(preLoadHack, function(){}); 
+	var preLoadHack = forceFunction(preLoadHack, function(){}); 
 
 	var do_call = function(suc){
 		if(has_called){
@@ -488,7 +489,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
 		}
 		has_called = true;
 
-		var func = JOBAD.util.forceFunction(callback, function(){});
+		var func = forceFunction(callback, function(){});
 		var scope = (typeof scope == "undefined")?window:scope;
 
 		func.call(scope, url, suc);
@@ -496,7 +497,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
 	}
 
 	
-	if(JOBAD.util.isArray(url)){
+	if(isArray(url)){
 		var i=0;
 		var next = function(urls, suc){
 			if(i>=url.length || !suc){
@@ -504,7 +505,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
 					do_call(suc);
 				}, 0);
 			} else {
-				JOBAD.util.loadExternalJS(url[i], function(urls, suc){
+				loadExternalJS(url[i], function(urls, suc){
 					i++;
 					next(urls, suc);
 				}, scope, preLoadHack);
@@ -539,7 +540,7 @@ JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
 	        };
 	    }
 
-	    script.src = JOBAD.util.resolve(url);
+	    script.src = resolve(url);
 	    preLoadHack(url); 
 	    document.getElementsByTagName("head")[0].appendChild(script);
 
@@ -558,11 +559,11 @@ JOBAD.util.loadExternalJS = function(url, callback, scope, preLoadHack){
 	@param	scope	Scope of callback. 
 	@param preLoadHack. Function to call before laoding a specific file. 
 */
-JOBAD.util.loadExternalCSS = function(url, callback, scope, preLoadHack){
+module.exports.loadExternalCSS = function loadExternalCSS(url, callback, scope, preLoadHack){
 	var TIMEOUT_CONST = 15000; //timeout for bad links
 	var has_called = false; 
 	var interval_id, timeout_id; 
-	var preLoadHack = JOBAD.util.forceFunction(preLoadHack, function(){}); 
+	var preLoadHack = forceFunction(preLoadHack, function(){}); 
 
 	var do_call = function(suc){
 		if(has_called){
@@ -576,7 +577,7 @@ JOBAD.util.loadExternalCSS = function(url, callback, scope, preLoadHack){
 			clearTimeout(timeout_id);
 		}
 
-		var func = JOBAD.util.forceFunction(callback, function(){});
+		var func = forceFunction(callback, function(){});
 		var scope = (typeof scope == "undefined")?window:scope;
 
 		func.call(scope, url, suc);
@@ -584,7 +585,7 @@ JOBAD.util.loadExternalCSS = function(url, callback, scope, preLoadHack){
 	}
 
 	
-	if(JOBAD.util.isArray(url)){
+	if(isArray(url)){
 		var i=0;
 		var next = function(urls, suc){
 			if(i>=url.length || !suc){
@@ -592,7 +593,7 @@ JOBAD.util.loadExternalCSS = function(url, callback, scope, preLoadHack){
 					do_call(suc);
 				}, 0);
 			} else {
-				JOBAD.util.loadExternalCSS(url[i], function(urls, suc){
+				loadExternalCSS(url[i], function(urls, suc){
 					i++;
 					next(urls, suc);
 				}, scope, preLoadHack);
@@ -672,7 +673,7 @@ JOBAD.util.loadExternalCSS = function(url, callback, scope, preLoadHack){
 	escapes a string for HTML
 	@param	str	String to escape
 */
-JOBAD.util.escapeHTML = function(s){
+module.exports.escapeHTML = function escapeHTML(s){
 	return s.split('&').join('&amp;').split('<').join('&lt;').split('"').join('&quot;');
 }
 
@@ -682,20 +683,20 @@ JOBAD.util.escapeHTML = function(s){
 	@param base	Optional. Base url to use. 
 	@param isDir	Optional. If set to true, will return a directory name ending with a slash
 */
-JOBAD.util.resolve = function(url, base, isDir){
+module.exports.resolve = function(url, base, isDir){
 
 	var resolveWithBase = false; 
 	var baseUrl, oldBase, newBase; 
 
 	if(typeof base == "string"){
 		resolveWithBase = true; 
-		baseUrl = JOBAD.util.resolve(base, true); 
-		oldBase = JOBAD.refs.$("base").detach(); 
-		newBase = JOBAD.refs.$("<base>").attr("href", baseUrl).appendTo("head"); 
+		baseUrl = resolve(base, true); 
+		oldBase = $("base").detach(); 
+		newBase = $("<base>").attr("href", baseUrl).appendTo("head"); 
 	}
 	
     var el= document.createElement('div');
-    el.innerHTML= '<a href="'+JOBAD.util.escapeHTML(url)+'">x</a>';
+    el.innerHTML= '<a href="'+escapeHTML(url)+'">x</a>';
     var url = el.firstChild.href;
    
     if(resolveWithBase){
@@ -715,14 +716,14 @@ JOBAD.util.resolve = function(url, base, isDir){
 	@param	handler	Handler to add
 	@returns an id for the added handler. 
 */
-JOBAD.util.on = function(query, event, handler){
-	var query = JOBAD.refs.$(query);
-	var id = JOBAD.util.UID(); 
-	var handler = JOBAD.util.forceFunction(handler, function(){});
-	handler = JOBAD.util.argSlice(handler, 1); 
+on = function on(query, event, handler){
+	var query = $(query);
+	var id = UID(); 
+	var handler = forceFunction(handler, function(){});
+	handler = argSlice(handler, 1); 
 
 	query.on(event+".core."+id, function(ev){
-		var result = JOBAD.util.forceArray(ev.result);
+		var result = forceArray(ev.result);
 
 		result.push(handler.apply(this, arguments));
 
@@ -738,12 +739,12 @@ JOBAD.util.on = function(query, event, handler){
 	@param	handler	Handler to add
 	@returns an id for the added handler. 
 */
-JOBAD.util.once = function(query, event, handler){
+module.exports.once = function(query, event, handler){
 	var id;
 
-	id = JOBAD.util.on(query, event, function(){
+	id = on(query, event, function(){
 		var result = handler.apply(this, arguments); 
-		JOBAD.util.off(query, id); 
+		off(query, id); 
 	});
 }
 
@@ -752,15 +753,15 @@ JOBAD.util.once = function(query, event, handler){
 	@param	query A jQuery element to use as as query. 
 	@param	id	Id of handler to remove. 
 */
-JOBAD.util.off = function(query, id){
-	var query = JOBAD.refs.$(query);
+module.exports.off = function off(query, id){
+	var query = $(query);
 	query.off(id); 
 }
 
 /*
 	Turns a keyup event into a string. 
 */
-JOBAD.util.toKeyString = function(e){
+module.exports.toKeyString = function toKeyString(e){
 	var res = ((e.ctrlKey || e.keyCode == 17 )? 'ctrl+' : '') +
         ((e.altKey || e.keyCode == 18 ) ? 'alt+' : '') +
         ((e.shiftKey || e.keyCode == 16 ) ? 'shift+' : ''); 
@@ -793,10 +794,10 @@ JOBAD.util.toKeyString = function(e){
     }
 };
 
-JOBAD.util.onKey = function(cb){
-	var uuid = JOBAD.util.UID(); 
-	JOBAD.refs.$(document).on("keydown."+uuid+" keypress."+uuid, function(evt){
-		var key = JOBAD.util.toKeyString(evt); 
+module.exports.onKey = function(cb){
+	var uuid = UID(); 
+	$(document).on("keydown."+uuid+" keypress."+uuid, function(evt){
+		var key = toKeyString(evt); 
 		if(!key){
 			return; 
 		}
@@ -819,16 +820,16 @@ JOBAD.util.onKey = function(cb){
 	@param	event Event to trigger. 
 	@param	params	Parameters to give to the event. 
 */
-JOBAD.util.trigger = function(query, event, params){
+module.exports.trigger = function trigger(query, event, params){
 
-	var query = JOBAD.refs.$(query);
+	var query = $(query);
 
 	var result; 
 
-	var params = JOBAD.util.forceArray(params).slice(0);
+	var params = forceArray(params).slice(0);
 	params.unshift(event); 
 
-	var id = JOBAD.util.UID(); 
+	var id = UID(); 
 
 	query.on(event+"."+id, function(ev){
 		result = ev.result; 
@@ -845,24 +846,24 @@ JOBAD.util.trigger = function(query, event, params){
 /*
 	Creates a new Event Handler
 */
-JOBAD.util.EventHandler = function(me){
+module.exports.EventHandler = function EventHandler(me){
 	var handler = {}; 
-	var EventHandler = JOBAD.refs.$("<div>"); 
+	var EventHandler = $("<div>"); 
 
 	handler.on = function(event, handler){
-		return JOBAD.util.on(EventHandler, event, handler.bind(me));
+		return on(EventHandler, event, handler.bind(me));
 	};
 
 	handler.once = function(event, handler){
-		return JOBAD.util.once(EventHandler, event, handler.bind(me));
+		return once(EventHandler, event, handler.bind(me));
 	};
 
 	handler.off = function(handler){
-		return JOBAD.util.off(EventHandler, handler);
+		return off(EventHandler, handler);
 	};
 
 	handler.trigger = function(event, params){
-		return JOBAD.util.trigger(EventHandler, event, params);
+		return trigger(EventHandler, event, params);
 	}
 
 	return handler;
@@ -871,9 +872,9 @@ JOBAD.util.EventHandler = function(me){
 /*
 	Gets the current script origin. 
 */
-JOBAD.util.getCurrentOrigin = function(){
+module.exports.getCurrentOrigin = function getCurrentOrigin(){
 
-	var scripts = JOBAD.refs.$('script'); 
+	var scripts = $('script'); 
 	var src = scripts[scripts.length-1].src;
 
 	//if we have an empty src or jQuery is ready, return the location.href
@@ -886,16 +887,16 @@ JOBAD.util.getCurrentOrigin = function(){
 	@param a	Index of first element. 
 	@param b	Index of second element. 
 */
-JOBAD.util.permuteArray = function(arr, a, b){
+module.exports.permuteArray = function permuteArray(arr, a, b){
 
-	var arr = JOBAD.refs.$.makeArray(arr); 
+	var arr = $.makeArray(arr); 
 	
-	if(!JOBAD.util.isArray(arr)){
+	if(!isArray(arr)){
 		return arr; 
 	}
 
-	var a = JOBAD.util.limit(a, 0, arr.length); 
-	var b = JOBAD.util.limit(b, 0, arr.length); 
+	var a = limit(a, 0, arr.length); 
+	var b = limit(b, 0, arr.length); 
 
 	var arr = arr.slice(0); 
 
@@ -910,17 +911,17 @@ JOBAD.util.permuteArray = function(arr, a, b){
 	Limit the number x to be between a and b. 
 
 */
-JOBAD.util.limit = function(x, a, b){
+module.exports.limit = function limit(x, a, b){
 	if(a >= b){
 		return (x<b)?b:((x>a)?a:x); 
 	} else {
 		// b > a
-		return JOBAD.util.limit(x, b, a); 
+		return limit(x, b, a); 
 	}
 }
 
-
-
-//Merge underscore and JOBAD.util namespace
-_.mixin(JOBAD.util);
-JOBAD.util = _.noConflict(); //destroy the original underscore instance. 
+// TODO: Think about removing this hack
+// as it might break things horribly
+// TODO: import underscore into the current namespace
+_.mixin(module.exports);
+module.exports = _.noConflict();

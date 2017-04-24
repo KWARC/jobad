@@ -1,0 +1,33 @@
+{
+  "name": "jobad",
+  "version": "3.3.0",
+  "description": "JavaScript API for OMDoc-based Active Documents",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "example": "examples"
+  },
+  "dependencies": {
+    "browserify": "^14.3.0",
+    "gear": "^0.9.7",
+    "gear-lib": "^0.9.2",
+    "jquery": "^3.2.1",
+    "less": "^2.7.2",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build": "browserify js/index.js -s JOBAD > build/JOBAD.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KWARC/jobad.git"
+  },
+  "author": "KWARC Group",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/KWARC/jobad/issues"
+  },
+  "homepage": "https://github.com/KWARC/jobad#readme"
+}

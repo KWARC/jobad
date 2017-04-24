@@ -19,12 +19,75 @@
 	along with JOBAD.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JOBAD.Instances = {}; 
+/** represents a new JOBADInstance */
+var Instance = module.exports = function Instance(jobad){
+	
+	// reference to the jobad instance
+	this._jobad = jobad;
+	
+	this._i_am_focused = false;
+	this.i_am_waiting = false;
+	
+	// the element that was focused previously
+	this._previousFocus = undefined;
+};
 
-JOBAD.Instances.all = {}; 
+/*
+	Focuses this JOBADInstance
+	@returns false if the Instance can not be focused for some reason, true otherwise. 
+*/
+Instance.prototype.focus = function(){
+	var me = this, 
+		meJOBAD = this._jobad;
+		
+	if(this._i_am_focused){
+		return false; 
+	}
+	
+	if(this._i_am_waiting){
+		return false;
+	}
+	
+	if(typeof focused != "undefined"){
+		//someone else is focused => throw him out. 
+		this._prev_focus = focused; 
+		focused.Instance.unfocus(); 
 
-var focused = undefined; 
-var waiting = undefined; 
+	}
+
+			if(typeof waiting != "undefined"){
+				//someone else is waiting => throw him out. 
+				waiting.Instance.unfocus(); 
+			}
+
+			i_am_waiting = true; 
+			waiting = me; 
+
+			me.Event.trigger("instance.focus_query"); 
+
+			me.Setup.enabled(function(){ //(IF ENABLED)
+				if(i_am_waiting){
+					i_am_waiting = false; 
+					waiting = undefined; 
+					i_am_focused = true; 
+					focused = me; 
+
+					me.Event.trigger("instance.focus", [prev_focus]); 
+
+					me.Event.focus.trigger(prev_focus);
+
+					prev_focus = undefined; 
+				}
+			});
+
+			return true; 
+		};
+	
+}
+
+
+/** a list of all available JOBADInstances */
+module.exports.all = {};
 
 JOBAD.ifaces.push(function(me){
 	//store a reference so it is kept
@@ -43,49 +106,7 @@ JOBAD.ifaces.push(function(me){
 		Focuses this JOBADInstance
 		@returns false if the Instance can not be focused for some reason, true otherwise. 
 	*/
-	me.Instance.focus = function(){
-		if(i_am_focused){
-			return false; 
-		}
-
-		if(i_am_waiting){
-			return false; 
-		}
-
-		if(typeof focused != "undefined"){
-			//someone else is focused => throw him out. 
-			prev_focus = focused; 
-			focused.Instance.unfocus(); 
-
-		}
-
-		if(typeof waiting != "undefined"){
-			//someone else is waiting => throw him out. 
-			waiting.Instance.unfocus(); 
-		}
-
-		i_am_waiting = true; 
-		waiting = me; 
-
-		me.Event.trigger("instance.focus_query"); 
-
-		me.Setup.enabled(function(){ //(IF ENABLED)
-			if(i_am_waiting){
-				i_am_waiting = false; 
-				waiting = undefined; 
-				i_am_focused = true; 
-				focused = me; 
-
-				me.Event.trigger("instance.focus", [prev_focus]); 
-
-				me.Event.focus.trigger(prev_focus);
-
-				prev_focus = undefined; 
-			}
-		});
-
-		return true; 
-	};
+	me.Instance
 
 	/*
 		Unfocuses this JOBADInstance
